@@ -1,0 +1,612 @@
+* {
+  padding: 0;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+.banner {
+  height: 50vh;
+  width: 100%;
+  background: url(../images/bannerv1.png);
+}
+
+.banner > p {
+  background: transparent;
+  color: transparent;
+}
+
+.content {
+  padding-top: 2%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+}
+
+.content .titleSection {
+  text-align: center;
+}
+
+.content .welcome {
+  font-size: 2.3rem;
+  font-weight: 400;
+  text-shadow: 2px 1px 2px black;
+}
+
+.content .title {
+  color: #5f4c27;
+  font-weight: bolder;
+  font-size: 3rem;
+  text-shadow: 2px 1px 1px black;
+}
+
+.content .subtitle {
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.content .appointmentButton {
+  background: #68b2a0;
+  color: #fff;
+  width: 20%;
+  padding: 1%;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.cards {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.cards .card {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  border: #2c6975 2px solid;
+  padding: 1% 2%;
+  border-radius: 10px;
+}
+
+.cards .card p {
+  padding: 1%;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.cards .card .top {
+  font-weight: bold;
+  color: #2c6975;
+}
+
+.top {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.top img {
+  width: 15%;
+  padding: 2%;
+}
+
+.quote {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.quote img {
+  width: 70%;
+}
+
+.about {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 8%;
+}
+
+.about .description {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.description h1 {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.btns {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 1rem;
+}
+
+.book {
+  font-size: 1rem;
+  text-align: center;
+  width: 49%;
+  background: #2c6975;
+  padding: 5px;
+  box-shadow: 1px 5px 5px gray;
+  border-radius: 40px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.Aboutlink {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  width: 49%;
+  background: #fff;
+  padding: 10px;
+  box-shadow: 1px 5px 5px gray;
+  border-radius: 40px;
+}
+
+.clientImage img {
+  width: 90%;
+}
+
+.services {
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 3% 0;
+}
+
+.services h1,
+.testimonies h1 {
+  font-size: 2rem;
+  color: #2c6975;
+  font-weight: bold;
+}
+
+.services h2,
+.testimonies h2 {
+  font-size: 1.3rem;
+  font-weight: 400;
+  text-align: center;
+}
+
+.btns2 {
+  display: flex;
+  flex-direction: row;
+  width: 40%;
+  gap: 1rem;
+}
+
+.tesimony {
+  display: flex;
+  flex-direction: column;
+}
+
+.items {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.dots {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Testimonies Section */
+.testimonies {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 3rem;
+}
+
+.testimonyContainer {
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  flex-wrap: wrap;
+}
+
+.testimony {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 300px;
+  box-shadow: 2px 10px 10px #2c6975;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.testimony p:first-child {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.testimony p:last-child {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Pagination Buttons */
+.pagination {
+  display: flex;
+  gap: 1rem;
+}
+
+.pagination button {
+  color: #000;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination button:focus {
+  color: #0056b3;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.profile {
+  background: #0056b3;
+  width: 50px;
+  height: 50px;
+  border-radius: 40px;
+}
+
+.name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+}
+
+.name p {
+  font-weight: bold;
+}
+
+.testimony {
+  font-weight: bold;
+}
+
+.blogContent {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.Categories {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.blog {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.blog h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c6975;
+}
+
+.Articles {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  width: 25rem;
+}
+
+.Articles img {
+  width: 100%;
+}
+
+.cardbottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  align-items: center;
+  background: #68b2a0;
+  width: 100%;
+  padding: 4%;
+}
+
+.category {
+  background: #fff;
+  padding: 2%;
+  border-radius: 20px;
+}
+
+.cardbottom button {
+  text-align: center;
+  font-weight: bold;
+}
+
+.Category {
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 40px;
+}
+
+.Category.active {
+  font-weight: bold;
+  background: #68b2a0;
+  color: black;
+}
+
+.bottomBanner {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url(../images/AdobeStock_287586510\ 2.png);
+}
+
+.bottomBanner button {
+  font-size: large;
+  background: linear-gradient(to right, #8be332, #4d7d1c);
+  padding: 10px;
+  border-radius: 20px;
+  position: absolute;
+  font-weight: bold;
+  color: #000;
+  top: 80%;
+  width: 20%;
+  box-shadow: 1px 5px 5px black;
+  left: 40%;
+}
+
+.bottomNavlinks {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  color: #2c6975;
+  font-weight: bold;
+}
+
+.bottomNavlinks a.active {
+  border-bottom: #2c6975 2px solid;
+}
+
+.bottomH1 {
+  width: 100%;
+  font-size: 1rem;
+  color: #2c6975;
+  font-weight: bold;
+  float: left;
+  padding-left: 5%;
+}
+
+hr {
+  border: #2c6975 1px solid;
+}
+
+/* Media Queries for Smaller Devices */
+@media (max-width: 768px) {
+  .content .welcome {
+    font-size: 2rem;
+  }
+
+  .content .title {
+    font-size: 2.5rem;
+  }
+
+  .content .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .content .appointmentButton {
+    width: 50%;
+    padding: 2%;
+  }
+
+  .cards {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .cards .card {
+    width: 80%;
+  }
+
+  .top img {
+    width: 25%;
+  }
+
+  .quote img {
+    width: 90%;
+  }
+
+  .about {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .about .description {
+    width: 80%;
+  }
+
+  .btns {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .book, .Aboutlink {
+    width: 100%;
+  }
+
+  .clientImage img {
+    width: 100%;
+  }
+
+  .services {
+    height: auto;
+    padding: 5% 0;
+  }
+
+  .services h1, .testimonies h1 {
+    font-size: 1.5rem;
+  }
+
+  .services h2, .testimonies h2 {
+    font-size: 1rem;
+  }
+
+  .btns2 {
+    flex-direction: column;
+    width: 80%;
+    gap: 1rem;
+  }
+
+  .blogContent {
+    flex-direction: column;
+  }
+
+  .Articles {
+    width: 100%;
+  }
+
+  .bottomBanner {
+    height: 30vh;
+  }
+
+  .bottomBanner button {
+    top: 70%;
+    width: 50%;
+    left: 25%;
+  }
+}
+
+@media (max-width: 480px) {
+  .content .welcome {
+    font-size: 1.5rem;
+  }
+
+  .content .title {
+    font-size: 2rem;
+  }
+
+  .content .subtitle {
+    font-size: 1rem;
+  }
+
+  .content .appointmentButton {
+    width: 70%;
+    padding: 3%;
+  }
+  .cards {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .cards .card {
+    width: 90%;
+  }
+
+  .top img {
+    width: 35%;
+  }
+
+  .quote img {
+    width: 100%;
+  }
+  .about{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .about .description {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btns {
+    gap: 0.5rem;
+  }
+
+  .book, .Aboutlink {
+    width: 100%;
+  }
+
+  .clientImage img {
+    width: 90%;
+  }
+
+  .services{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .services h1, .testimonies h1 {
+    font-size: 1.2rem;
+  }
+
+  .services h2, .testimonies h2 {
+    font-size: 0.9rem;
+  }
+  .blog, .blogContent{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .Categories{
+    font-size: x-small;
+  }
+  .btns2 {
+    width: 90%;
+  }
+  .Articles{
+    width: 90%;
+  }
+  .bottomBanner {
+    height: 20vh;
+  }
+
+  .bottomBanner button {
+    top: 60%;
+    width: 80%;
+    left: 10%;
+  }
+  .bottomNavlinks{
+    display: flex;
+    flex-direction: row;
+    font-size: small;
+  }
+}

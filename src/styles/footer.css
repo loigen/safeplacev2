@@ -1,0 +1,180 @@
+.right {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 70%;
+    color: #2C6975;
+    font-weight: 500;
+  }
+  
+  .topright {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+  }
+  
+  .rightside {
+    width: 30%;
+    text-align: justify;
+  }
+  
+  .leftside {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .leftside h1 {
+    font-size: 2rem;
+    color: #2C6975;
+    font-weight: bold;
+  }
+  
+  .leftside h2 {
+    color: #2C6975;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .footer {
+    width: 100%;
+    padding: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  
+  .info {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: baseline;
+    gap: 1rem;
+    color: #2C6975;
+  }
+  
+  .subscribe {
+    width: 76%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .subscribe input[type="text"] {
+    outline: none;
+    width: 80%;
+  }
+  
+  .inputfield {
+    padding: 0.5%;
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: black 1px solid;
+    border-radius: 10px;
+  }
+  
+  .inputfield button {
+    background: #2C6975;
+    color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .left {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    color: #2C6975;
+    font-weight: bold;
+    gap: 1rem;
+  }
+  
+  .left .title {
+    font-size: 2rem;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Media Queries for Responsive Footer */
+  @media (max-width: 768px) {
+    .footer {
+      flex-direction: column;
+      align-items: center;
+      padding: 2%;
+    }
+  
+    .right, .left {
+      width: 90%;
+      text-align: center;
+    }
+  
+    .topright {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .rightside {
+      width: 100%;
+    }
+  
+    .subscribe {
+      width: 100%;
+      flex-direction: column;
+    }
+  
+    .inputfield {
+      width: 90%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .leftside h1 {
+      font-size: 1.5rem;
+    }
+  
+    .leftside h2 {
+      font-size: 1rem;
+    }
+  
+    .subscribe input[type="text"] {
+      width: 100%;
+    }
+  
+    .inputfield {
+      width: 100%;
+      padding: 1%;
+    }
+  
+    .inputfield button {
+      padding: 5px;
+    }
+  
+    .left .title {
+      font-size: 1.5rem;
+    }
+    .rightside{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .leftside{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .info{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+  }
+}   
