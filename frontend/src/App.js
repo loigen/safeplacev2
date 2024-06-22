@@ -50,6 +50,7 @@ const App = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={LandingPage} />
+        <Route exact path="/landingpage" component={LandingPage} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
         <Route path="/signup" component={Signup} />
