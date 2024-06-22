@@ -38,6 +38,9 @@ const Navpar = () => {
           <div className="nav-link" onClick={() => handleCardClick("/Contact")}>
             Blog
           </div>
+          <div className="nav-link" onClick={() => handleCardClick("/login")}>
+            Signin/Signup
+          </div>
         </div>
         <div className="menu-toggle md-hidden">
           <button className="menu-button" onClick={toggleMenu}>
