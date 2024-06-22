@@ -101,14 +101,9 @@
     color: #fff;
     border-radius: 10px;
     width: 30%;
+    cursor: pointer;
   }
-  .cardLogin .form form button:disabled,
-  .cardLogin .form form button.disabled {
-    background-color: #68B2A0;
-    color: #fff;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
+  
   .forSignup {
     display: flex;
     flex-direction: row;
