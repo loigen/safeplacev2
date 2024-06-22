@@ -7,7 +7,7 @@ const LoadingSpinner = () => {
   return (
     <div className="loading-container">
       <div className="loading-spinner"></div>
-      <p>Slow Internet Connection, Please Wait...</p>
+      <p>Loading, Please Wait...</p>
     </div>
   );
 };
