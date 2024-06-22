@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useHistory } from 'react-router-dom';
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useHistory } from "react-router-dom";
 import "./../styles/Signup.css";
+import logo from "../images/bannerLogo.png";
+
+import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function Signup() {
   const [firstname, setFirstname] = useState("");
@@ -12,7 +18,25 @@ function Signup() {
   const [repeatPassword, setRepeatPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [agreement, setAgreement] = useState(false);
+
   const history = useHistory();
+
+  useEffect(() => {
+    if (
+      firstname.trim() &&
+      lastname.trim() &&
+      email.trim() &&
+      password.trim() &&
+      repeatPassword.trim() &&
+      agreement
+    ) {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  }, [firstname, lastname, email, password, repeatPassword, agreement]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,7 +50,7 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/signup", {
+      const response = await axios.post("http://localhost:5000/auth/signup", {
         firstname,
         lastname,
         email,
@@ -37,14 +61,12 @@ function Signup() {
       if (response.status === 201) {
         alert("Account created successfully");
 
-        // Clear input fields after successful signup
         setFirstname("");
         setLastname("");
         setEmail("");
         setPassword("");
         setRepeatPassword("");
 
-        // Navigate to login page
         history.push("/login");
       } else {
         setError("Failed to create account");
@@ -65,46 +87,139 @@ function Signup() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ArrowBackIcon onClick={handleBackClick} style={{ cursor: "pointer" }} />
-      <input
-        type="text"
-        value={firstname}
-        onChange={(e) => setFirstname(e.target.value)}
-        placeholder="First Name"
-        required
-      />
-      <input
-        type="text"
-        value={lastname}
-        onChange={(e) => setLastname(e.target.value)}
-        placeholder="Last Name"
-        required
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email Address"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <input
-        type="password"
-        value={repeatPassword}
-        onChange={(e) => setRepeatPassword(e.target.value)}
-        placeholder="Repeat Password"
-        required
-      />
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <button type="submit">{loading ? "Signing up..." : "Signup"}</button>
-    </form>
+    <div className="containerSignup">
+      <div className="logo">
+        <img src={logo} alt="" />
+      </div>
+      <div className="cardSignup">
+        <div className="back">
+          <ArrowBackIcon
+            onClick={handleBackClick}
+            style={{
+              cursor: "pointer",
+              width: "10%",
+              fontSize: "1.5rem",
+              color: "#2C6975",
+            }}
+          />
+          <div className="subtitle">
+            <h1>Welcome to Safe Place</h1>
+            <p>Please take a moment to complete your account</p>
+          </div>
+        </div>
+        <br />
+        <div className="form">
+          <form onSubmit={handleSubmit}>
+            <div className="inputFields">
+              <label htmlFor="firstname">
+                <span>
+                  <PersonOutlineIcon />
+                </span>
+                First Name:
+              </label>
+              <input
+                type="text"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+                placeholder="First Name"
+                required
+              />
+              <label htmlFor="lastname">
+                <span>
+                  <PersonOutlineIcon />
+                </span>
+                Last Name:
+              </label>
+              <input
+                type="text"
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
+                placeholder="Last Name"
+                required
+              />
+              <label htmlFor="email">
+                <span>
+                  <ContactMailIcon />
+                </span>
+                Email Address:
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email Address"
+                required
+              />
+              <label htmlFor="password">
+                <span>
+                  <LockOpenIcon />
+                </span>
+                Password:
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                required
+              />
+              <label htmlFor="repeatPassword">
+                <span>
+                  <LockOpenIcon />
+                </span>
+                Repeat Password:
+              </label>
+              <input
+                type="password"
+                value={repeatPassword}
+                onChange={(e) => setRepeatPassword(e.target.value)}
+                placeholder="Repeat Password"
+                required
+              />
+              {error && <p style={{ color: "red" }}>{error}</p>}
+            </div>
+
+            <div className="agreement">
+              <p>
+                The Safe Place platform may keep me informed with personalized
+                emails about services and activities. See our Privacy Policy for
+                more details or to opt-out at any time.
+              </p>
+              <div className="checkbox">
+                <input
+                  type="checkbox"
+                  name="agree"
+                  id="agree"
+                  checked={agreement}
+                  onChange={() => setAgreement(!agreement)}
+                />
+                <span>Please contact me via email</span>
+              </div>
+              <p>
+                By clicking Create account, I agree that I have read and
+                accepted the Terms of Use and Privacy Policy.
+              </p>
+            </div>
+            <div className="bottompart">
+              <div></div>
+              <button
+                type="submit"
+                disabled={isButtonDisabled}
+                className={isButtonDisabled ? "disabled" : ""}
+              >
+                {loading ? "Signing up..." : "Create Account"}
+              </button>
+            </div>
+            <div className="forSignup">
+              <p>Already have an account? </p>
+              <Link className="login" to="/login">
+                Sign In
+              </Link>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   );
 }
 

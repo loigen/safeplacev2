@@ -17,7 +17,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/profile', { withCredentials: true });
+        const response = await axios.get('http://localhost:5000/user/profile', { withCredentials: true });
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
@@ -32,7 +32,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; // Optional: Show a loading indicator while verifying authentication
+    return <div>Loading...</div>; 
   }
 
   return (

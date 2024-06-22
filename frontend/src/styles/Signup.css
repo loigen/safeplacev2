@@ -1,6 +1,152 @@
 .error {
-    color: red;
-    font-size: 0.8em;
-    margin-top: 0.5em;
+  color: red;
+  font-size: 0.8em;
+  margin-top: 0.5em;
+}
+
+.containerSignup {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url(../images/nature.png);
+  background-size: cover;
+}
+
+.cardSignup {
+  left: 50%;
+  background: #fff;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 2px 10px 10px #2c6975;
+  padding: 2% 1%;
+  width: 35%;
+  border-radius: 20px;
+}
+
+.back {
+  display: flex;
+  flex-direction: row;
+}
+
+.back .subtitle h1 {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.cardSignup .subtitle {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 70%;
+}
+
+.cardSignup .logo img {
+  width: 50%;
+}
+
+.cardSignup .form form {
+  padding: 6px;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form form .inputFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 80%;
+}
+
+.login {
+  font-weight: bold;
+  border-bottom: #2c6975 1px solid;
+}
+
+.cardSignup .form form input[type="text"],
+.cardSignup .form form input[type="email"],
+.cardSignup .form form input[type="password"] {
+  box-shadow: 2px 2px 5px gray;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.cardSignup .form form input[type="text"]:focus,
+.cardSignup .form form input[type="email"]:focus,
+.cardSignup .form form input[type="password"]:focus {
+  outline: #2c6975 2px solid;
+}
+
+.cardSignup .form label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 500;
+}
+
+label span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cardSignup .agreement {
+  color: black;
+  display: flex;
+  flex-direction: column;
+  font-weight: 400;
+  text-align: justify;
+  line-height: normal;
+  justify-content: flex-start;
+  width: 100%;
+  align-items: flex-start;
+  font-size: small;
+}
+
+.cardSignup .bottompart {
+  width: 80%;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+
+.containerSignup .logo {
+  top: 30%;
+  left: 15%;
+  position: absolute;
+  width: 20%;
+}
+
+.containerSignup .logo img {
+  width: 100%;
+}
+
+.bottompart button[type="submit"] {
+  width: 40%;
+  padding: 2% 4%;
+  font-size: large;
+  font-weight: bold;
+  color: #fff;
+  border-radius: 10px;
+  background: #2c6975;
+}
+  .cardSignup .form form button.disabled {
+    background-color: #68B2A0;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
   }
-  

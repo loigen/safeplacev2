@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import LoadingSpinner from './custom/LoadingSpinner';
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -7,19 +8,29 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/profile', { withCredentials: true });
-        setUser(response.data.user); // Assuming response.data.user contains the user object
+        const response = await axios.get('http://localhost:5000/user/profile', { withCredentials: true });
+        setUser(response.data.user); 
       } catch (error) {
         console.error('Error fetching profile:', error);
-        // Handle error fetching profile
       }
     };
 
     fetchProfile();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await axios.post('http://localhost:5000/auth/logout', {}, { withCredentials: true });
+      localStorage.removeItem('token'); 
+      setUser(null); 
+      window.location.href = '/login'; 
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   if (!user) {
-    return <div>Loading...</div>; // Optional: Show loading indicator while fetching profile
+    return <LoadingSpinner />; 
   }
 
   return (
@@ -27,6 +38,7 @@ const Profile = () => {
       <h2>Profile</h2>
       <p>Name: {user.firstname} {user.lastname}</p>
       <p>Email: {user.email}</p>
+      <button onClick={handleLogout}>Logout</button>
     </div>
   );
 };

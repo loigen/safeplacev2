@@ -1,0 +1,139 @@
+.containerLogin {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url(../images/nature.png);
+    background-size: cover;
+  }
+  .cardLogin {
+    background: #fff;
+    border: none;
+    left: 50%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 10px 10px #2c6975;
+    padding: 2% 1%;
+    width: 28%;
+    border-radius: 20px;
+    gap: 1.5rem;
+  }
+  .form {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .form form {
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+  }
+  .back {
+    width: 100%;
+  }
+  .back button {
+    background: #2c6975;
+    color: #fff;
+    font-weight: bold;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    padding: 2%;
+    border-radius: 10px;
+  }
+  .form > form > input[type="email"],
+  .form > form > input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    outline: #2c6975;
+    box-shadow: 2px 2px 5px gray;
+  }
+  .form > form > input[type="email"]:focus,
+  .form > form > input[type="password"]:focus {
+    outline: #2c6975 2px solid;
+  }
+  .bottompart {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .containerLogin .logo{
+    top: 30%;
+    left: 20%;
+    position: absolute;
+    width: 30%;
+  }
+  .containerLogin .logo img {
+    width: 60%;
+  }
+
+  .form form label {
+    color: #2c6975;
+    font-weight: bold;
+    font-size: large;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .forgotpass {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: #2c6975;
+    align-items: center;
+  }
+  .buttonSubmit {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .form form .buttonSubmit button[type="submit"] {
+    background: #2c6975;
+    padding: 2% 4%;
+    font-size: large;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 10px;
+    width: 30%;
+  }
+  .cardLogin .form form button:disabled,
+  .cardLogin .form form button.disabled {
+    background-color: #68B2A0;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  .forSignup {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    font-weight: 600;
+    color: #2c6975;
+  }
+  .forSignup .signup {
+    font-weight: bold;
+    border-bottom: #2c6975 1px solid;
+  }
+  .agreement {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    font-weight: bold;
+    justify-content: center;
+    color: #2c6975;
+  }
+  .agreement .privacy,
+  .agreement .terms {
+    border-bottom: #2c6975 1px solid;
+  }
+  .errorMessage {
+    color: #d90000;
+  }
