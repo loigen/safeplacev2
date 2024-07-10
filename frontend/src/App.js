@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import axios from 'axios';
-import Signup from './components/Signup';
-import Login from './components/Login';
-import Profile from './components/Profile';
-import LandingPage from './components/LandingPage.component';
-import About from './components/About.component';
-import Contact from './components/contact.component';
-import NotFound from './components/NotFound';
-import './styles/landingpage.css';
+import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import axios from "axios";
+import Signup from "./components/Signup";
+import Login from "./components/Login";
+import Profile from "./components/Profile";
+import LandingPage from "./components/LandingPage.component";
+import About from "./components/About.component";
+import Contact from "./components/contact.component";
+import NotFound from "./components/NotFound";
+import "./styles/landingpage.css";
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -17,7 +22,9 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/user/profile', { withCredentials: true });
+        const response = await axios.get("http://localhost:5000/user/profile", {
+          withCredentials: true,
+        });
         if (response.status === 200) {
           setIsAuthenticated(true);
         }
@@ -32,7 +39,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
