@@ -9,10 +9,12 @@ const userRoutes = require("./routes/userRoutes");
 
 const app = express();
 app.use(express.json());
-app.use(cors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "https://safeplacev2-1tge.vercel.app",
+    credentials: true,
+  })
+);
 
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -25,17 +27,19 @@ const sessionStore = MongoStore.create({
   ttl: 7 * 24 * 60 * 60, // Session TTL in seconds (optional)
 });
 
-app.use(session({
-  secret: JWT_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: sessionStore,
-  cookie: {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // Cookie TTL (optional)
-    secure: process.env.NODE_ENV === "production", // Secure cookies in production
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Adjust 'sameSite' based on environment
-  },
-}));
+app.use(
+  session({
+    secret: JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    cookie: {
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      secure: true, // Set to true in production
+      sameSite: "none", // Set to "none" in production
+    },
+  })
+);
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
