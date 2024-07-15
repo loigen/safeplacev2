@@ -1,15 +1,21 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userController = require('../controllers/userController');
-const authController = require('../controllers/authController'); // Assuming authController is correctly imported
+const userController = require("../controllers/userController");
+const authController = require("../controllers/authController");
 
-const checkAdmin = require('../middlewares/checkAdmin');
-const authenticateToken = require('../middlewares/authenticateToken');
+const checkAdmin = require("../middlewares/checkAdmin");
+const authenticateToken = require("../middlewares/authenticateToken");
 
-router.get('/profile', authenticateToken, userController.getProfile);
+router.get("/profile", authenticateToken, userController.getProfile);
 
-router.post('/admin', [authenticateToken, checkAdmin], userController.adminFunction);
+router.put("/updateprofile", authenticateToken, userController.updateProfile); // New route for updating profile
 
-router.post('/logout', authenticateToken, authController.logout);
+router.post(
+  "/admin",
+  [authenticateToken, checkAdmin],
+  userController.adminFunction
+);
+
+router.post("/logout", authenticateToken, authController.logout);
 
 module.exports = router;
