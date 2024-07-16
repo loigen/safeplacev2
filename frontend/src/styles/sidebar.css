@@ -1,0 +1,39 @@
+.sidebar {
+  /* Your sidebar styles */
+  height: 91.3vh;
+}
+
+.sidebar-link {
+  color: gray;
+  text-decoration: none;
+  padding: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.sidebar-link:hover {
+  background-color: #f0f0f0;
+}
+
+.sidebar-link.active {
+  color: #2c6975;
+  font-weight: bold;
+  background: rgb(228, 228, 228);
+  border-left: 10px solid #2c6975;
+  transition: 0.5s;
+}
+#icon {
+  font-size: 2rem;
+}
+.links li {
+  padding: 0 !important;
+  margin: 0;
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
