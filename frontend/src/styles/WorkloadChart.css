@@ -1,0 +1,49 @@
+.workload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+.controls-container {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 10px;
+}
+
+.buttons-container button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.buttons-container button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.buttons-container button:not(.active):hover {
+  background-color: #e0e0e0;
+}
+
+.legend-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-grow: 1;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Adjust height as needed */
+}
