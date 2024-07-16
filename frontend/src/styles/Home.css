@@ -1,0 +1,13 @@
+#icons {
+  font-size: 4rem;
+}
+.iconContainer {
+  background: #9eaaa7;
+  color: #a4cdc3;
+  padding: 1%;
+  border-radius: 10px;
+}
+.iconContainer.health {
+  background: #bda0e2;
+  color: #9747ff;
+}

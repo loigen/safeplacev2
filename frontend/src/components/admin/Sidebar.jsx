@@ -82,12 +82,14 @@ const Sidebar = () => {
               </NavLink>
             </li>
           </ul>
-          <div className="logout">
+          <div className="logout ">
             <button
+              className="flex flex-row justify-center items-center"
               onClick={handleLogout}
               style={{ color: "red", fontSize: "2rem" }}
             >
               <PowerSettingsNewIcon />
+              <b className="log-out text-sm">LOGOUT</b>
             </button>
           </div>
         </div>
