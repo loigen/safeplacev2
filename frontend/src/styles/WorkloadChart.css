@@ -28,6 +28,7 @@
 
 .buttons-container button.active {
   background-color: #007bff;
+  box-shadow: 1px 5px 5px gray;
   color: white;
 }
 
