@@ -1,10 +1,14 @@
 import React from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
+import EqualizerOutlinedIcon from "@mui/icons-material/EqualizerOutlined";
+import { FaSearch, FaChevronRight, FaCheck, FaTimes } from "react-icons/fa";
+
 import "../../styles/Home.css";
 
 import WorkloadChart from "../custom/chart";
 import AppointmentRequest from "../custom/Appointment.request";
+import AvailabilityCard from "../custom/AvailabilityCard";
 
 const getRateClass = (rate) => {
   return rate < 0 ? "bg-red-400" : "bg-green-200";
@@ -29,10 +33,10 @@ const Home = () => {
           </select>
         </div>
       </div>
-      <div className="w-full">
+      <div className="w-full flex flex-row gap-10">
         <div className="flex flex-col  w-1/2 gap-10">
           <div className="flex flex-row gap-12">
-            <div className="w-full shadow-xl p-2 rounded-md">
+            <div className="w-full shadow-xl p-2 rounded-md bg-white">
               <div className="flex justify-end w-full">
                 <p
                   className={`rate px-2 rounded-md ${getRateClass(
@@ -52,7 +56,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full shadow-xl p-2 rounded-md">
+            <div className="w-full bg-white shadow-xl p-2 rounded-md">
               <div className="flex justify-end w-full">
                 <p
                   className={`rate px-2 rounded-md ${getRateClass(
@@ -75,18 +79,72 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="workload">
+          <div className="workload bg-white">
             <p style={{ paddingLeft: "3%", fontWeight: "bold" }}>Workload</p>
             <div className="graph">
               <WorkloadChart />
             </div>
           </div>
-          <div className="appointments w-full">
-            <p>Appointment Request</p>
+          <div className="appointments w-full bg-white p-2">
+            <p className="font-bold px-4">Appointment Request</p>
             <AppointmentRequest />
           </div>
         </div>
-        <div className="flex w-1/2"></div>
+        <div className="flex w-1/2 flex-col gap-10">
+          <div className="rating flex flex-row w-full items-center justify-evenly gap-8 px-4 ">
+            <div className="shadow-2xl w-1/2 p-8 rounded-lg bg-white flex flex-row">
+              <div className="w-1/6">
+                <EqualizerOutlinedIcon
+                  style={{ fontSize: "3rem", color: "#00A8E8" }}
+                />
+              </div>
+              <div>
+                <p className="font-extrabold text-3xl">30%</p>
+                <p className="subTitle">Conversion Rate</p>
+              </div>
+            </div>
+            <div
+              className="shadow-2xl w-1/2 p-8
+             rounded-lg bg-white flex flex-row gap-2"
+            >
+              <div className="w-1/6 flex items-center justify-center bg-red-300 rounded-md">
+                <FaTimes className="text-3xl text-red-600 font-normal" />
+              </div>
+              <div>
+                <p className="font-extrabold text-3xl">4%</p>
+                <p className="subTitle">Cancellation Rate</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white" style={{ width: "98%" }}>
+            <p className="text-2xl font-bold px-10 py-2">
+              Appointment Statistics
+            </p>
+            <div className="flex flex-row justify-center items-center  shadow-xl px-16 py-2">
+              <div
+                className="w-1/2 p-8 flex-row"
+                style={{ borderRight: "1px solid black" }}
+              >
+                <div className="flex flex-col gap-2">
+                  <p className="font-extrabold text-3xl">3</p>
+                  <p className="subTitle">Appointments Pending</p>
+                </div>
+              </div>
+              <div
+                className=" w-1/2 p-8
+             flex flex-row px-5"
+              >
+                <div>
+                  <p className="font-extrabold text-3xl">4%</p>
+                  <p className="subTitle">Cancelled Appointments</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <AvailabilityCard availableSlots={17} totalSlots={20} />
+          </div>
+        </div>
       </div>
     </div>
   );

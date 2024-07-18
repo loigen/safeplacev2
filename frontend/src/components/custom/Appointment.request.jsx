@@ -37,7 +37,7 @@ const AppointmentRequest = () => {
     <div className="w-full shadow-2xl p-5">
       <div className="Header-part flex justify-between flex-row w-full">
         <div
-          className="search flex flex-row justify-center items-center p-2 rounded-md gap-2 shadow-xl "
+          className="search flex flex-row justify-center items-center p-2 rounded-md gap-2 shadow-2xl "
           style={{ border: "1px solid gray" }}
         >
           <FaSearch />
@@ -56,11 +56,12 @@ const AppointmentRequest = () => {
           </NavLink>
         </div>
       </div>
-      <div className="display-list">
+      <br />
+      <div className="display-list flex flex-col gap-2">
         {filteredAppointments.map((appointment) => (
           <div
             key={appointment.id}
-            className="appointment-item flex justify-between items-center p-2 border-b"
+            className="appointment-item border rounded-lg border-slate-700 flex justify-between items-center p-2 border-b"
           >
             <div>
               <p className="font-bold">{appointment.name}</p>
