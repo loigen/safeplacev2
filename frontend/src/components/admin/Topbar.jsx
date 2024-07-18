@@ -76,6 +76,14 @@ const Topbar = () => {
 
   const markNotificationAsRead = async (notificationId) => {
     try {
+      const notification = notifications.find(
+        (notif) => notif.id === notificationId
+      );
+
+      if (notification.read) {
+        return; // If the notification is already read, do nothing
+      }
+
       if (process.env.NODE_ENV !== "development") {
         await axios.post(
           `http://localhost:5000/notifications/markAsRead/${notificationId}`,
