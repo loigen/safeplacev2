@@ -1,0 +1,44 @@
+.dropzone {
+  border: 2px dashed #007bff;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 4px;
+  position: relative;
+  font-size: 14px;
+  overflow: hidden; /* Ensures content doesn't overflow */
+  white-space: nowrap; /* Keeps text in a single line */
+}
+
+.dropzone.dragging {
+  background-color: #e9ecef;
+}
+
+.upload-button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.upload-button:hover {
+  background-color: #0056b3;
+}
+
+.dropzone p {
+  display: inline-block;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  font-size: 12px;
+}

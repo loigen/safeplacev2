@@ -2,18 +2,24 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LoadingSpinner from "./LoadingSpinner";
 import UpdateProfileModal from "./UpdateProfileModal";
-import profile from "../../images/defaultAvatar.jpg";
+
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/profile", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/profile`,
+          {
+            withCredentials: true,
+          }
+        );
         setUser(response.data.user);
       } catch (error) {
+        setError("Error fetching profile.");
         console.error("Error fetching profile:", error);
       }
     };
@@ -24,7 +30,7 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/auth/logout",
+        `${process.env.REACT_APP_API_URL}/auth/logout`,
         {},
         { withCredentials: true }
       );
@@ -32,6 +38,7 @@ const Profile = () => {
       setUser(null);
       window.location.href = "/login";
     } catch (error) {
+      setError("Error logging out.");
       console.error("Error logging out:", error);
     }
   };
@@ -46,14 +53,18 @@ const Profile = () => {
 
   return (
     <div>
-      <h2>Admin Profile</h2>
-      {/* Display Profile Photo */}
-      {user.profilePicture && (
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {user.avatar && (
         <div>
           <img
-            src={profile} // Assuming your server serves images from this path
+            src={user.avatar}
             alt="Profile"
-            style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+            style={{
+              width: "150px",
+              height: "150px",
+              borderRadius: "50%",
+              background: "red",
+            }}
           />
         </div>
       )}

@@ -5,7 +5,13 @@ const validator = require("validator");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const validateSignupData = (firstname, lastname, email, password, repeatPassword) => {
+const validateSignupData = (
+  firstname,
+  lastname,
+  email,
+  password,
+  repeatPassword
+) => {
   if (!firstname || !lastname || !email || !password || !repeatPassword) {
     return "All fields are required";
   }
@@ -20,7 +26,13 @@ const validateSignupData = (firstname, lastname, email, password, repeatPassword
 
 exports.signup = async (req, res) => {
   const { firstname, lastname, email, password, repeatPassword } = req.body;
-  const errorMessage = validateSignupData(firstname, lastname, email, password, repeatPassword);
+  const errorMessage = validateSignupData(
+    firstname,
+    lastname,
+    email,
+    password,
+    repeatPassword
+  );
 
   if (errorMessage) {
     return res.status(400).json({ error: errorMessage });
@@ -33,8 +45,14 @@ exports.signup = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const role = email === 'jebBohol@gmail.com' ? 'admin' : 'user';
-    const user = new User({ firstname, lastname, email, password: hashedPassword, role });
+    const role = email === "jebBohol@gmail.com" ? "admin" : "user";
+    const user = new User({
+      firstname,
+      lastname,
+      email,
+      password: hashedPassword,
+      role,
+    });
     await user.save();
     res.status(201).json({ message: "User created" });
   } catch (error) {
@@ -62,9 +80,10 @@ exports.login = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
-    req.session.token = token; // Store token in session
+    req.session.token = token;
 
-    res.status(200).json({ token });
+    // Send back the token and user role
+    res.status(200).json({ token, role: user.role });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ error: "Server error" });
