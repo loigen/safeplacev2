@@ -2,6 +2,7 @@ import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import "../../styles/AvailabilityCard.css";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -45,8 +46,8 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
             <p className="text-xl font-normal">{totalSlots} slots</p>
           </div>
           <div className="ml-4">
-            <button className="bg-blue-600 px-1 flex items-center justify-center rounded-full border-none cursor-pointer">
-              <span className="text-2xl text-white arrow-icon">➔</span>
+            <button className="bg-blue-600 text-white p-1 flex items-center justify-center rounded-full border-none cursor-pointer">
+              <ChevronRightIcon />
             </button>
           </div>
         </p>

@@ -37,9 +37,13 @@ const Login = () => {
       );
 
       localStorage.setItem("token", response.data.token);
-      console.log("Token stored:", response.data.token);
+      const userRole = response.data.role;
 
-      history.push("/profile");
+      if (userRole === "user") {
+        history.push("/patients");
+      } else {
+        history.push("/home");
+      }
     } catch (error) {
       setError("Invalid credentials, Please try again!");
       setEmail("");
