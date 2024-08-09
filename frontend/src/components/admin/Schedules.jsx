@@ -39,7 +39,7 @@ const Schedules = () => {
       id: 3,
       firstName: "Patient",
       lastName: "C",
-      date: "2024-08-08",
+      date: "2024-08-09",
       time: "07:00 PM",
       type: "Consultation",
     },
@@ -47,7 +47,7 @@ const Schedules = () => {
       id: 4,
       firstName: "Patient",
       lastName: "D",
-      date: "2024-08-08",
+      date: "2024-08-09",
       time: "05:00 PM",
       type: "Check-up",
     },
@@ -185,7 +185,6 @@ const Schedules = () => {
   const handleUnacceptRequest = (id) => {
     const rejected = appointmentRequests.find((req) => req.id === id);
     setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
-    // Optionally, you can keep track of rejected requests in another state
   };
 
   const handleShowDetails = (request) => {
@@ -214,8 +213,8 @@ const Schedules = () => {
             className="custom-calendar"
           />
         </div>
-        <div className="mt-4 bg-[#68b2a0] p-4 shadow-2xl rounded-lg flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-2xl px-10 py-2">
+        <div className="upcomingAppointment mt-4 p-4 shadow-2xl rounded-lg flex justify-center items-center">
+          <div className="card flex flex-col justify-center items-center rounded-3xl shadow-2xl px-10 py-2">
             <h2 className="text-xl font-bold">Incoming Appointments</h2>
             {todaysAppointments.length > 0 ? (
               <ul>
@@ -353,12 +352,14 @@ const Schedules = () => {
             <p>
               <strong>Type:</strong> {selectedRequest.type}
             </p>
-            <button
-              onClick={handleCloseModal}
-              className="mt-4 bg-red-500 text-white py-2 px-4 rounded"
-            >
-              Close
-            </button>
+            <div className="w-full flex justify-end">
+              <button
+                onClick={handleCloseModal}
+                className="mt-4 bg-[#2c6975] text-white py-2 px-4 rounded w-[30%]"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

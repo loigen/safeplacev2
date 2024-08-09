@@ -13,9 +13,23 @@ import AvailabilityCard from "../custom/AvailabilityCard";
 const getRateClass = (rate) => {
   return rate < 0 ? "bg-red-400" : "bg-green-200";
 };
+
 const Home = () => {
   const patientRate = 10;
   const appointmentRate = -3;
+
+  const todaysAppointments = [
+    {
+      id: 1,
+      date: "2024-08-08",
+      time: "10:00 AM",
+      firstName: "John",
+      lastName: "Doe",
+      type: "Consultation",
+    },
+    // Add more appointments if needed
+  ];
+
   return (
     <div className="home h-lvh px-2">
       <div className="sort flex flex-row justify-between w-full p-10">
@@ -34,7 +48,7 @@ const Home = () => {
         </div>
       </div>
       <div className="w-full flex flex-row gap-10">
-        <div className="flex flex-col  w-1/2 gap-10">
+        <div className="flex flex-col w-1/2 gap-10">
           <div className="flex flex-row gap-12">
             <div className="w-full shadow-xl p-2 rounded-md bg-white">
               <div className="flex justify-end w-full">
@@ -103,10 +117,7 @@ const Home = () => {
                 <p className="subTitle">Conversion Rate</p>
               </div>
             </div>
-            <div
-              className="shadow-2xl w-1/2 p-8
-             rounded-lg bg-white flex flex-row gap-2"
-            >
+            <div className="shadow-2xl w-1/2 p-8 rounded-lg bg-white flex flex-row gap-2">
               <div className="w-1/6 flex items-center justify-center bg-red-300 rounded-md">
                 <FaTimes className="text-3xl text-red-600 font-normal" />
               </div>
@@ -116,33 +127,32 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="bg-white" style={{ width: "98%" }}>
-            <p className="text-2xl font-bold px-10 py-2">
-              Appointment Statistics
-            </p>
-            <div className="flex flex-row justify-center items-center  shadow-xl px-16 py-2">
-              <div
-                className="w-1/2 p-8 flex-row"
-                style={{ borderRight: "1px solid black" }}
-              >
-                <div className="flex flex-col gap-2">
-                  <p className="font-extrabold text-3xl">3</p>
-                  <p className="subTitle">Appointments Pending</p>
-                </div>
-              </div>
-              <div
-                className=" w-1/2 p-8
-             flex flex-row px-5"
-              >
-                <div>
-                  <p className="font-extrabold text-3xl">4%</p>
-                  <p className="subTitle">Cancelled Appointments</p>
-                </div>
-              </div>
-            </div>
-          </div>
+
           <div>
             <AvailabilityCard availableSlots={17} totalSlots={20} />
+          </div>
+          <div style={{ width: "98%" }}>
+            <div className="upcomingAppointment mt-4 p-4 shadow-2xl rounded-lg flex justify-center items-center">
+              <div className="card w-[70%] flex flex-col justify-center items-center rounded-3xl shadow-2xl px-10 py-2">
+                <h2 className="text-xl font-bold">Incoming Appointments</h2>
+                {todaysAppointments.length > 0 ? (
+                  <ul>
+                    {todaysAppointments.map((appointment) => (
+                      <li key={appointment.id} className="border-b py-2">
+                        <p>Date: {appointment.date}</p>
+                        <p>Time: {appointment.time}</p>
+                        <p>
+                          Name: {appointment.firstName} {appointment.lastName}
+                        </p>
+                        <p>Type: {appointment.type}</p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No appointments for today.</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

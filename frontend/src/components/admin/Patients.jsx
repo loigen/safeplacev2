@@ -4,6 +4,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import NewFolderModal from "../custom/newFolderModal";
 import CustomFileUpload from "../custom/customInputField";
+import SearchIcon from "@mui/icons-material/Search";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const dummyData = {
   patients: [
@@ -53,10 +55,62 @@ const dummyData = {
       ],
       reports: [],
     },
+    {
+      id: 4,
+      date: "2024-07-24",
+      time: "02:00 PM",
+      name: "Jane Smith",
+      status: "Completed",
+      typeOfCounseling: "Therapeutic",
+      appointmentHistory: [
+        { date: "2024-07-18", time: "10:00 AM", day: "Thursday" },
+        { date: "2024-07-12", time: "01:00 PM", day: "Friday" },
+      ],
+      reports: [],
+    },
   ],
 };
+
+const getInitials = (name) => {
+  const [firstName, lastName] = name.split(" ");
+  return `${firstName[0]}${lastName[0]}`;
+};
+
+// Function to generate a random hex color
+const getRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+// Function to filter data based on the selected range
+const filterAppointmentsByDateRange = (range) => {
+  const now = new Date();
+  let startDate;
+
+  switch (range) {
+    case "Daily":
+      startDate = new Date(now.setDate(now.getDate() - 1));
+      break;
+    case "Weekly":
+      startDate = new Date(now.setDate(now.getDate() - 7));
+      break;
+    case "Monthly":
+      startDate = new Date(now.setMonth(now.getMonth() - 1));
+      break;
+    default:
+      startDate = new Date("1970-01-01"); // Default to a very old date
+  }
+
+  return dummyData.patients.filter(
+    (patient) => new Date(patient.date) >= startDate
+  );
+};
+
 const Patients = () => {
-  // State management
   const [patients] = useState(dummyData.patients);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activePatientIdList, setActivePatientIdList] = useState(null);
@@ -69,7 +123,16 @@ const Patients = () => {
   const [newFile, setNewFile] = useState(null);
   const [selectedFolderIndex, setSelectedFolderIndex] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [dataRange, setDataRange] = useState("Daily");
+  const filteredData = filterAppointmentsByDateRange(dataRange);
 
+  const handleDataRangeChange = (e) => {
+    setDataRange(e.target.value);
+  };
+
+  const getCounts = (status) => {
+    return filteredData.filter((patient) => patient.status === status).length;
+  };
   const itemsPerPage = 6;
   const [position, setPosition] = useState("-50%");
 
@@ -258,7 +321,9 @@ const Patients = () => {
     <div className="patients">
       <div className="listContainer">
         <div className="searchContainer">
-          <div className="searchIcon">🔍</div>
+          <div className="searchIcon">
+            <SearchIcon />
+          </div>
           <div className="searchField">
             <input
               type="text"
@@ -311,7 +376,7 @@ const Patients = () => {
                           toggleActionsList(patient.id);
                         }}
                       >
-                        ...
+                        <MoreHorizIcon />
                       </button>
                     )}
                     {activePatientIdList === patient.id && (
@@ -358,51 +423,87 @@ const Patients = () => {
         </div>
       </div>
       <div className="appointmentStatistics w-1/2 h-full">
-        <div className="title font-semibold">Appointment Statistics</div>
+        <div className="title items-center font-semibold flex flex-row justify-between">
+          <h1>Appointment Statistics</h1>
+          <div className="dataRange flex flex-row gap-1 items-center">
+            <p>Data Range</p>
+            <select
+              className="p-2  border border-gray-300 rounded-md"
+              value={dataRange}
+              onChange={handleDataRangeChange}
+            >
+              <option value="Daily">Daily</option>
+              <option value="Weekly">Weekly</option>
+              <option value="Monthly">Monthly</option>
+            </select>
+          </div>
+        </div>
         <br />
         <div className="flex flex-col justify-between gap-5">
-          <div className="card1 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist">
-              <div className="latest1"></div>
-              <div className="latest2"></div>
-              <div className="latest3"></div>
+          <div className="card1 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
+            <div className="userlist w-full flex gap-1 flex-row flex-wrap ">
+              {filteredData
+                .filter((patient) => patient.status === "Pending")
+                .slice(0, 3)
+                .map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: getRandomColor() }}
+                  >
+                    <span className="text-white text-lg">
+                      {getInitials(patient.name)}
+                    </span>
+                  </div>
+                ))}
             </div>
-            <div className="overview">
-              <b className="counts"></b>
+            <div className="overview flex flex-row gap-2">
+              <b className="counts">{getCounts("Pending")}</b>
               <p>Pending Appointments</p>
             </div>
           </div>
-          <div className="card2 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist">
-              <div className="latest1"></div>
-              <div className="latest2"></div>
-              <div className="latest3"></div>
+          <div className="card2 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
+            <div className="userlist w-full flex gap-1 flex-row flex-wrap">
+              {filteredData
+                .filter((patient) => patient.status === "Approved")
+                .slice(0, 3)
+                .map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: getRandomColor() }}
+                  >
+                    <span className="text-white text-lg">
+                      {getInitials(patient.name)}
+                    </span>
+                  </div>
+                ))}
             </div>
-            <div className="overview">
-              <b className="counts"></b>
+            <div className="overview flex flex-row gap-2">
+              <b className="counts">{getCounts("Approved")}</b>
               <p>Approved Appointments</p>
             </div>
           </div>
-          <div className="card3 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist">
-              <div className="latest1"></div>
-              <div className="latest2"></div>
-              <div className="latest3"></div>
+          <div className="card3 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
+            <div className="userlist w-full flex gap-1 flex-row flex-wrap">
+              {filteredData
+                .filter((patient) => patient.status === "Completed")
+                .slice(0, 3)
+                .map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: getRandomColor() }}
+                  >
+                    <span className="text-white text-lg">
+                      {getInitials(patient.name)}
+                    </span>
+                  </div>
+                ))}
             </div>
-            <div className="overview">
-              <b className="counts "></b>
+            <div className="overview flex flex-row gap-2">
+              <b className="counts">{getCounts("Completed")}</b>
               <p>Completed Appointments</p>
-            </div>
-          </div>
-          <div className="card4 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist">
-              <div className="latest1"></div>
-              <div className="latest2"></div>
-              <div className="latest3"></div>
-            </div>
-            <div className="overview">
-              <b className="counts"></b>
-              <p>Cancelled Appointments</p>
             </div>
           </div>
         </div>

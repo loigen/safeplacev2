@@ -47,3 +47,14 @@
   outline: none;
   background: #1f4d53;
 }
+.upcomingAppointment {
+  background: url(../images/Frame1.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+.upcomingAppointment .card {
+  background: url(../images/crystalBG.svg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: #fff;
+}
