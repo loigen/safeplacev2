@@ -8,7 +8,8 @@ import Person2Icon from "@mui/icons-material/Person2";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import LogoutIcon from "@mui/icons-material/Logout";
+
 const Sidebar = () => {
   const handleLogout = async () => {
     try {
@@ -84,12 +85,10 @@ const Sidebar = () => {
           </ul>
           <div className="logout ">
             <button
-              className="flex flex-row justify-center items-center"
+              className="flex text-[#2c6975] font-bold flex-row justify-center items-center"
               onClick={handleLogout}
-              style={{ color: "red", fontSize: "2rem" }}
             >
-              <PowerSettingsNewIcon />
-              <b className="log-out text-sm">LOGOUT</b>
+              <LogoutIcon fontSize="large" />
             </button>
           </div>
         </div>
