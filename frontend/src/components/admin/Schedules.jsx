@@ -5,6 +5,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import CustomTimePicker from "../custom/CustomTimePicker";
 import Swal from "sweetalert2";
 import "../../styles/Schedules.css";
+import DeleteIcon from "@mui/icons-material/Delete";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import InfoIcon from "@mui/icons-material/Info";
 
 const Schedules = () => {
   const today = new Date();
@@ -12,12 +15,12 @@ const Schedules = () => {
   const [freeSchedules, setFreeSchedules] = useState({
     [today.toDateString()]: ["10:00 AM"],
   });
-  const [patientRequests, setPatientRequests] = useState([
+  const [appointmentRequests, setAppointmentRequests] = useState([
     {
       id: 1,
       firstName: "Patient",
       lastName: "A",
-      date: "2024-08-08",
+      date: "2024-08-10",
       time: "10:00 AM",
       type: "Consultation",
     },
@@ -30,18 +33,43 @@ const Schedules = () => {
       type: "Follow-up",
     },
   ]);
-  const [incomingAppointment, setIncomingAppointment] = useState(null);
+
+  const [incomingAppointments, setIncomingAppointments] = useState([
+    {
+      id: 3,
+      firstName: "Patient",
+      lastName: "C",
+      date: "2024-08-08",
+      time: "07:00 PM",
+      type: "Consultation",
+    },
+    {
+      id: 4,
+      firstName: "Patient",
+      lastName: "D",
+      date: "2024-08-08",
+      time: "05:00 PM",
+      type: "Check-up",
+    },
+  ]);
+
+  const [acceptedAppointments, setAcceptedAppointments] = useState([]);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [todaysAppointments, setTodaysAppointments] = useState([]);
 
   useEffect(() => {
-    const findNearestAppointment = () => {
-      const upcomingAppointments = patientRequests
-        .map((request) => {
-          const [year, month, day] = request.date.split("-").map(Number);
-          const [hour, minute] = request.time
+    const findTodaysAppointments = () => {
+      const now = new Date();
+      const endOfDay = new Date(now.setHours(23, 59, 59, 999));
+
+      const appointmentsToday = incomingAppointments
+        .map((appointment) => {
+          const [year, month, day] = appointment.date.split("-").map(Number);
+          const [hour, minute] = appointment.time
             .split(/[: ]/)
             .slice(0, 2)
             .map(Number);
-          const period = request.time.split(" ")[1];
+          const period = appointment.time.split(" ")[1];
           const adjustedHour =
             period === "PM" && hour !== 12
               ? hour + 12
@@ -49,18 +77,18 @@ const Schedules = () => {
               ? 0
               : hour;
           return {
-            ...request,
+            ...appointment,
             dateTime: new Date(year, month - 1, day, adjustedHour, minute),
           };
         })
-        .filter(({ dateTime }) => dateTime.getTime() >= today.getTime())
+        .filter(({ dateTime }) => dateTime >= now && dateTime <= endOfDay)
         .sort((a, b) => a.dateTime - b.dateTime);
 
-      setIncomingAppointment(upcomingAppointments[0] || null);
+      setTodaysAppointments(appointmentsToday);
     };
 
-    findNearestAppointment();
-  }, [patientRequests, today]);
+    findTodaysAppointments();
+  }, [incomingAppointments]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -81,7 +109,7 @@ const Schedules = () => {
         : period === "AM" && hour === 12
         ? 0
         : hour;
-    selectedDateTime.setHours(adjustedHour, minute || 0); // Default to 00 if minute is empty
+    selectedDateTime.setHours(adjustedHour, minute || 0);
 
     const isAvailable = !Object.keys(freeSchedules).some((dateKey) => {
       const scheduleTimes = freeSchedules[dateKey] || [];
@@ -101,7 +129,7 @@ const Schedules = () => {
         scheduleDateTime.setHours(adjustedScheduledHour, scheduledMinute);
 
         const timeDiff = Math.abs(selectedDateTime - scheduleDateTime);
-        return timeDiff < 7200000; // 2 hours in milliseconds
+        return timeDiff < 7200000;
       });
     });
 
@@ -135,6 +163,39 @@ const Schedules = () => {
     }
   };
 
+  const handleTimeDelete = (time) => {
+    const dateKey = selectedDate.toDateString();
+    setFreeSchedules((prevSchedules) => {
+      const updatedTimes = prevSchedules[dateKey].filter(
+        (scheduledTime) => scheduledTime !== time
+      );
+      return {
+        ...prevSchedules,
+        [dateKey]: updatedTimes,
+      };
+    });
+  };
+
+  const handleAcceptRequest = (id) => {
+    const accepted = appointmentRequests.find((req) => req.id === id);
+    setAcceptedAppointments((prev) => [...prev, accepted]);
+    setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+  };
+
+  const handleUnacceptRequest = (id) => {
+    const rejected = appointmentRequests.find((req) => req.id === id);
+    setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+    // Optionally, you can keep track of rejected requests in another state
+  };
+
+  const handleShowDetails = (request) => {
+    setSelectedRequest(request);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedRequest(null);
+  };
+
   const tileDisabled = ({ date }) => {
     return date < today.setHours(0, 0, 0, 0);
   };
@@ -153,20 +214,27 @@ const Schedules = () => {
             className="custom-calendar"
           />
         </div>
-        {incomingAppointment && (
-          <div className="mt-4 bg-[#68b2a0] p-4 shadow-2xl rounded-lg flex justify-center items-center">
-            <div className="bg-white rounded-lg shadow-2xl px-10 py-2">
-              <h2 className="text-xl font-bold">Incoming Appointment</h2>
-              <p>Date: {incomingAppointment.date}</p>
-              <p>Time: {incomingAppointment.time}</p>
-              <p>
-                Name: {incomingAppointment.firstName}{" "}
-                {incomingAppointment.lastName}
-              </p>
-              <p>Type: {incomingAppointment.type}</p>
-            </div>
+        <div className="mt-4 bg-[#68b2a0] p-4 shadow-2xl rounded-lg flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-2xl px-10 py-2">
+            <h2 className="text-xl font-bold">Incoming Appointments</h2>
+            {todaysAppointments.length > 0 ? (
+              <ul>
+                {todaysAppointments.map((appointment) => (
+                  <li key={appointment.id} className="border-b py-2">
+                    <p>Date: {appointment.date}</p>
+                    <p>Time: {appointment.time}</p>
+                    <p>
+                      Name: {appointment.firstName} {appointment.lastName}
+                    </p>
+                    <p>Type: {appointment.type}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No appointments for today.</p>
+            )}
           </div>
-        )}
+        </div>
       </div>
       <div className="secondBox w-[30%]">
         <div className="bg-white rounded-lg shadow-2xl p-5">
@@ -177,35 +245,123 @@ const Schedules = () => {
           />
         </div>
 
-        <div className="mt-4 bg-white rounded-2xl">
+        <div className="mt-4 bg-white shadow-2xl rounded-2xl">
           {freeSchedules[selectedDate.toDateString()] && (
-            <div className="mt-2 p-4 border rounded">
-              <p className="font-bold text-[#5f5f5f]">
-                Selected Time Schedule:
-              </p>
+            <div className="p-4">
               {freeSchedules[selectedDate.toDateString()].map((time, index) => (
-                <p key={index}>Free Schedule: {time}</p>
+                <div className="flex justify-between items-center " key={index}>
+                  <p className="rounded w-[50%] text-center bg-[#2c6975] shadow-2xl p-2 text-white font-bold">
+                    {time}
+                  </p>
+                  <button
+                    onClick={() => handleTimeDelete(time)}
+                    className="text-red-600 hover:text-red-800 ml-4"
+                  >
+                    <DeleteIcon />
+                  </button>
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
-
-      <div className="thirdBox w-[30%] mt-4">
-        <h2 className="text-xl font-bold">Patient Requests</h2>
+      <div className="thirdBox w-[30%] mt-4 bg-white p-4 shadow-2xl">
+        <h2 className="text-xl uppercase font-bold">
+          Patient Requests for Approval
+        </h2>
         <ul>
-          {patientRequests.map((request) => (
-            <li key={request.id} className="mt-2 p-4 border rounded">
-              <p>
-                Name: {request.firstName} {request.lastName}
-              </p>
-              <p>Date: {request.date}</p>
-              <p>Time: {request.time}</p>
-              <p>Type: {request.type}</p>
-            </li>
-          ))}
+          {appointmentRequests
+            .filter((request) => {
+              const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+              const todayDate = today.setHours(0, 0, 0, 0);
+              return requestDate >= todayDate;
+            })
+            .map((request) => {
+              const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+              const isToday = requestDate === today.setHours(0, 0, 0, 0);
+              const formattedDate = new Date(request.date)
+                .toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+                .replace(",", "");
+
+              return (
+                <li
+                  key={request.id}
+                  className="mt-2 bg-white p-4 shadow-2xl border rounded"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-s text-[#2c6975]">
+                      <strong>
+                        {isToday
+                          ? "TODAY"
+                          : new Date(request.date).toLocaleDateString("en-US", {
+                              weekday: "long",
+                            })}
+                      </strong>{" "}
+                      {formattedDate}
+                    </span>
+                    <div className="flex items-center">
+                      <button
+                        onClick={() => handleShowDetails(request)}
+                        className="text-gray-400 hover:text-[#2c6975]"
+                      >
+                        <InfoIcon />
+                      </button>
+                      <button
+                        onClick={() => handleUnacceptRequest(request.id)}
+                        className="text-red-600 hover:text-red-800 ml-4"
+                      >
+                        <HighlightOffIcon />
+                      </button>
+                    </div>
+                  </div>
+                  <p>
+                    Name: {request.firstName} {request.lastName}
+                  </p>
+                  <p>Type: {request.type}</p>
+                  <div className="w-full flex justify-end">
+                    <button
+                      onClick={() => handleAcceptRequest(request.id)}
+                      className="mt-4 bg-[#2c6975] w-[50%] text-white font-semibold py-1 px-4 rounded"
+                    >
+                      Accept
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
         </ul>
       </div>
+
+      {selectedRequest && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 className="text-xl font-bold mb-4">Appointment Details</h2>
+            <p>
+              <strong>Name:</strong> {selectedRequest.firstName}{" "}
+              {selectedRequest.lastName}
+            </p>
+            <p>
+              <strong>Date:</strong> {selectedRequest.date}
+            </p>
+            <p>
+              <strong>Time:</strong> {selectedRequest.time}
+            </p>
+            <p>
+              <strong>Type:</strong> {selectedRequest.type}
+            </p>
+            <button
+              onClick={handleCloseModal}
+              className="mt-4 bg-red-500 text-white py-2 px-4 rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
