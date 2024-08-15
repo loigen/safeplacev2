@@ -67,9 +67,9 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange }) => {
   return (
     <div className="bg-transparent p-4 rounded w-full">
       <h3 className="text-gray-700 mb-2">Enter Time</h3>
-      <div className="flex items-center justify-between mb-4 w-[90%]">
+      <div className="time flex justify-between mb-4 w-[90%]">
         {/* Start Time */}
-        <div className="w-[30%]">
+        <div className="hour w-[30%]">
           <input
             type="number"
             value={startHour || ""}
@@ -82,7 +82,7 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange }) => {
           <p>Start Hour</p>
         </div>
         <span className="mx-2 text-[3rem] text-black-600">:</span>
-        <div className="w-[30%]">
+        <div className="minute w-[30%]">
           <input
             type="number"
             value={startMinute || ""}

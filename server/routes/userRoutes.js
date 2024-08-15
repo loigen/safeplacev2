@@ -5,10 +5,31 @@ const authController = require("../controllers/authController");
 
 const checkAdmin = require("../middlewares/checkAdmin");
 const authenticateToken = require("../middlewares/authenticateToken");
+const {
+  uploadProfilePicture,
+  uploadReceipt,
+  uploadBlogPhoto,
+} = require("../middlewares/multer");
 
 router.get("/profile", authenticateToken, userController.getProfile);
 
-router.put("/updateprofile", authenticateToken, userController.updateProfile); // New route for updating profile
+router.put(
+  "/updateprofile",
+  [authenticateToken, uploadProfilePicture.single("profile_picture")],
+  userController.updateProfile
+);
+
+router.post(
+  "/uploadreceipt",
+  [authenticateToken, uploadReceipt.single("receipt")],
+  userController.uploadReceipt
+);
+
+router.post(
+  "/uploadblogphoto",
+  [authenticateToken, uploadBlogPhoto.single("blog_photo")],
+  userController.uploadBlogPhoto
+);
 
 router.post(
   "/admin",

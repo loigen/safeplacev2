@@ -1,7 +1,6 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import "../../styles/AvailabilityCard.css";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -30,27 +29,25 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
   };
 
   return (
-    <div
-      className="flex items-center justify-between bg-white rounded-lg p-4 shadow-2xl availability-card"
-      style={{ width: "98%" }}
-    >
-      <div className="chart-container">
+    <div className=" p-4  w-full max-w-full mx-auto flex flex-col md:flex-row items-center justify-center gap-4">
+      <div className="w-full md:w-full flex items-center justify-center">
         <Doughnut data={data} options={options} />
       </div>
-      <div className="flex-1 flex-col gap-3 ml-4">
-        <h4 className="text-2xl font-bold">Availability this Week</h4>
-        <br />
-        <p className="text-2xl flex flex-row font-bold items-center justify-between">
-          <div className="flex flex-row items-center">
-            <p className="text-4xl">{availableSlots}</p> /{" "}
-            <p className="text-xl font-normal">{totalSlots} slots</p>
+      <div className="w-full h-full flex flex-col gap-3 items-center justify-center">
+        <h4 className="text-xl md:text-2xl font-bold">
+          Availability this Week
+        </h4>
+        <div className="text-xl w-[60%] md:text-2xl font-bold flex items-center gap-2 justify-around">
+          <div className="flex items-center">
+            <span className="text-2xl md:text-4xl">{availableSlots}</span> /
+            <span className="text-base md:text-xl font-normal">
+              {totalSlots} slots
+            </span>
           </div>
-          <div className="ml-4">
-            <button className="bg-blue-600 text-white p-1 flex items-center justify-center rounded-full border-none cursor-pointer">
-              <ChevronRightIcon />
-            </button>
-          </div>
-        </p>
+          <button className="bg-blue-600 text-white p-2 rounded-full border-none cursor-pointer hidden md:flex items-center justify-center">
+            <ChevronRightIcon />
+          </button>
+        </div>
       </div>
     </div>
   );

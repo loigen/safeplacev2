@@ -40,7 +40,7 @@ const Login = () => {
       const userRole = response.data.role;
 
       if (userRole === "user") {
-        history.push("/patients");
+        history.push("/booking");
       } else {
         history.push("/home");
       }

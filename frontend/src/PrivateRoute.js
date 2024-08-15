@@ -1,11 +1,10 @@
-// PrivateRoute.js
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import axios from "axios";
 import UserDashboard from "./components/client/userDashboard";
 import AdminDashboard from "./components/admin/Dashboard";
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
+const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,22 +33,26 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
     return <div>Loading...</div>;
   }
 
+  if (!isAuthenticated) {
+    return <Redirect to="/login" />;
+  }
+
+  if (adminOnly && !isAdmin) {
+    return <Redirect to="/forbidden" />;
+  }
+
   return (
     <Route
       {...rest}
       render={(props) =>
-        isAuthenticated ? (
-          isAdmin ? (
-            <AdminDashboard>
-              <Component {...props} />
-            </AdminDashboard>
-          ) : (
-            <UserDashboard>
-              <Component {...props} />
-            </UserDashboard>
-          )
+        isAdmin ? (
+          <AdminDashboard>
+            <Component {...props} />
+          </AdminDashboard>
         ) : (
-          <Redirect to="/login" />
+          <UserDashboard>
+            <Component {...props} />
+          </UserDashboard>
         )
       }
     />

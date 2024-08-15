@@ -4,23 +4,24 @@ const crypto = require("crypto");
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
-  avatar: { type: String, default: "" },
+  profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
 });
 
-// Method to generate Gravatar URL
 userSchema.methods.getGravatarUrl = function () {
-  const hash = crypto.createHash("md5").update(this.email).digest("hex");
-  return `https://www.gravatar.com/avatar/${hash}?d=identicon`;
+  return `https://res.cloudinary.com/dovlzzudf/image/upload/v1723689322/profile_pictures/66a1b5181567b42d75cc816b_profile.jpg`;
 };
 
-// Pre-save hook to set the avatar if not provided
 userSchema.pre("save", function (next) {
-  if (!this.avatar) {
-    this.avatar = this.getGravatarUrl();
+  if (!this.profilePicture) {
+    this.profilePicture = this.getGravatarUrl();
   }
   next();
 });

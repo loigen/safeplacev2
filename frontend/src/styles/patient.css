@@ -338,3 +338,47 @@
   color: gray;
   display: none;
 }
+@media (max-width: 808px) {
+  .patients {
+    flex-direction: column;
+  }
+  .appointmentStatistics {
+    width: 100%;
+  }
+  .dataRange {
+    flex-direction: column;
+  }
+  .patientStatus {
+    display: flex;
+    flex-direction: column;
+  }
+  .patient {
+    align-items: center;
+  }
+  .viewContainer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Full viewport height */
+    width: 80vw;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    transition: ease-in-out 0.5s;
+    overflow-x: scroll;
+  }
+  .personalInfo {
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
+  .about {
+    gap: 10px;
+  }
+  .about h1 {
+    display: none;
+  }
+  .patientHistory {
+    overflow-x: scroll;
+  }
+}

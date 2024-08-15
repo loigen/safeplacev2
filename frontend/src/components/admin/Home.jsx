@@ -27,14 +27,13 @@ const Home = () => {
       lastName: "Doe",
       type: "Consultation",
     },
-    // Add more appointments if needed
   ];
 
   return (
     <div className="home h-lvh px-2">
-      <div className="sort flex flex-row justify-between w-full p-10">
+      <div className="sort flex flex-col sm:flex-row sm:justify-between w-full p-10">
         <div></div>
-        <div className="flex flex-row gap-3 items-center">
+        <div className="flex flex-col sm:flex-row sm:gap-3 sm:items-center">
           <p>Data Range</p>
           <select
             name=""
@@ -47,9 +46,9 @@ const Home = () => {
           </select>
         </div>
       </div>
-      <div className="w-full flex flex-row gap-10">
-        <div className="flex flex-col w-1/2 gap-10">
-          <div className="flex flex-row gap-12">
+      <div className="w-full flex flex-col sm:flex-row sm:gap-10">
+        <div className="flex flex-col w-full sm:w-[48%] gap-10">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap">
             <div className="w-full shadow-xl p-2 rounded-md bg-white">
               <div className="flex justify-end w-full">
                 <p
@@ -93,9 +92,9 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="workload bg-white">
-            <p style={{ paddingLeft: "3%", fontWeight: "bold" }}>Workload</p>
-            <div className="graph">
+          <div className="workload w-full bg-white">
+            <p className="px-4 py-2 w-full font-bold">Workload</p>
+            <div className="graph w-full">
               <WorkloadChart />
             </div>
           </div>
@@ -104,41 +103,44 @@ const Home = () => {
             <AppointmentRequest />
           </div>
         </div>
-        <div className="flex w-1/2 flex-col gap-10">
-          <div className="rating flex flex-row w-full items-center justify-evenly gap-8 px-4 ">
-            <div className="shadow-2xl w-1/2 p-8 rounded-lg bg-white flex flex-row">
-              <div className="w-1/6">
+        <div className="flex flex-col w-full sm:w-[48%] gap-10">
+          <div className="rating flex flex-col sm:flex-row w-full items-center justify-evenly gap-8 px-4">
+            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col sm:flex-row">
+              <div className="w-full sm:w-1/6 flex items-center justify-center">
                 <EqualizerOutlinedIcon
                   style={{ fontSize: "3rem", color: "#00A8E8" }}
                 />
               </div>
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="font-extrabold text-3xl">30%</p>
                 <p className="subTitle">Conversion Rate</p>
               </div>
             </div>
-            <div className="shadow-2xl w-1/2 p-8 rounded-lg bg-white flex flex-row gap-2">
-              <div className="w-1/6 flex items-center justify-center bg-red-300 rounded-md">
+            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col sm:flex-row gap-2">
+              <div className="w-full sm:w-1/6 flex items-center justify-center bg-red-300 rounded-md">
                 <FaTimes className="text-3xl text-red-600 font-normal" />
               </div>
-              <div>
+              <div className="text-center sm:text-left">
                 <p className="font-extrabold text-3xl">4%</p>
                 <p className="subTitle">Cancellation Rate</p>
               </div>
             </div>
           </div>
 
-          <div>
+          <div className="w-full bg-white rounded-lg shadow-2xl">
             <AvailabilityCard availableSlots={17} totalSlots={20} />
           </div>
-          <div style={{ width: "98%" }}>
-            <div className="upcomingAppointment mt-4 p-4 shadow-2xl rounded-lg flex justify-center items-center">
-              <div className="card w-[70%] flex flex-col justify-center items-center rounded-3xl shadow-2xl px-10 py-2">
+          <div className="w-full bg-[#fff]">
+            <div className="upcomingAppointment sm:bg-transparent mt-4 p-4 shadow-2xl rounded-lg flex flex-col items-center">
+              <div className="card w-full h-full sm:w-[70%] flex flex-col justify-center items-center rounded-3xl shadow-2xl px-10 py-2">
                 <h2 className="text-xl font-bold">Incoming Appointments</h2>
                 {todaysAppointments.length > 0 ? (
-                  <ul>
+                  <ul className="w-full items-center flex">
                     {todaysAppointments.map((appointment) => (
-                      <li key={appointment.id} className="border-b py-2">
+                      <li
+                        key={appointment.id}
+                        className="border-b py-2 w-full text-center"
+                      >
                         <p>Date: {appointment.date}</p>
                         <p>Time: {appointment.time}</p>
                         <p>

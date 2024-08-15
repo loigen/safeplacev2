@@ -8,54 +8,38 @@ import "../../styles/Schedules.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InfoIcon from "@mui/icons-material/Info";
+import axios from "axios";
 
 const Schedules = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
-  const [freeSchedules, setFreeSchedules] = useState({
-    [today.toDateString()]: ["10:00 AM"],
-  });
-  const [appointmentRequests, setAppointmentRequests] = useState([
-    {
-      id: 1,
-      firstName: "Patient",
-      lastName: "A",
-      date: "2024-08-10",
-      time: "10:00 AM",
-      type: "Consultation",
-    },
-    {
-      id: 2,
-      firstName: "Patient",
-      lastName: "B",
-      date: "2024-08-09",
-      time: "02:00 PM",
-      type: "Follow-up",
-    },
-  ]);
-
-  const [incomingAppointments, setIncomingAppointments] = useState([
-    {
-      id: 3,
-      firstName: "Patient",
-      lastName: "C",
-      date: "2024-08-09",
-      time: "07:00 PM",
-      type: "Consultation",
-    },
-    {
-      id: 4,
-      firstName: "Patient",
-      lastName: "D",
-      date: "2024-08-09",
-      time: "05:00 PM",
-      type: "Check-up",
-    },
-  ]);
-
+  const [freeSchedules, setFreeSchedules] = useState({});
+  const [appointmentRequests, setAppointmentRequests] = useState([]);
+  const [incomingAppointments, setIncomingAppointments] = useState([]);
   const [acceptedAppointments, setAcceptedAppointments] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
+
+  useEffect(() => {
+    // Fetch free schedules and appointment requests from the server
+    const fetchSchedulesAndRequests = async () => {
+      try {
+        const [freeScheduleResponse, appointmentRequestResponse] =
+          await Promise.all([
+            axios.get(`${process.env.REACT_APP_API_URL}/schedules/slots`), // Updated endpoint
+            axios.get(
+              `${process.env.REACT_APP_API_URL}/schedules/appointments/today`
+            ), // Updated endpoint
+          ]);
+        setFreeSchedules(freeScheduleResponse.data);
+        setAppointmentRequests(appointmentRequestResponse.data);
+      } catch (error) {
+        console.error("Error fetching schedules and requests:", error);
+      }
+    };
+
+    fetchSchedulesAndRequests();
+  }, []);
 
   useEffect(() => {
     const findTodaysAppointments = () => {
@@ -136,7 +120,7 @@ const Schedules = () => {
     return isAvailable;
   };
 
-  const handleTimeChange = (time) => {
+  const handleTimeChange = async (time) => {
     if (time && selectedDate) {
       if (typeof time !== "string") {
         console.error("Expected time to be a string, but got:", typeof time);
@@ -152,6 +136,15 @@ const Schedules = () => {
             [dateKey]: updatedTimes,
           };
         });
+
+        try {
+          await axios.post(`${process.env.REACT_APP_API_URL}/schedules/slots`, {
+            date: selectedDate.toDateString(),
+            time,
+          }); // Changed to POST
+        } catch (error) {
+          console.error("Error adding free time slot:", error);
+        }
       } else {
         Swal.fire({
           icon: "error",
@@ -164,27 +157,68 @@ const Schedules = () => {
   };
 
   const handleTimeDelete = (time) => {
-    const dateKey = selectedDate.toDateString();
-    setFreeSchedules((prevSchedules) => {
-      const updatedTimes = prevSchedules[dateKey].filter(
-        (scheduledTime) => scheduledTime !== time
-      );
-      return {
-        ...prevSchedules,
-        [dateKey]: updatedTimes,
-      };
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this time slot?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2c6975",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const dateKey = selectedDate.toDateString();
+        setFreeSchedules((prevSchedules) => {
+          const updatedTimes = prevSchedules[dateKey].filter(
+            (scheduledTime) => scheduledTime !== time
+          );
+          return {
+            ...prevSchedules,
+            [dateKey]: updatedTimes,
+          };
+        });
+
+        try {
+          await axios.delete(
+            `${process.env.REACT_APP_API_URL}/schedules/slots/${time}`
+          );
+        } catch (error) {
+          console.error("Error deleting time slot:", error);
+        }
+
+        Swal.fire({
+          icon: "success",
+          title: "Deleted!",
+          text: "The time slot has been deleted.",
+          confirmButtonColor: "#2c6975",
+        });
+      }
     });
   };
 
-  const handleAcceptRequest = (id) => {
-    const accepted = appointmentRequests.find((req) => req.id === id);
-    setAcceptedAppointments((prev) => [...prev, accepted]);
-    setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+  const handleAcceptRequest = async (id) => {
+    try {
+      const accepted = appointmentRequests.find((req) => req.id === id);
+      setAcceptedAppointments((prev) => [...prev, accepted]);
+      setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/schedules/appointments/accept/${id}`
+      );
+    } catch (error) {
+      console.error("Error accepting request:", error);
+    }
   };
 
-  const handleUnacceptRequest = (id) => {
-    const rejected = appointmentRequests.find((req) => req.id === id);
-    setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+  const handleUnacceptRequest = async (id) => {
+    try {
+      const rejected = appointmentRequests.find((req) => req.id === id);
+      setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/schedules/appointments/reject/${id}`
+      );
+    } catch (error) {
+      console.error("Error rejecting request:", error);
+    }
   };
 
   const handleShowDetails = (request) => {
@@ -202,9 +236,9 @@ const Schedules = () => {
   const minDate = new Date(today.getFullYear(), today.getMonth(), 1);
 
   return (
-    <div className="py-16 px-6 flex flex-row flex-wrap justify-between h-full">
-      <div className="firstBox flex flex-col w-[30%] h-full">
-        <div className="Calendar h-[60%] w-full gap-3 bg-white rounded-lg shadow-2xl flex flex-col items-center py-12">
+    <div className="mainContainer py-16 px-6 flex flex-row gap-[2%]  h-full">
+      <div className="firstBox flex flex-col w-full h-full">
+        <div className="Calendar h-[100%] w-full gap-3 bg-white rounded-lg shadow-2xl flex flex-col items-center py-12">
           <Calendar
             onClickDay={handleDateChange}
             tileDisabled={tileDisabled}
@@ -235,7 +269,7 @@ const Schedules = () => {
           </div>
         </div>
       </div>
-      <div className="secondBox w-[30%]">
+      <div className="secondBox w-full h-full flex flex-col justify-start">
         <div className="bg-white rounded-lg shadow-2xl p-5">
           <h2 className="px-2 text-lg">{selectedDate.toDateString()}</h2>
           <CustomTimePicker
@@ -245,10 +279,11 @@ const Schedules = () => {
         </div>
 
         <div className="mt-4 bg-white shadow-2xl rounded-2xl">
-          {freeSchedules[selectedDate.toDateString()] && (
-            <div className="p-4">
-              {freeSchedules[selectedDate.toDateString()].map((time, index) => (
-                <div className="flex justify-between items-center " key={index}>
+          <div className="p-4">
+            {freeSchedules[selectedDate.toDateString()] &&
+            freeSchedules[selectedDate.toDateString()].length > 0 ? (
+              freeSchedules[selectedDate.toDateString()].map((time, index) => (
+                <div className="flex justify-between items-center" key={index}>
                   <p className="rounded w-[50%] text-center bg-[#2c6975] shadow-2xl p-2 text-white font-bold">
                     {time}
                   </p>
@@ -259,80 +294,97 @@ const Schedules = () => {
                     <DeleteIcon />
                   </button>
                 </div>
-              ))}
-            </div>
-          )}
+              ))
+            ) : (
+              <p className="text-center text-gray-500">
+                No selected Time slots!
+              </p>
+            )}
+          </div>
         </div>
       </div>
-      <div className="thirdBox w-[30%] mt-4 bg-white p-4 shadow-2xl">
+      <div className="thirdBox w-full mt-4 bg-white p-4 shadow-2xl">
         <h2 className="text-xl uppercase font-bold">
           Patient Requests for Approval
         </h2>
-        <ul>
-          {appointmentRequests
-            .filter((request) => {
-              const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
-              const todayDate = today.setHours(0, 0, 0, 0);
-              return requestDate >= todayDate;
-            })
-            .map((request) => {
-              const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
-              const isToday = requestDate === today.setHours(0, 0, 0, 0);
-              const formattedDate = new Date(request.date)
-                .toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-                .replace(",", "");
+        {appointmentRequests.filter((request) => {
+          const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+          const todayDate = today.setHours(0, 0, 0, 0);
+          return requestDate >= todayDate;
+        }).length === 0 ? (
+          <p className="text-center text-gray-500 p-10">
+            No request for approval
+          </p>
+        ) : (
+          <ul>
+            {appointmentRequests
+              .filter((request) => {
+                const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+                const todayDate = today.setHours(0, 0, 0, 0);
+                return requestDate >= todayDate;
+              })
+              .map((request) => {
+                const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+                const isToday = requestDate === today.setHours(0, 0, 0, 0);
+                const formattedDate = new Date(request.date)
+                  .toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                  .replace(",", "");
 
-              return (
-                <li
-                  key={request.id}
-                  className="mt-2 bg-white p-4 shadow-2xl border rounded"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="text-s text-[#2c6975]">
-                      <strong>
-                        {isToday
-                          ? "TODAY"
-                          : new Date(request.date).toLocaleDateString("en-US", {
-                              weekday: "long",
-                            })}
-                      </strong>{" "}
-                      {formattedDate}
-                    </span>
-                    <div className="flex items-center">
+                return (
+                  <li
+                    key={request.id}
+                    className="mt-2 bg-white p-4 shadow-2xl border rounded"
+                  >
+                    <div className="flex justify-between items-center">
+                      <span className="text-s text-[#2c6975]">
+                        <strong>
+                          {isToday
+                            ? "TODAY"
+                            : new Date(request.date).toLocaleDateString(
+                                "en-US",
+                                {
+                                  weekday: "long",
+                                }
+                              )}
+                        </strong>{" "}
+                        {formattedDate}
+                      </span>
+                      <div className="flex items-center">
+                        <button
+                          onClick={() => handleShowDetails(request)}
+                          className="text-gray-400 hover:text-[#2c6975]"
+                        >
+                          <InfoIcon />
+                        </button>
+                        <button
+                          onClick={() => handleUnacceptRequest(request.id)}
+                          className="text-red-600 hover:text-red-800 ml-4"
+                        >
+                          <HighlightOffIcon />
+                        </button>
+                      </div>
+                    </div>
+                    <p>
+                      Name: {request.firstName} {request.lastName}
+                    </p>
+                    <p>Type: {request.type}</p>
+                    <div className="w-full flex justify-end">
                       <button
-                        onClick={() => handleShowDetails(request)}
-                        className="text-gray-400 hover:text-[#2c6975]"
+                        onClick={() => handleAcceptRequest(request.id)}
+                        className="mt-4 bg-[#2c6975] w-[50%] text-white font-semibold py-1 px-4 rounded"
                       >
-                        <InfoIcon />
-                      </button>
-                      <button
-                        onClick={() => handleUnacceptRequest(request.id)}
-                        className="text-red-600 hover:text-red-800 ml-4"
-                      >
-                        <HighlightOffIcon />
+                        Accept
                       </button>
                     </div>
-                  </div>
-                  <p>
-                    Name: {request.firstName} {request.lastName}
-                  </p>
-                  <p>Type: {request.type}</p>
-                  <div className="w-full flex justify-end">
-                    <button
-                      onClick={() => handleAcceptRequest(request.id)}
-                      className="mt-4 bg-[#2c6975] w-[50%] text-white font-semibold py-1 px-4 rounded"
-                    >
-                      Accept
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
-        </ul>
+                  </li>
+                );
+              })}
+          </ul>
+        )}
       </div>
 
       {selectedRequest && (

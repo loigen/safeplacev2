@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { FaSearch, FaChevronRight, FaCheck, FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const AppointmentRequest = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -22,60 +23,82 @@ const AppointmentRequest = () => {
   }, [searchTerm, appointments]);
 
   const approveAppointment = (id) => {
-    setAppointments(
-      appointments.filter((appointment) => appointment.id !== id)
-    );
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to approve this appointment!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, approve it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setAppointments(
+          appointments.filter((appointment) => appointment.id !== id)
+        );
+        Swal.fire("Approved!", "The appointment has been approved.", "success");
+      }
+    });
   };
 
   const declineAppointment = (id) => {
-    setAppointments(
-      appointments.filter((appointment) => appointment.id !== id)
-    );
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to decline this appointment!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, decline it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setAppointments(
+          appointments.filter((appointment) => appointment.id !== id)
+        );
+        Swal.fire("Declined!", "The appointment has been declined.", "success");
+      }
+    });
   };
 
   return (
-    <div className="w-full shadow-2xl p-5">
-      <div className="Header-part flex justify-between flex-row w-full">
-        <div
-          className="search flex flex-row justify-center items-center p-2 rounded-md gap-2 shadow-2xl "
-          style={{ border: "1px solid gray" }}
-        >
+    <div className="w-full shadow-2xl p-4 md:p-5">
+      <div className="flex flex-col md:flex-row justify-between items-start mb-4">
+        <div className="flex items-center p-2 rounded-md gap-2 shadow-lg border border-gray-300 w-full md:w-auto">
           <FaSearch />
           <input
-            className="w-full"
+            className="w-full p-2 border-none outline-none"
             type="text"
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="view-all flex flex-row items-center justify-center gap-3">
-          <p>View All</p>
+        <div className="flex items-center mt-2 md:mt-0 gap-3">
+          <p className="text-lg font-semibold">View All</p>
           <NavLink to="/view-all-appointment">
-            <FaChevronRight />
+            <FaChevronRight className="text-blue-600" />
           </NavLink>
         </div>
       </div>
-      <br />
-      <div className="display-list flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         {filteredAppointments.map((appointment) => (
           <div
             key={appointment.id}
-            className="appointment-item border rounded-lg border-slate-700 flex justify-between items-center p-2 border-b"
+            className="border rounded-lg border-gray-700 flex flex-col md:flex-row justify-between items-center p-4"
           >
             <div>
-              <p className="font-bold">{appointment.name}</p>
-              <p>{appointment.type}</p>
+              <p className="font-bold text-lg">{appointment.name}</p>
+              <p className="text-sm text-center">{appointment.type}</p>
             </div>
-            <div className="action-buttons flex gap-2">
+            <div className="flex gap-2 mt-2 md:mt-0">
               <button
-                className="approve bg-blue-600 p-2 rounded-md"
+                className="bg-blue-600 text-white p-2 rounded-md"
                 onClick={() => approveAppointment(appointment.id)}
               >
                 <FaCheck />
               </button>
               <button
-                className="decline bg-red-600 p-2 rounded-md"
+                className="bg-red-600 text-white p-2 rounded-md"
                 onClick={() => declineAppointment(appointment.id)}
               >
                 <FaTimes />

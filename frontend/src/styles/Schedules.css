@@ -1,6 +1,8 @@
+/* Custom calendar styles */
 .custom-calendar {
   border: none;
 }
+
 .custom-calendar .react-calendar__tile--active {
   border: 2px solid #2c6975;
   color: #2c6975;
@@ -12,15 +14,18 @@
   background: white;
   border-radius: 10px;
 }
+
 .custom-calendar .react-calendar__tile--active:enabled {
   background: #2c6975;
   color: white;
   border-radius: 10px;
 }
+
 .custom-calendar .react-calendar__tile--active:enabled:hover {
   border: 2px solid #2c6975;
   color: #2c6975;
 }
+
 .custom-calendar .react-calendar__navigation button {
   background-color: #2c6975;
   color: white;
@@ -47,14 +52,84 @@
   outline: none;
   background: #1f4d53;
 }
+
 .upcomingAppointment {
-  background: url(../images/Frame1.png);
   background-size: cover;
   background-repeat: no-repeat;
 }
+
 .upcomingAppointment .card {
-  background: url(../images/crystalBG.svg);
   background-size: cover;
   background-repeat: no-repeat;
-  color: #fff;
+  color: #000;
+}
+
+@media (max-width: 768px) {
+  .secondBox {
+    margin-top: 10%;
+  }
+  .hour {
+    width: 100%;
+  }
+  .hour p,
+  .minute p {
+    text-align: center;
+  }
+  .minute {
+    width: 100%;
+  }
+  .time {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .firstBox {
+    flex-direction: column;
+  }
+  .mainContainer {
+    flex-direction: column;
+  }
+  .custom-calendar .react-calendar__navigation button {
+    font-size: 14px;
+    padding: 6px;
+  }
+
+  .custom-calendar .react-calendar__tile--active:enabled {
+    background: #2c6975;
+    color: white;
+    border-radius: 8px;
+  }
+
+  .custom-calendar .react-calendar__tile--active:enabled:hover {
+    border: 2px solid #2c6975;
+    color: #2c6975;
+  }
+
+  .upcomingAppointment {
+    background-size: contain;
+    background-position: center;
+  }
+
+  .upcomingAppointment .card {
+    background-size: contain;
+    padding: 1rem;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .custom-calendar .react-calendar__navigation button {
+    font-size: 12px;
+    padding: 4px;
+  }
+
+  .upcomingAppointment {
+    background-size: contain;
+    background-position: center;
+  }
+
+  .upcomingAppointment .card {
+    background-size: contain;
+    padding: 0.5rem;
+  }
 }

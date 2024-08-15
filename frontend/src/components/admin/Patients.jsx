@@ -145,7 +145,7 @@ const Patients = () => {
   };
 
   const handlePositionClose = () => {
-    setPosition("-50%");
+    setPosition("-100%");
   };
 
   const toggleActionsList = (patientId) => {
@@ -249,7 +249,7 @@ const Patients = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex justify-between gap-2">
+                <div className="flex justify-between flex-wrap gap-2">
                   <CustomFileUpload onFileChange={setNewFile} />
                   <button onClick={handleFileUpload}>Add</button>
                 </div>

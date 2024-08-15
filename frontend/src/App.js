@@ -1,4 +1,3 @@
-// App.js
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Signup from "./components/Signup";
@@ -14,22 +13,35 @@ import Patients from "./components/admin/Patients";
 import Schedules from "./components/admin/Schedules";
 import BLog from "./components/admin/BLog";
 import Settings from "./components/admin/Settings";
+import MrJebBlog from "./components/client/MrJebBlog";
+import PatientsCalendar from "./components/client/PatientsCalendar";
+import Appointments from "./components/custom/Appointments";
 
 const App = () => {
   return (
     <Router>
       <Switch>
+        {/* Public Routes */}
         <Route exact path="/" component={LandingPage} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
+        <Route path="/try" component={Appointments} />
+
+        {/* Private Routes for All Authenticated Users */}
         <PrivateRoute path="/profile" component={Profile} />
-        <PrivateRoute path="/home" component={Home} />
-        <PrivateRoute path="/patients" component={Patients} />
-        <PrivateRoute path="/schedule" component={Schedules} />
-        <PrivateRoute path="/blog" component={BLog} />
-        <PrivateRoute path="/settings" component={Settings} />
+        <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
+        <PrivateRoute path="/Booking" component={PatientsCalendar} />
+
+        {/* Admin-Only Private Routes */}
+        <PrivateRoute path="/home" component={Home} adminOnly />
+        <PrivateRoute path="/patients" component={Patients} adminOnly />
+        <PrivateRoute path="/schedule" component={Schedules} adminOnly />
+        <PrivateRoute path="/blog" component={BLog} adminOnly />
+        <PrivateRoute path="/settings" component={Settings} adminOnly />
+
+        {/* Catch-All Route for 404 */}
         <Route path="*" component={NotFound} />
       </Switch>
     </Router>
