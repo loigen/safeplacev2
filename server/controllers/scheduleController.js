@@ -1,19 +1,14 @@
 const Schedule = require("../schemas/Schedule");
 
-exports.getTodaysAppointments = async (req, res) => {
+exports.getFreeTimeSlots = async (req, res) => {
   try {
-    const today = new Date();
-    const endOfDay = new Date(today);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const appointments = await Schedule.find({
-      date: { $gte: today, $lte: endOfDay },
-      status: "accepted",
-    }).sort({ time: 1 });
-
-    res.json(appointments);
+    const freeSlots = await Schedule.find({ status: "free" }).sort({
+      date: 1,
+      time: 1,
+    });
+    res.json(freeSlots);
   } catch (error) {
-    console.error("Error fetching today's appointments:", error);
+    console.error("Error fetching free time slots:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -24,6 +19,17 @@ exports.addFreeTimeSlot = async (req, res) => {
 
     if (!date || !time) {
       return res.status(400).json({ message: "Date and time are required" });
+    }
+
+    // Check if the time slot already exists
+    const existingSlot = await Schedule.findOne({
+      date: new Date(date),
+      time,
+      status: "free",
+    });
+
+    if (existingSlot) {
+      return res.status(400).json({ message: "Time slot already exists" });
     }
 
     const freeSlot = new Schedule({
@@ -51,32 +57,64 @@ exports.deleteFreeTimeSlot = async (req, res) => {
   }
 };
 
-exports.acceptAppointment = async (req, res) => {
+// New method to check if a time slot exists
+exports.checkTimeSlot = async (req, res) => {
   try {
-    const { id } = req.params;
-    const appointment = await Schedule.findByIdAndUpdate(
-      id,
-      { status: "accepted" },
-      { new: true }
-    );
-    res.json(appointment);
+    const { date, time } = req.query;
+
+    if (!date || !time) {
+      return res.status(400).json({ message: "Date and time are required" });
+    }
+
+    const slotExists = await Schedule.findOne({
+      date: new Date(date),
+      time,
+      status: "free",
+    });
+
+    res.json({ exists: !!slotExists });
   } catch (error) {
-    console.error("Error accepting appointment:", error);
+    console.error("Error checking time slot:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-exports.rejectAppointment = async (req, res) => {
+exports.updateSlotStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const appointment = await Schedule.findByIdAndUpdate(
+    const { status } = req.body;
+
+    console.log(`Updating slot with ID: ${id} to status: ${status}`); // Add this line
+
+    if (!status) {
+      return res.status(400).json({ message: "Status is required" });
+    }
+
+    const updatedSlot = await Schedule.findByIdAndUpdate(
       id,
-      { status: "rejected" },
+      { status },
       { new: true }
     );
-    res.json(appointment);
+
+    if (!updatedSlot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    res.json(updatedSlot);
   } catch (error) {
-    console.error("Error rejecting appointment:", error);
+    console.error("Error updating slot status:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.getPendingSlots = async (req, res) => {
+  try {
+    const pendingSlots = await Schedule.find({ status: "pending" }).sort({
+      date: 1,
+      time: 1,
+    });
+    res.json(pendingSlots);
+  } catch (error) {
+    console.error("Error fetching pending slots:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -19,11 +19,11 @@ router.put(
   userController.updateProfile
 );
 
-router.post(
-  "/uploadreceipt",
-  [authenticateToken, uploadReceipt.single("receipt")],
-  userController.uploadReceipt
-);
+// router.post(
+//   "/uploadreceipt",
+//   [authenticateToken, uploadReceipt.single("receipt")],
+//   userController.uploadReceipt
+// );
 
 router.post(
   "/uploadblogphoto",

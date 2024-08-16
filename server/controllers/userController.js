@@ -70,26 +70,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// Method to handle receipt upload
-exports.uploadReceipt = async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
-
-    const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      folder: "receipts",
-      public_id: `${Date.now()}_${req.file.originalname}`,
-    });
-
-    res.status(200).json({ success: true, url: uploadResult.secure_url });
-  } catch (error) {
-    console.error("Error uploading receipt to Cloudinary:", error);
-    res.status(500).json({ error: "Error uploading receipt" });
-  }
-};
-
-// Method to handle blog photo upload
 exports.uploadBlogPhoto = async (req, res) => {
   try {
     if (!req.file) {
