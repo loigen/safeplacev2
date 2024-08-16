@@ -9,6 +9,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InfoIcon from "@mui/icons-material/Info";
 import axios from "axios";
+import dayjs from "dayjs";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const Schedules = () => {
   const today = new Date();
@@ -19,18 +22,64 @@ const Schedules = () => {
   const [acceptedAppointments, setAcceptedAppointments] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
-
+  const [pendingSchedules, setPendingSchedules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [freeSlots, setFreeSlots] = useState([]);
   useEffect(() => {
-    // Fetch free schedules and appointment requests from the server
+    const fetchPendingSchedules = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/schedules/slots/pending"
+        );
+        setPendingSchedules(response.data);
+      } catch (error) {
+        setMessage("Failed to load pending schedules.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPendingSchedules();
+  }, []);
+
+  const handleAccept = async (id) => {
+    try {
+      await axios.put(`http://localhost:5000/schedules/slots/${id}`, {
+        status: "approved",
+      });
+      setPendingSchedules(
+        pendingSchedules.filter((schedule) => schedule._id !== id)
+      );
+      setMessage("Schedule accepted.");
+    } catch (error) {
+      setMessage("Failed to accept schedule.");
+    }
+  };
+
+  const handleReject = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/schedules/slots/${id}`);
+      setPendingSchedules(
+        pendingSchedules.filter((schedule) => schedule._id !== id)
+      );
+      setMessage("Schedule rejected.");
+    } catch (error) {
+      setMessage("Failed to reject schedule.");
+    }
+  };
+  useEffect(() => {
     const fetchSchedulesAndRequests = async () => {
       try {
         const [freeScheduleResponse, appointmentRequestResponse] =
           await Promise.all([
-            axios.get(`${process.env.REACT_APP_API_URL}/schedules/slots`), // Updated endpoint
+            axios.get(`${process.env.REACT_APP_API_URL}/schedules/slots`),
             axios.get(
-              `${process.env.REACT_APP_API_URL}/schedules/appointments/today`
-            ), // Updated endpoint
+              `${process.env.REACT_APP_API_URL}/schedules/appointments/today
+            `
+            ),
           ]);
+        console.log(freeScheduleResponse.data);
         setFreeSchedules(freeScheduleResponse.data);
         setAppointmentRequests(appointmentRequestResponse.data);
       } catch (error) {
@@ -40,6 +89,49 @@ const Schedules = () => {
 
     fetchSchedulesAndRequests();
   }, []);
+
+  useEffect(() => {
+    const fetchFreeSlots = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/schedules/slots`);
+        setFreeSlots(response.data);
+      } catch (error) {
+        console.error("Error fetching free slots:", error);
+      }
+    };
+
+    fetchFreeSlots();
+
+    const intervalId = setInterval(fetchFreeSlots, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleDeleteFreeSlot = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action will permanently delete the selected time slot.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2c6975",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await axios.delete(`${API_URL}/schedules/slots/${id}`);
+        setFreeSlots(freeSlots.filter((slot) => slot._id !== id));
+        Swal.fire("Success", "Free time slot deleted", "success");
+      } catch (error) {
+        console.error("Error deleting free time slot:", error);
+        Swal.fire("Error", "Failed to delete free time slot", "error");
+      }
+    } else {
+      Swal.fire("Cancelled", "The time slot was not deleted", "info");
+    }
+  };
 
   useEffect(() => {
     const findTodaysAppointments = () => {
@@ -78,56 +170,42 @@ const Schedules = () => {
     setSelectedDate(date);
   };
 
-  const isTimeAvailable = (time) => {
-    if (typeof time !== "string") {
-      console.error("Expected time to be a string, but got:", typeof time);
-      return false;
-    }
-
-    const selectedDateTime = new Date(selectedDate);
-    const [hour, minute] = time.split(/[: ]/).slice(0, 2).map(Number);
-    const period = time.split(" ")[1];
-    const adjustedHour =
-      period === "PM" && hour !== 12
-        ? hour + 12
-        : period === "AM" && hour === 12
-        ? 0
-        : hour;
-    selectedDateTime.setHours(adjustedHour, minute || 0);
-
-    const isAvailable = !Object.keys(freeSchedules).some((dateKey) => {
-      const scheduleTimes = freeSchedules[dateKey] || [];
-      return scheduleTimes.some((scheduleTime) => {
-        const scheduleDateTime = new Date(dateKey);
-        const [scheduledHour, scheduledMinute] = scheduleTime
-          .split(/[: ]/)
-          .slice(0, 2)
-          .map(Number);
-        const scheduledPeriod = scheduleTime.split(" ")[1];
-        const adjustedScheduledHour =
-          scheduledPeriod === "PM" && scheduledHour !== 12
-            ? scheduledHour + 12
-            : scheduledPeriod === "AM" && scheduledHour === 12
-            ? 0
-            : scheduledHour;
-        scheduleDateTime.setHours(adjustedScheduledHour, scheduledMinute);
-
-        const timeDiff = Math.abs(selectedDateTime - scheduleDateTime);
-        return timeDiff < 7200000;
-      });
-    });
-
-    return isAvailable;
-  };
-
   const handleTimeChange = async (time) => {
-    if (time && selectedDate) {
+    if (time) {
       if (typeof time !== "string") {
         console.error("Expected time to be a string, but got:", typeof time);
         return;
       }
 
-      if (isTimeAvailable(time)) {
+      const newTimeDate = new Date(`${selectedDate.toDateString()} ${time}`);
+      console.log("Constructed New Time Date:", newTimeDate);
+
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/schedules/slots/check`,
+          {
+            params: {
+              date: selectedDate.toDateString(),
+              time,
+            },
+          }
+        );
+
+        if (response.data.exists) {
+          Swal.fire({
+            icon: "warning",
+            title: "Slot Already Exists",
+            text: "The selected time slot already exists.",
+            confirmButtonColor: "#2c6975",
+          });
+          return;
+        }
+
+        await axios.post(`${process.env.REACT_APP_API_URL}/schedules/slots`, {
+          date: selectedDate.toDateString(),
+          time,
+        });
+
         setFreeSchedules((prevSchedules) => {
           const dateKey = selectedDate.toDateString();
           const updatedTimes = (prevSchedules[dateKey] || []).concat(time);
@@ -137,63 +215,32 @@ const Schedules = () => {
           };
         });
 
-        try {
-          await axios.post(`${process.env.REACT_APP_API_URL}/schedules/slots`, {
-            date: selectedDate.toDateString(),
-            time,
-          }); // Changed to POST
-        } catch (error) {
-          console.error("Error adding free time slot:", error);
-        }
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Time Slot Unavailable",
-          text: "The selected time slot is either already scheduled or conflicts with another appointment.",
-          confirmButtonColor: "#2c6975",
-        });
-      }
-    }
-  };
-
-  const handleTimeDelete = (time) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this time slot?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2c6975",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const dateKey = selectedDate.toDateString();
-        setFreeSchedules((prevSchedules) => {
-          const updatedTimes = prevSchedules[dateKey].filter(
-            (scheduledTime) => scheduledTime !== time
-          );
-          return {
-            ...prevSchedules,
-            [dateKey]: updatedTimes,
-          };
-        });
-
-        try {
-          await axios.delete(
-            `${process.env.REACT_APP_API_URL}/schedules/slots/${time}`
-          );
-        } catch (error) {
-          console.error("Error deleting time slot:", error);
-        }
-
         Swal.fire({
           icon: "success",
-          title: "Deleted!",
-          text: "The time slot has been deleted.",
+          title: "Time Slot Added",
+          text: "The time slot has been successfully added.",
+          confirmButtonColor: "#2c6975",
+        });
+      } catch (error) {
+        console.error(
+          "Error adding time slot:",
+          error.response?.data || error.message
+        );
+        Swal.fire({
+          icon: "error",
+          title: "Failed to Add Slot",
+          text: "There was an issue processing your request. Please try again.",
           confirmButtonColor: "#2c6975",
         });
       }
-    });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Input",
+        text: "Please make sure a time is selected.",
+        confirmButtonColor: "#2c6975",
+      });
+    }
   };
 
   const handleAcceptRequest = async (id) => {
@@ -273,6 +320,7 @@ const Schedules = () => {
         <div className="bg-white rounded-lg shadow-2xl p-5">
           <h2 className="px-2 text-lg">{selectedDate.toDateString()}</h2>
           <CustomTimePicker
+            selectedDate={selectedDate}
             initialStartTime={freeSchedules[selectedDate.toDateString()] || []}
             onTimeChange={handleTimeChange}
           />
@@ -280,26 +328,20 @@ const Schedules = () => {
 
         <div className="mt-4 bg-white shadow-2xl rounded-2xl">
           <div className="p-4">
-            {freeSchedules[selectedDate.toDateString()] &&
-            freeSchedules[selectedDate.toDateString()].length > 0 ? (
-              freeSchedules[selectedDate.toDateString()].map((time, index) => (
-                <div className="flex justify-between items-center" key={index}>
-                  <p className="rounded w-[50%] text-center bg-[#2c6975] shadow-2xl p-2 text-white font-bold">
-                    {time}
-                  </p>
-                  <button
-                    onClick={() => handleTimeDelete(time)}
-                    className="text-red-600 hover:text-red-800 ml-4"
-                  >
-                    <DeleteIcon />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <p className="text-center text-gray-500">
-                No selected Time slots!
-              </p>
-            )}
+            {freeSlots.map((slot) => (
+              <li
+                key={slot._id}
+                className="mb-2 w-full shadow-2xl flex justify-between"
+              >
+                {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
+                <button
+                  onClick={() => handleDeleteFreeSlot(slot._id)}
+                  className=" text-red-600 p-1 rounded ml-4"
+                >
+                  <DeleteIcon />
+                </button>
+              </li>
+            ))}
           </div>
         </div>
       </div>
@@ -307,26 +349,33 @@ const Schedules = () => {
         <h2 className="text-xl uppercase font-bold">
           Patient Requests for Approval
         </h2>
-        {appointmentRequests.filter((request) => {
-          const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
-          const todayDate = today.setHours(0, 0, 0, 0);
-          return requestDate >= todayDate;
-        }).length === 0 ? (
-          <p className="text-center text-gray-500 p-10">
-            No request for approval
-          </p>
+        {message && <p className="text-center text-red-500 p-10">{message}</p>}
+        {loading ? (
+          <p className="text-gray-500">Loading pending schedules...</p>
+        ) : pendingSchedules.length === 0 ? (
+          <p className="text-center text-gray-500 p-10">No pending requests.</p>
         ) : (
           <ul>
-            {appointmentRequests
-              .filter((request) => {
-                const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
+            {pendingSchedules
+              .filter((schedule) => {
+                const scheduleDate = new Date(schedule.date).setHours(
+                  0,
+                  0,
+                  0,
+                  0
+                );
                 const todayDate = today.setHours(0, 0, 0, 0);
-                return requestDate >= todayDate;
+                return scheduleDate >= todayDate;
               })
-              .map((request) => {
-                const requestDate = new Date(request.date).setHours(0, 0, 0, 0);
-                const isToday = requestDate === today.setHours(0, 0, 0, 0);
-                const formattedDate = new Date(request.date)
+              .map((schedule) => {
+                const scheduleDate = new Date(schedule.date).setHours(
+                  0,
+                  0,
+                  0,
+                  0
+                );
+                const isToday = scheduleDate === today.setHours(0, 0, 0, 0);
+                const formattedDate = new Date(schedule.date)
                   .toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "long",
@@ -336,7 +385,7 @@ const Schedules = () => {
 
                 return (
                   <li
-                    key={request.id}
+                    key={schedule._id}
                     className="mt-2 bg-white p-4 shadow-2xl border rounded"
                   >
                     <div className="flex justify-between items-center">
@@ -344,7 +393,7 @@ const Schedules = () => {
                         <strong>
                           {isToday
                             ? "TODAY"
-                            : new Date(request.date).toLocaleDateString(
+                            : new Date(schedule.date).toLocaleDateString(
                                 "en-US",
                                 {
                                   weekday: "long",
@@ -355,26 +404,25 @@ const Schedules = () => {
                       </span>
                       <div className="flex items-center">
                         <button
-                          onClick={() => handleShowDetails(request)}
+                          // Handle details display
                           className="text-gray-400 hover:text-[#2c6975]"
                         >
-                          <InfoIcon />
+                          {/* Replace with your InfoIcon */}
                         </button>
                         <button
-                          onClick={() => handleUnacceptRequest(request.id)}
+                          onClick={() => handleReject(schedule._id)}
                           className="text-red-600 hover:text-red-800 ml-4"
                         >
-                          <HighlightOffIcon />
+                          {/* Replace with your HighlightOffIcon */}
                         </button>
                       </div>
                     </div>
                     <p>
-                      Name: {request.firstName} {request.lastName}
+                      <strong>Time:</strong> {schedule.time}
                     </p>
-                    <p>Type: {request.type}</p>
                     <div className="w-full flex justify-end">
                       <button
-                        onClick={() => handleAcceptRequest(request.id)}
+                        onClick={() => handleAccept(schedule._id)}
                         className="mt-4 bg-[#2c6975] w-[50%] text-white font-semibold py-1 px-4 rounded"
                       >
                         Accept
@@ -386,7 +434,6 @@ const Schedules = () => {
           </ul>
         )}
       </div>
-
       {selectedRequest && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">

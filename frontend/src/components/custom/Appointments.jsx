@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import dayjs from "dayjs"; // Import dayjs for date formatting
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -12,6 +13,7 @@ const Appointments = () => {
 
   useEffect(() => {
     fetchAppointments();
+    fetchFreeSlots();
   }, []);
 
   const fetchAppointments = async () => {
@@ -22,6 +24,15 @@ const Appointments = () => {
       setAppointments(response.data);
     } catch (error) {
       console.error("Error fetching appointments:", error);
+    }
+  };
+
+  const fetchFreeSlots = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/schedules/slots`);
+      setFreeSlots(response.data);
+    } catch (error) {
+      console.error("Error fetching free slots:", error);
     }
   };
 
@@ -38,6 +49,7 @@ const Appointments = () => {
       setFreeSlots([...freeSlots, response.data]);
       setDate("");
       setTime("");
+      Swal.fire("Success", "Free time slot added", "success");
     } catch (error) {
       console.error("Error adding free time slot:", error);
       Swal.fire("Error", "Failed to add free time slot", "error");
@@ -48,6 +60,7 @@ const Appointments = () => {
     try {
       await axios.delete(`${API_URL}/schedules/slots/${id}`);
       setFreeSlots(freeSlots.filter((slot) => slot._id !== id));
+      Swal.fire("Success", "Free time slot deleted", "success");
     } catch (error) {
       console.error("Error deleting free time slot:", error);
       Swal.fire("Error", "Failed to delete free time slot", "error");
@@ -56,8 +69,17 @@ const Appointments = () => {
 
   const handleAcceptAppointment = async (id) => {
     try {
-      await axios.put(`${API_URL}/schedules/appointments/accept/${id}`);
-      fetchAppointments();
+      const response = await axios.put(
+        `${API_URL}/schedules/appointments/accept/${id}`
+      );
+      setAppointments(
+        appointments.map((appointment) =>
+          appointment._id === id
+            ? { ...appointment, status: "accepted" }
+            : appointment
+        )
+      );
+      Swal.fire("Success", "Appointment accepted", "success");
     } catch (error) {
       console.error("Error accepting appointment:", error);
       Swal.fire("Error", "Failed to accept appointment", "error");
@@ -66,8 +88,17 @@ const Appointments = () => {
 
   const handleRejectAppointment = async (id) => {
     try {
-      await axios.put(`${API_URL}/schedules/appointments/reject/${id}`);
-      fetchAppointments();
+      const response = await axios.put(
+        `${API_URL}/schedules/appointments/reject/${id}`
+      );
+      setAppointments(
+        appointments.map((appointment) =>
+          appointment._id === id
+            ? { ...appointment, status: "rejected" }
+            : appointment
+        )
+      );
+      Swal.fire("Success", "Appointment rejected", "success");
     } catch (error) {
       console.error("Error rejecting appointment:", error);
       Swal.fire("Error", "Failed to reject appointment", "error");
@@ -106,8 +137,8 @@ const Appointments = () => {
       <ul className="list-disc pl-5">
         {appointments.map((appointment) => (
           <li key={appointment._id} className="mb-2">
-            {appointment.date.toString()} at {appointment.time} -{" "}
-            {appointment.status}
+            {dayjs(appointment.date).format("YYYY-MM-DD")} at {appointment.time}{" "}
+            - {appointment.status}
             {appointment.status === "pending" && (
               <div className="flex space-x-4 mt-2">
                 <button
@@ -132,7 +163,7 @@ const Appointments = () => {
       <ul className="list-disc pl-5">
         {freeSlots.map((slot) => (
           <li key={slot._id} className="mb-2">
-            {slot.date.toString()} at {slot.time}
+            {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
             <button
               onClick={() => handleDeleteFreeSlot(slot._id)}
               className="bg-red-500 text-white p-1 rounded ml-4"

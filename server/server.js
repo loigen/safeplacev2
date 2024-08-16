@@ -7,7 +7,8 @@ const MongoStore = require("connect-mongo");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const scheduleRoutes = require("./routes/scheduleRoutes"); // Add this line
+const scheduleRoutes = require("./routes/scheduleRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes"); // Import appointment routes
 
 const app = express();
 app.use(express.json());
@@ -65,7 +66,8 @@ app.use(
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-app.use("/schedules", scheduleRoutes); // Add this line
+app.use("/schedules", scheduleRoutes);
+app.use("/api", appointmentRoutes); // Prefix routes with /api
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

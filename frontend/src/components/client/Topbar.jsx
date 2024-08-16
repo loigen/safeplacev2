@@ -24,7 +24,7 @@ const Topbar = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Check on component mount
+    handleResize();
 
     const fetchProfile = async () => {
       try {

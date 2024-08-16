@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 
-const CustomTimePicker = ({ initialStartTime, onTimeChange }) => {
+const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
   const [startHour, setStartHour] = useState("01");
   const [startMinute, setStartMinute] = useState("00");
   const [startPeriod, setStartPeriod] = useState("AM");
@@ -17,101 +16,84 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange }) => {
   }, [initialStartTime]);
 
   const handleStartHourChange = (e) => {
-    let value = e.target.value;
-    if (value === "" || (Number(value) >= 1 && Number(value) <= 12)) {
-      setStartHour(value);
-    }
+    setStartHour(e.target.value);
   };
 
   const handleStartMinuteChange = (e) => {
-    let value = e.target.value;
-    let lastTwoDigits = value.slice(-2);
-
-    if (/^\d*$/.test(value) && (value === "" || Number(lastTwoDigits) <= 59)) {
-      setStartMinute(lastTwoDigits.padStart(2, "0"));
-    }
+    setStartMinute(e.target.value);
   };
 
   const handlePeriodChange = (newPeriod) => {
     setStartPeriod(newPeriod);
   };
 
-  const handleOk = () => {
-    const validStartHour = Number(startHour) >= 1 && Number(startHour) <= 12;
-    const validStartMinute =
-      Number(startMinute) >= 0 && Number(startMinute) <= 59;
-
-    if (validStartHour && validStartMinute) {
-      const formattedTime = `${startHour.padStart(
-        2,
-        "0"
-      )}:${startMinute} ${startPeriod}`;
-      onTimeChange(formattedTime);
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Invalid Time",
-        text: "Please enter a valid start time.",
-        confirmButtonColor: "#2c6975",
-      });
-    }
+  const handleSave = () => {
+    const formattedTime = `${startHour}:${startMinute} ${startPeriod}`;
+    onTimeChange(formattedTime);
   };
 
-  const handleCancel = () => {
-    setStartHour("01");
-    setStartMinute("00");
-    setStartPeriod("AM");
-    onTimeChange(null);
-  };
+  const hours = Array.from({ length: 12 }, (_, i) =>
+    (i + 1).toString().padStart(2, "0")
+  );
+  const minutes = Array.from({ length: 60 }, (_, i) =>
+    i.toString().padStart(2, "0")
+  );
 
   return (
     <div className="bg-transparent p-4 rounded w-full">
-      <h3 className="text-gray-700 mb-2">Enter Time</h3>
-      <div className="time flex justify-between mb-4 w-[90%]">
-        {/* Start Time */}
-        <div className="hour w-[30%]">
-          <input
-            type="number"
-            value={startHour || ""}
-            placeholder="HH"
+      <h3 className="text-gray-700 mb-4 text-xl font-semibold">Enter Time</h3>
+      <div className="flex justify-between mb-4">
+        <div className="w-1/4">
+          <select
+            value={startHour}
             onChange={handleStartHourChange}
-            className="w-full outline-[#2c6975] p-2 border rounded text-center text-[3rem]"
-            min="1"
-            max="12"
-          />
-          <p>Start Hour</p>
+            className="w-full p-2 border rounded text-center text-lg appearance-none"
+            aria-label="Start Hour"
+          >
+            {hours.map((hour) => (
+              <option key={hour} value={hour}>
+                {hour}
+              </option>
+            ))}
+          </select>
+          <p className="text-center mt-1 text-sm text-gray-500">Hour</p>
         </div>
-        <span className="mx-2 text-[3rem] text-black-600">:</span>
-        <div className="minute w-[30%]">
-          <input
-            type="number"
-            value={startMinute || ""}
-            placeholder="MM"
+        <span className="text-2xl text-gray-600">:</span>
+        <div className="w-1/4">
+          <select
+            value={startMinute}
             onChange={handleStartMinuteChange}
-            className="w-full outline-[#2c6975] text-[3rem] p-2 border rounded text-center"
-            min="0"
-            max="59"
-          />
-          <p>Start Minute</p>
+            className="w-full p-2 border rounded text-center text-lg appearance-none"
+            aria-label="Start Minute"
+          >
+            {minutes.map((minute) => (
+              <option key={minute} value={minute}>
+                {minute}
+              </option>
+            ))}
+          </select>
+          <p className="text-center mt-1 text-sm text-gray-500">Minute</p>
         </div>
-        <div className="ml-2 flex gap-1 flex-col">
+        <div className="flex flex-col ml-4">
           <button
             onClick={() => handlePeriodChange("AM")}
-            className={`px-2 py-1 rounded font-bold ${
+            className={`px-3 py-1 rounded font-bold mb-1 ${
               startPeriod === "AM"
                 ? "bg-[#89cfbe] text-[#2c6975]"
                 : "bg-gray-200"
             }`}
+            aria-label="AM"
           >
             AM
           </button>
           <button
             onClick={() => handlePeriodChange("PM")}
-            className={`px-2 py-1 rounded font-bold ${
+            className={`px-3 py-1 rounded font-bold ${
               startPeriod === "PM"
                 ? "bg-[#89cfbe] text-[#2c6975]"
                 : "bg-gray-200"
             }`}
+            aria-label="PM"
           >
             PM
           </button>
@@ -120,13 +102,10 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange }) => {
 
       <div className="flex justify-end">
         <button
-          onClick={handleCancel}
-          className="text-[#2c6975] font-bold mr-4"
+          onClick={handleSave}
+          className="bg-[#2c6975] text-white font-bold px-4 py-2 rounded"
         >
-          CANCEL
-        </button>
-        <button onClick={handleOk} className="font-bold text-[#2c6975]">
-          SAVE
+          Save
         </button>
       </div>
     </div>

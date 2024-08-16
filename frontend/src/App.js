@@ -15,7 +15,7 @@ import BLog from "./components/admin/BLog";
 import Settings from "./components/admin/Settings";
 import MrJebBlog from "./components/client/MrJebBlog";
 import PatientsCalendar from "./components/client/PatientsCalendar";
-import Appointments from "./components/custom/Appointments";
+import AppointmentsPage from "./components/custom/AppointmentsPage";
 
 const App = () => {
   return (
@@ -27,12 +27,11 @@ const App = () => {
         <Route path="/contact" component={Contact} />
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
-        <Route path="/try" component={Appointments} />
 
         {/* Private Routes for All Authenticated Users */}
         <PrivateRoute path="/profile" component={Profile} />
         <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
-        <PrivateRoute path="/Booking" component={PatientsCalendar} />
+        <PrivateRoute path="/Booking" component={AppointmentsPage} />
 
         {/* Admin-Only Private Routes */}
         <PrivateRoute path="/home" component={Home} adminOnly />
