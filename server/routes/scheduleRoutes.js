@@ -14,4 +14,5 @@ router.patch("/slots/:id", scheduleController.updateSlotStatus);
 
 router.get("/slots/pending", scheduleController.getPendingSlots); // Add this line
 
+router.patch("accept-slot/:id", scheduleController.acceptSlot);
 module.exports = router;

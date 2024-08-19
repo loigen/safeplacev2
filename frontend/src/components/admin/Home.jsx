@@ -1,20 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import EqualizerOutlinedIcon from "@mui/icons-material/EqualizerOutlined";
 import { FaSearch, FaChevronRight, FaCheck, FaTimes } from "react-icons/fa";
-
+import axios from "axios";
+import Swal from "sweetalert2";
 import "../../styles/Home.css";
 
 import WorkloadChart from "../custom/chart";
 import AppointmentRequest from "../custom/Appointment.request";
 import AvailabilityCard from "../custom/AvailabilityCard";
+import HighestWeeklyAppointments from "../custom/HighestWeeklyAppointments";
 
 const getRateClass = (rate) => {
   return rate < 0 ? "bg-red-400" : "bg-green-200";
 };
 
 const Home = () => {
+  const [userCount, setUserCount] = useState(0);
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/countNonAdminUsers`
+        );
+        setUserCount(response.data.count);
+      } catch (error) {
+        console.error("Error fetching user count:", error);
+      }
+    };
+
+    fetchUserCount();
+  }, []);
   const patientRate = 10;
   const appointmentRate = -3;
 
@@ -33,63 +50,23 @@ const Home = () => {
     <div className="home h-lvh px-2">
       <div className="sort flex flex-col sm:flex-row sm:justify-between w-full p-10">
         <div></div>
-        <div className="flex flex-col sm:flex-row sm:gap-3 sm:items-center">
-          <p>Data Range</p>
-          <select
-            name=""
-            id=""
-            className="border border-black rounded-md px-2 py-1 outline-0"
-          >
-            <option value="">Week</option>
-            <option value="">Month</option>
-            <option value="">Year</option>
-          </select>
-        </div>
       </div>
       <div className="w-full flex flex-col sm:flex-row sm:gap-10">
         <div className="flex flex-col w-full sm:w-[48%] gap-10">
           <div className="flex flex-col sm:flex-row gap-2 sm:gap">
             <div className="w-full shadow-xl p-2 rounded-md bg-white">
-              <div className="flex justify-end w-full">
-                <p
-                  className={`rate px-2 rounded-md ${getRateClass(
-                    patientRate
-                  )}`}
-                >
-                  {patientRate > 0 ? `+${patientRate}%` : `${patientRate}%`}
-                </p>
-              </div>
-              <div className="flex flex-row gap-3 px-10 items-center">
+              <div className="flex flex-row gap-3 justify-center py-2 items-center">
                 <div className="iconContainer">
                   <PersonIcon id="icons" />
                 </div>
                 <div className="flex justify-items-center flex-col">
-                  <b className="num text-5xl">80</b>
+                  <b className="num text-5xl">{userCount}</b>
                   <p className="text-2xl capitalize">patients</p>
                 </div>
               </div>
             </div>
             <div className="w-full bg-white shadow-xl p-2 rounded-md">
-              <div className="flex justify-end w-full">
-                <p
-                  className={`rate px-2 rounded-md ${getRateClass(
-                    appointmentRate
-                  )}`}
-                >
-                  {appointmentRate > 0
-                    ? `+${appointmentRate}%`
-                    : `${appointmentRate}%`}
-                </p>
-              </div>
-              <div className="flex flex-row gap-3 px-10 items-center">
-                <div className="iconContainer health">
-                  <MedicalServicesIcon id="icons" />
-                </div>
-                <div>
-                  <b className="text-5xl">5</b>
-                  <p>Weekly Appointment</p>
-                </div>
-              </div>
+              <HighestWeeklyAppointments />
             </div>
           </div>
           <div className="workload w-full bg-white">

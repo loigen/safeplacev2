@@ -7,7 +7,6 @@ const checkAdmin = require("../middlewares/checkAdmin");
 const authenticateToken = require("../middlewares/authenticateToken");
 const {
   uploadProfilePicture,
-  uploadReceipt,
   uploadBlogPhoto,
 } = require("../middlewares/multer");
 
@@ -36,6 +35,8 @@ router.post(
   [authenticateToken, checkAdmin],
   userController.adminFunction
 );
+
+router.get("/countNonAdminUsers", userController.countNonAdminUsers);
 
 router.post("/logout", authenticateToken, authController.logout);
 

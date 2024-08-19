@@ -1,23 +1,60 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const AppointmentsPage = () => {
   const [appointmentType, setAppointmentType] = useState("");
-  const [message, setMessage] = useState("");
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [file, setFile] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
 
-  // Fetch available slots when the component mounts
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    role: "",
+  });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/profile`,
+          { withCredentials: true }
+        );
+        const { firstname, lastname, email, role } = response.data.user;
+        setUser(response.data.user);
+        setFormData({ firstname, lastname, email, role });
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load user profile.",
+        });
+        console.error("Error fetching profile:", error);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   useEffect(() => {
     const fetchAvailableSlots = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/schedules/slots"
+          `${process.env.REACT_APP_API_URL}/schedules/slots`,
+          { withCredentials: true }
         );
         setAvailableSlots(response.data);
       } catch (error) {
-        setMessage("Failed to load available slots.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load available slots.",
+        });
       } finally {
         setLoading(false);
       }
@@ -26,61 +63,101 @@ const AppointmentsPage = () => {
     fetchAvailableSlots();
   }, []);
 
-  // Handle form submission to create an appointment
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!selectedSlot) {
-      setMessage("Please select a time slot.");
+      Swal.fire({
+        icon: "warning",
+        title: "No Slot Selected",
+        text: "Please select a time slot.",
+        color: "red",
+      });
       return;
     }
 
     try {
-      // Create the appointment
-      await axios.post("http://localhost:5000/api/appointments", {
-        date: selectedSlot.date,
-        time: selectedSlot.time,
-        appointmentType,
-        userId: "60c72b2f9b1e8c6f9b1e8c6b", // Replace with the actual user ID
-      });
+      const formData = new FormData();
+      formData.append("date", selectedSlot.date);
+      formData.append("time", selectedSlot.time);
+      formData.append("appointmentType", appointmentType);
+      formData.append("userId", user._id);
+      formData.append("firstname", user.firstname);
+      formData.append("lastname", user.lastname);
+      formData.append("email", user.email);
+      formData.append("role", user.role);
 
-      // Update the slot status to 'pending'
+      if (file) {
+        formData.append("receipt", file);
+        console.log(FormData);
+      }
+
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/appointments`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
       const patchResponse = await axios.patch(
-        `http://localhost:5000/schedules/slots/${selectedSlot._id}`,
-        { status: "pending" }
+        `${process.env.REACT_APP_API_URL}/schedules/slots/${selectedSlot._id}`,
+        { status: "pending" },
+        { withCredentials: true }
       );
 
       if (patchResponse.status === 200) {
-        setMessage("Appointment created successfully!");
+        Swal.fire({
+          icon: "success",
+          title: "Appointment Created",
+          text: "Your appointment has been scheduled successfully!",
+        });
         setAppointmentType("");
         setSelectedSlot(null);
+        setFile(null);
+        document.getElementById("receipt").value = ""; // Clear the file input
 
-        // Refresh available slots after successful appointment creation
         const updatedSlots = await axios.get(
-          "http://localhost:5000/schedules/slots"
+          `${process.env.REACT_APP_API_URL}/schedules/slots`,
+          { withCredentials: true }
         );
         setAvailableSlots(updatedSlots.data);
       } else {
-        setMessage("Failed to update slot status.");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update slot status.",
+        });
       }
     } catch (error) {
-      console.error("Error creating appointment:", error);
-      setMessage("Failed to create appointment.");
+      console.error("Error creating appointment:", error.response || error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to create appointment.",
+      });
     }
   };
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
 
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFilePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFilePreview(null);
+    }
+  };
   return (
     <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded-lg">
       <h2 className="text-2xl font-bold mb-4">Schedule an Appointment</h2>
-      {message && (
-        <p
-          className={`mb-4 ${
-            message.includes("successfully") ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {message}
-        </p>
-      )}
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
@@ -99,7 +176,6 @@ const AppointmentsPage = () => {
             required
           />
         </div>
-
         <div className="mb-4">
           <h3 className="text-lg font-semibold mb-2">Available Slots</h3>
           <div className="grid grid-cols-1 gap-4">
@@ -114,7 +190,13 @@ const AppointmentsPage = () => {
                       ? "bg-indigo-100 border-indigo-500"
                       : "bg-white border-gray-300"
                   }`}
-                  onClick={() => setSelectedSlot(slot)}
+                  onClick={() =>
+                    setSelectedSlot(
+                      selectedSlot && selectedSlot._id === slot._id
+                        ? null
+                        : slot
+                    )
+                  }
                 >
                   <p>
                     <strong>Date:</strong>{" "}
@@ -130,7 +212,31 @@ const AppointmentsPage = () => {
             )}
           </div>
         </div>
-
+        <div className="mb-4">
+          <label
+            htmlFor="receipt"
+            className="block text-sm font-medium text-gray-700 mb-2"
+          >
+            Upload Receipt
+          </label>
+          <input
+            type="file"
+            id="receipt"
+            onChange={handleFileChange}
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            accept=".pdf,.jpg,.jpeg,.png"
+            required
+          />
+          {filePreview && (
+            <div className="mt-2">
+              <img
+                src={filePreview}
+                alt="File preview"
+                className="w-full h-auto border border-gray-300 rounded-md"
+              />
+            </div>
+          )}
+        </div>
         <button
           type="submit"
           className="w-full px-4 py-2 bg-indigo-600 text-white font-bold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

@@ -5,6 +5,7 @@ const validator = require("validator");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Signup Validator
 const validateSignupData = (
   firstname,
   lastname,
@@ -24,6 +25,7 @@ const validateSignupData = (
   return null;
 };
 
+// Signup
 exports.signup = async (req, res) => {
   const { firstname, lastname, email, password, repeatPassword } = req.body;
   const errorMessage = validateSignupData(
@@ -61,6 +63,7 @@ exports.signup = async (req, res) => {
   }
 };
 
+// Login
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -89,7 +92,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
+//Logout
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {

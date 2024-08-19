@@ -67,7 +67,7 @@ app.use(
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/schedules", scheduleRoutes);
-app.use("/api", appointmentRoutes); // Prefix routes with /api
+app.use("/Appointments/api", appointmentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

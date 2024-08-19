@@ -1,7 +1,7 @@
 const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
 
-// Method to get user profile
+// get user profile
 exports.getProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -18,7 +18,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// Method for admin function
+// admin function
 exports.adminFunction = async (req, res) => {
   try {
     res.status(200).json({ message: "Admin function executed successfully" });
@@ -28,7 +28,7 @@ exports.adminFunction = async (req, res) => {
   }
 };
 
-// Method to update user profile
+// update user profile
 exports.updateProfile = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -85,5 +85,17 @@ exports.uploadBlogPhoto = async (req, res) => {
   } catch (error) {
     console.error("Error uploading blog photo to Cloudinary:", error);
     res.status(500).json({ error: "Error uploading blog photo" });
+  }
+};
+
+// count non-admin users
+exports.countNonAdminUsers = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments({ role: { $ne: "admin" } });
+
+    res.status(200).json({ count: userCount });
+  } catch (error) {
+    console.error("Error counting non-admin users:", error);
+    res.status(500).json({ error: "Error counting non-admin users" });
   }
 };

@@ -1,5 +1,6 @@
 const Schedule = require("../schemas/Schedule");
 
+// Fetch slots with status "Free"
 exports.getFreeTimeSlots = async (req, res) => {
   try {
     const freeSlots = await Schedule.find({ status: "free" }).sort({
@@ -13,6 +14,7 @@ exports.getFreeTimeSlots = async (req, res) => {
   }
 };
 
+// add free slots
 exports.addFreeTimeSlot = async (req, res) => {
   try {
     const { date, time } = req.body;
@@ -21,7 +23,6 @@ exports.addFreeTimeSlot = async (req, res) => {
       return res.status(400).json({ message: "Date and time are required" });
     }
 
-    // Check if the time slot already exists
     const existingSlot = await Schedule.findOne({
       date: new Date(date),
       time,
@@ -46,6 +47,7 @@ exports.addFreeTimeSlot = async (req, res) => {
   }
 };
 
+// Delete the time slot
 exports.deleteFreeTimeSlot = async (req, res) => {
   try {
     const { id } = req.params;
@@ -57,7 +59,7 @@ exports.deleteFreeTimeSlot = async (req, res) => {
   }
 };
 
-// New method to check if a time slot exists
+// Check if a time slot exists
 exports.checkTimeSlot = async (req, res) => {
   try {
     const { date, time } = req.query;
@@ -79,6 +81,7 @@ exports.checkTimeSlot = async (req, res) => {
   }
 };
 
+//Update the Time Slot
 exports.updateSlotStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,6 +109,8 @@ exports.updateSlotStatus = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// Fetch pending Slots
 exports.getPendingSlots = async (req, res) => {
   try {
     const pendingSlots = await Schedule.find({ status: "pending" }).sort({
@@ -115,6 +120,32 @@ exports.getPendingSlots = async (req, res) => {
     res.json(pendingSlots);
   } catch (error) {
     console.error("Error fetching pending slots:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Accept a time slot
+exports.acceptSlot = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Log the ID for debugging purposes
+    console.log(`Accepting slot with ID: ${id}`);
+
+    // Update the slot's status to "accepted"
+    const updatedSlot = await Schedule.findByIdAndUpdate(
+      id,
+      { status: "accepted" },
+      { new: true }
+    );
+
+    if (!updatedSlot) {
+      return res.status(404).json({ message: "Slot not found" });
+    }
+
+    res.json(updatedSlot);
+  } catch (error) {
+    console.error("Error accepting slot:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

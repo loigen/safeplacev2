@@ -1,6 +1,7 @@
 const multer = require("multer");
 const path = require("path");
 
+// Put the photos in the folder first before uploading
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let folder = "";
@@ -20,6 +21,7 @@ const storage = multer.diskStorage({
   },
 });
 
+// Method for uploading profile in CLoudinary
 const uploadProfilePicture = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -36,6 +38,7 @@ const uploadProfilePicture = multer({
     }
   },
 });
+// Method for uploading receipt in CLoudinary
 
 const uploadReceipt = multer({
   storage: storage,
@@ -53,7 +56,7 @@ const uploadReceipt = multer({
     }
   },
 });
-
+// method to upload photos for blog
 const uploadBlogPhoto = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },

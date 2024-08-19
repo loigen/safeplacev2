@@ -17,79 +17,67 @@ const Schedules = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
   const [freeSchedules, setFreeSchedules] = useState({});
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [appointmentRequests, setAppointmentRequests] = useState([]);
   const [incomingAppointments, setIncomingAppointments] = useState([]);
   const [acceptedAppointments, setAcceptedAppointments] = useState([]);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
-  const [pendingSchedules, setPendingSchedules] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
+
   const [freeSlots, setFreeSlots] = useState([]);
+
   useEffect(() => {
-    const fetchPendingSchedules = async () => {
+    const fetchAppointments = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/schedules/slots/pending"
+          "http://localhost:5000/Appointments/api/pending"
         );
-        setPendingSchedules(response.data);
-      } catch (error) {
-        setMessage("Failed to load pending schedules.");
+        setAppointments(response.data);
+      } catch (err) {
+        setError("Failed to fetch pending appointments.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPendingSchedules();
+    fetchAppointments();
+  }, []);
+  useEffect(() => {
+    const handleFetchTodaysAppointment = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/Appointments/api/today"
+        );
+        setTodaysAppointments(response.data);
+      } catch (err) {
+        setError("Failed to fetch today's appointments.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    handleFetchTodaysAppointment();
   }, []);
 
   const handleAccept = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/schedules/slots/${id}`, {
-        status: "approved",
-      });
-      setPendingSchedules(
-        pendingSchedules.filter((schedule) => schedule._id !== id)
-      );
-      setMessage("Schedule accepted.");
+      await axios.patch(`http://localhost:5000/Appointments/api/accept/${id}`);
+      setAppointments(appointments.filter((app) => app._id !== id));
     } catch (error) {
-      setMessage("Failed to accept schedule.");
+      setMessage("Failed to accept the appointment.");
     }
   };
-
   const handleReject = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/schedules/slots/${id}`);
-      setPendingSchedules(
-        pendingSchedules.filter((schedule) => schedule._id !== id)
-      );
-      setMessage("Schedule rejected.");
+      await axios.patch(`http://localhost:5000/Appointments/api/reject/${id}`);
+      setAppointments(appointments.filter((app) => app._id !== id));
     } catch (error) {
-      setMessage("Failed to reject schedule.");
+      setMessage("Failed to reject the appointment.");
     }
   };
-  useEffect(() => {
-    const fetchSchedulesAndRequests = async () => {
-      try {
-        const [freeScheduleResponse, appointmentRequestResponse] =
-          await Promise.all([
-            axios.get(`${process.env.REACT_APP_API_URL}/schedules/slots`),
-            axios.get(
-              `${process.env.REACT_APP_API_URL}/schedules/appointments/today
-            `
-            ),
-          ]);
-        console.log(freeScheduleResponse.data);
-        setFreeSchedules(freeScheduleResponse.data);
-        setAppointmentRequests(appointmentRequestResponse.data);
-      } catch (error) {
-        console.error("Error fetching schedules and requests:", error);
-      }
-    };
-
-    fetchSchedulesAndRequests();
-  }, []);
-
   useEffect(() => {
     const fetchFreeSlots = async () => {
       try {
@@ -132,39 +120,6 @@ const Schedules = () => {
       Swal.fire("Cancelled", "The time slot was not deleted", "info");
     }
   };
-
-  useEffect(() => {
-    const findTodaysAppointments = () => {
-      const now = new Date();
-      const endOfDay = new Date(now.setHours(23, 59, 59, 999));
-
-      const appointmentsToday = incomingAppointments
-        .map((appointment) => {
-          const [year, month, day] = appointment.date.split("-").map(Number);
-          const [hour, minute] = appointment.time
-            .split(/[: ]/)
-            .slice(0, 2)
-            .map(Number);
-          const period = appointment.time.split(" ")[1];
-          const adjustedHour =
-            period === "PM" && hour !== 12
-              ? hour + 12
-              : period === "AM" && hour === 12
-              ? 0
-              : hour;
-          return {
-            ...appointment,
-            dateTime: new Date(year, month - 1, day, adjustedHour, minute),
-          };
-        })
-        .filter(({ dateTime }) => dateTime >= now && dateTime <= endOfDay)
-        .sort((a, b) => a.dateTime - b.dateTime);
-
-      setTodaysAppointments(appointmentsToday);
-    };
-
-    findTodaysAppointments();
-  }, [incomingAppointments]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -243,37 +198,12 @@ const Schedules = () => {
     }
   };
 
-  const handleAcceptRequest = async (id) => {
-    try {
-      const accepted = appointmentRequests.find((req) => req.id === id);
-      setAcceptedAppointments((prev) => [...prev, accepted]);
-      setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/schedules/appointments/accept/${id}`
-      );
-    } catch (error) {
-      console.error("Error accepting request:", error);
-    }
+  const handleShowDetails = (appointment) => {
+    setSelectedAppointment(appointment);
   };
 
-  const handleUnacceptRequest = async (id) => {
-    try {
-      const rejected = appointmentRequests.find((req) => req.id === id);
-      setAppointmentRequests((prev) => prev.filter((req) => req.id !== id));
-      await axios.put(
-        `${process.env.REACT_APP_API_URL}/schedules/appointments/reject/${id}`
-      );
-    } catch (error) {
-      console.error("Error rejecting request:", error);
-    }
-  };
-
-  const handleShowDetails = (request) => {
-    setSelectedRequest(request);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedRequest(null);
+  const handleCloseDetails = () => {
+    setSelectedAppointment(null);
   };
 
   const tileDisabled = ({ date }) => {
@@ -294,30 +224,46 @@ const Schedules = () => {
             className="custom-calendar"
           />
         </div>
+
         <div className="upcomingAppointment mt-4 p-4 shadow-2xl rounded-lg flex justify-center items-center">
-          <div className="card flex flex-col justify-center items-center rounded-3xl shadow-2xl px-10 py-2">
-            <h2 className="text-xl font-bold">Incoming Appointments</h2>
-            {todaysAppointments.length > 0 ? (
-              <ul>
-                {todaysAppointments.map((appointment) => (
-                  <li key={appointment.id} className="border-b py-2">
-                    <p>Date: {appointment.date}</p>
-                    <p>Time: {appointment.time}</p>
-                    <p>
-                      Name: {appointment.firstName} {appointment.lastName}
-                    </p>
-                    <p>Type: {appointment.type}</p>
-                  </li>
-                ))}
-              </ul>
+          <div className="card flex flex-col justify-center items-center ">
+            <h2 className="text-xl font-bold uppercase font-mono ">
+              Today's Appointments
+            </h2>
+            {loading ? (
+              <p>Loading...</p>
+            ) : error ? (
+              <p style={{ color: "red" }}>{error}</p>
             ) : (
-              <p>No appointments for today.</p>
+              <ul>
+                {todaysAppointments.length === 0 ? (
+                  <p>No appointments for today.</p>
+                ) : (
+                  todaysAppointments.map((appointment, index) => (
+                    <li
+                      key={index}
+                      className="flex flex-col rounded-3xl shadow-2xl px-10 py-2 bg-white"
+                    >
+                      <strong>{appointment.time}</strong>
+                      <p>
+                        <strong>Patients Name: </strong>
+                        {appointment.firstname} {appointment.lastname}
+                      </p>
+                      <p>
+                        {" "}
+                        <strong>Type:</strong> {appointment.appointmentType}
+                      </p>
+                    </li>
+                  ))
+                )}
+              </ul>
             )}
           </div>
         </div>
       </div>
       <div className="secondBox w-full h-full flex flex-col justify-start">
         <div className="bg-white rounded-lg shadow-2xl p-5">
+          <p className="uppercase font-mono px-2">Enter Time</p>
           <h2 className="px-2 text-lg">{selectedDate.toDateString()}</h2>
           <CustomTimePicker
             selectedDate={selectedDate}
@@ -346,119 +292,178 @@ const Schedules = () => {
         </div>
       </div>
       <div className="thirdBox w-full mt-4 bg-white p-4 shadow-2xl">
-        <h2 className="text-xl uppercase font-bold">
+        <h2 className="text-xl text-center uppercase font-mono">
           Patient Requests for Approval
         </h2>
-        {message && <p className="text-center text-red-500 p-10">{message}</p>}
-        {loading ? (
-          <p className="text-gray-500">Loading pending schedules...</p>
-        ) : pendingSchedules.length === 0 ? (
-          <p className="text-center text-gray-500 p-10">No pending requests.</p>
+        {appointments.length === 0 ? (
+          <div className="text-center flex justify-center items-center text-gray-500 p-10 h-full w-full">
+            No Appointment Request
+          </div>
         ) : (
-          <ul>
-            {pendingSchedules
-              .filter((schedule) => {
-                const scheduleDate = new Date(schedule.date).setHours(
-                  0,
-                  0,
-                  0,
-                  0
-                );
-                const todayDate = today.setHours(0, 0, 0, 0);
-                return scheduleDate >= todayDate;
-              })
-              .map((schedule) => {
-                const scheduleDate = new Date(schedule.date).setHours(
-                  0,
-                  0,
-                  0,
-                  0
-                );
-                const isToday = scheduleDate === today.setHours(0, 0, 0, 0);
-                const formattedDate = new Date(schedule.date)
-                  .toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                  .replace(",", "");
+          <ul className="list-disc pl-5 mt-4">
+            {appointments.map((appointment) => {
+              const appointmentDate = new Date(appointment.date);
+              const today = new Date().setHours(0, 0, 0, 0);
+              const appointmentDateSet = appointmentDate.setHours(0, 0, 0, 0);
+              const isToday = appointmentDateSet === today;
+              const formattedDate = appointmentDate.toLocaleDateString(
+                "en-US",
+                {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }
+              );
+              const dayOfWeek = appointmentDate.toLocaleDateString("en-US", {
+                weekday: "long",
+              });
+              const formattedTime = new Date(
+                `1970-01-01T${appointment.time}`
+              ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-                return (
-                  <li
-                    key={schedule._id}
-                    className="mt-2 bg-white p-4 shadow-2xl border rounded"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-s text-[#2c6975]">
-                        <strong>
-                          {isToday
-                            ? "TODAY"
-                            : new Date(schedule.date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  weekday: "long",
-                                }
-                              )}
-                        </strong>{" "}
-                        {formattedDate}
-                      </span>
-                      <div className="flex items-center">
-                        <button
-                          // Handle details display
-                          className="text-gray-400 hover:text-[#2c6975]"
-                        >
-                          {/* Replace with your InfoIcon */}
-                        </button>
-                        <button
-                          onClick={() => handleReject(schedule._id)}
-                          className="text-red-600 hover:text-red-800 ml-4"
-                        >
-                          {/* Replace with your HighlightOffIcon */}
-                        </button>
-                      </div>
-                    </div>
-                    <p>
-                      <strong>Time:</strong> {schedule.time}
-                    </p>
-                    <div className="w-full flex justify-end">
+              return (
+                <li
+                  key={appointment._id}
+                  className="mt-4 p-4 bg-gray-100 border rounded shadow-md list-none"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-[#2c6975] font-semibold">
+                      <strong>{isToday ? "TODAY" : dayOfWeek}</strong>{" "}
+                      {formattedDate}
+                    </span>
+                    <div className="flex items-center">
                       <button
-                        onClick={() => handleAccept(schedule._id)}
-                        className="mt-4 bg-[#2c6975] w-[50%] text-white font-semibold py-1 px-4 rounded"
+                        onClick={() => handleShowDetails(appointment)}
+                        className="text-gray-400 hover:text-[#2c6975] mr-2"
                       >
-                        Accept
+                        <InfoIcon />
+                      </button>
+                      <button
+                        onClick={() => handleReject(appointment._id)}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        <HighlightOffIcon />
                       </button>
                     </div>
-                  </li>
-                );
-              })}
+                  </div>
+                  <div className="flex gap-2">
+                    <p className="mt-2 uppercase">
+                      <strong>{appointment.firstname}</strong>
+                    </p>
+                    <p className="mt-2 uppercase">
+                      <strong> {appointment.lastname}</strong>
+                    </p>
+                  </div>
+                  <p className="mt-2 text-gray-700 capitalize">
+                    {appointment.appointmentType}
+                  </p>
+                  <p className="mt-2">
+                    <strong>{appointment.time}</strong>
+                  </p>
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => handleAccept(appointment._id)}
+                      className="bg-[#2c6975] text-white font-semibold px-10 py-2 rounded hover:bg-[#1f4f5f]"
+                    >
+                      Accept
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
+        ;
       </div>
-      {selectedRequest && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-            <h2 className="text-xl font-bold mb-4">Appointment Details</h2>
-            <p>
-              <strong>Name:</strong> {selectedRequest.firstName}{" "}
-              {selectedRequest.lastName}
+      {selectedAppointment && (
+        <div
+          className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-50"
+          onClick={handleCloseDetails}
+        >
+          <div
+            className="bg-white rounded-lg p-6 max-w-lg mx-4 w-full sm:w-11/12 md:w-3/4 lg:w-1/2 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+              Appointment Details
+            </h2>
+            <p className="mb-2">
+              <strong className="text-gray-700">Date:</strong>{" "}
+              {new Date(selectedAppointment.date).toLocaleDateString()}
             </p>
-            <p>
-              <strong>Date:</strong> {selectedRequest.date}
+            <p className="mb-2">
+              <strong className="text-gray-700">Time:</strong>{" "}
+              {selectedAppointment.time}
             </p>
-            <p>
-              <strong>Time:</strong> {selectedRequest.time}
+            <p className="mb-2">
+              <strong className="text-gray-700">Type:</strong>{" "}
+              {selectedAppointment.appointmentType}
             </p>
-            <p>
-              <strong>Type:</strong> {selectedRequest.type}
+            <p className="mb-2">
+              <strong className="text-gray-700">Firstname:</strong>{" "}
+              {selectedAppointment.firstname}
             </p>
-            <div className="w-full flex justify-end">
-              <button
-                onClick={handleCloseModal}
-                className="mt-4 bg-[#2c6975] text-white py-2 px-4 rounded w-[30%]"
-              >
-                Close
-              </button>
+            <p className="mb-2">
+              <strong className="text-gray-700">Lastname:</strong>{" "}
+              {selectedAppointment.lastname}
+            </p>
+            <p className="mb-2">
+              <strong className="text-gray-700">Email:</strong>{" "}
+              {selectedAppointment.email}
+            </p>
+            <p className="mb-4">
+              <strong className="text-gray-700">Role:</strong>{" "}
+              {selectedAppointment.role}
+            </p>
+            <div className="mb-4">
+              <strong className="text-gray-700">Receipt:</strong>
+              {selectedAppointment.receipt ? (
+                <div className="mt-2 border border-gray-300 rounded-lg overflow-hidden">
+                  <img
+                    src={selectedAppointment.receipt}
+                    alt="Receipt"
+                    className="w-full h-auto"
+                  />
+                  <div className="mt-2 flex space-x-2">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(
+                            selectedAppointment.receipt
+                          );
+                          if (response.ok) {
+                            const blob = await response.blob();
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement("a");
+                            link.href = url;
+                            link.download = "receipt.jpg";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(url);
+                          } else {
+                            console.error("Failed to fetch receipt");
+                          }
+                        } catch (error) {
+                          console.error("Error downloading receipt:", error);
+                        }
+                      }}
+                      className="inline-flex items-center bg-green-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-green-600 transition-colors"
+                    >
+                      Download Receipt
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <span className="text-gray-500">No receipt available</span>
+              )}
             </div>
+            <button
+              onClick={handleCloseDetails}
+              className="bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 transition-colors"
+            >
+              Close Details
+            </button>
           </div>
         </div>
       )}

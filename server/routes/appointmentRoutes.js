@@ -17,4 +17,18 @@ router.put("/appointments/:id", appointmentController.updateAppointment);
 // Delete appointment
 router.delete("/appointments/:id", appointmentController.deleteAppointment);
 
+// Accept an appointment
+router.patch("/accept/:id", appointmentController.acceptAppointment);
+
+// Reject an appointment
+router.patch("/reject/:id", appointmentController.rejectAppointment);
+
+// Fetch pending appointments
+router.get("/pending", appointmentController.getPendingAppointments);
+router.get("/today", appointmentController.getTodaysAppointments);
+router.get(
+  "/highest-weekly",
+  appointmentController.getHighestWeeklyAppointments
+);
+
 module.exports = router;

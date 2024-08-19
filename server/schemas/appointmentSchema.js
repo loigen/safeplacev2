@@ -19,7 +19,7 @@ const appointmentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "approved", "completed"],
+      enum: ["pending", "accepted", "rejected", "canceled", "completed"],
       default: "pending", // Default to 'pending'
       required: true,
     },
@@ -28,16 +28,32 @@ const appointmentSchema = new Schema(
       ref: "User",
       required: true,
     },
-    receipt: {
-      // Optional field for storing receipt URL
+    firstname: {
       type: String,
-      default: null,
+      required: true,
+    },
+    lastname: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      required: true,
+    },
+    receipt: {
+      type: String,
+      required: true,
     },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
+appointmentSchema.index({ status: 1 });
 
 // Create the model
 const Appointment = mongoose.model("Appointment", appointmentSchema);
