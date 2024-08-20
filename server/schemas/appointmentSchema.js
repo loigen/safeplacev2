@@ -48,6 +48,10 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    avatar: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

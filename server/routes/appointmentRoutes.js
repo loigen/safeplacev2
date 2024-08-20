@@ -25,10 +25,20 @@ router.patch("/reject/:id", appointmentController.rejectAppointment);
 
 // Fetch pending appointments
 router.get("/pending", appointmentController.getPendingAppointments);
+
 router.get("/today", appointmentController.getTodaysAppointments);
+
+router.get("/highest-weekly", appointmentController.getCurrentWeekAppointments);
+
+router.get("/cancellation-rate", appointmentController.getCancellationRate);
+
+router.get("/data", appointmentController.getAppointmentData);
+
+router.get("/daily", appointmentController.getDailyAppointmentsForCurrentWeek);
+
 router.get(
-  "/highest-weekly",
-  appointmentController.getHighestWeeklyAppointments
+  "/dailyCancel",
+  appointmentController.getDailyCancelledAppointmentsForCurrentWeek
 );
 
 module.exports = router;

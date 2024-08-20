@@ -20,7 +20,7 @@ const HighestWeeklyAppointments = () => {
         </div>
         <div>
           <b className="text-5xl">{data.count}</b>
-          <p>Weekly Appointment</p>
+          <p>Appointment of the Week</p>
         </div>
       </div>
     </div>

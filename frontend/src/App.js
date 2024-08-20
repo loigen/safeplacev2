@@ -16,6 +16,7 @@ import Settings from "./components/admin/Settings";
 import MrJebBlog from "./components/client/MrJebBlog";
 import PatientsCalendar from "./components/client/PatientsCalendar";
 import AppointmentsPage from "./components/custom/AppointmentsPage";
+import PatientDetail from "./components/custom/PatientDetail";
 
 const App = () => {
   return (
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/contact" component={Contact} />
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
+        <Route path="/patients/:id" element={PatientDetail} />
 
         {/* Private Routes for All Authenticated Users */}
         <PrivateRoute path="/profile" component={Profile} />

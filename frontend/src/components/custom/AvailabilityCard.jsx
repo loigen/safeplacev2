@@ -46,6 +46,7 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
           </div>
           <button className="bg-blue-600 text-white p-2 rounded-full border-none cursor-pointer hidden md:flex items-center justify-center">
             <ChevronRightIcon />
+            {/* this should redirect to the /schedules */}
           </button>
         </div>
       </div>

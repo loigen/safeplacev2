@@ -25,9 +25,10 @@ const AppointmentsPage = () => {
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );
-        const { firstname, lastname, email, role } = response.data.user;
+        const { firstname, lastname, email, role, profilePicture } =
+          response.data.user;
         setUser(response.data.user);
-        setFormData({ firstname, lastname, email, role });
+        setFormData({ firstname, lastname, email, role, profilePicture });
       } catch (error) {
         Swal.fire({
           icon: "error",
@@ -86,6 +87,7 @@ const AppointmentsPage = () => {
       formData.append("lastname", user.lastname);
       formData.append("email", user.email);
       formData.append("role", user.role);
+      formData.append("avatar", user.profilePicture); // Add avatar to formData
 
       if (file) {
         formData.append("receipt", file);

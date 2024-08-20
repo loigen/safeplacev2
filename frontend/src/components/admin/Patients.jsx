@@ -1,602 +1,170 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
+import axios from "axios";
+import { getPatientData } from "../api/getPatientDataApi";
+import PatientDetails from "../custom/PatientDetail";
+import PatientList from "../custom/PatientList";
 import "../../styles/patient.css";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import NewFolderModal from "../custom/newFolderModal";
-import CustomFileUpload from "../custom/customInputField";
-import SearchIcon from "@mui/icons-material/Search";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-
-const dummyData = {
-  patients: [
-    {
-      id: 1,
-      date: "2024-07-25",
-      time: "10:00 AM",
-      name: "John Doe",
-      status: "Pending",
-      typeOfCounseling: "Psychological",
-      appointmentHistory: [
-        { date: "2024-07-20", time: "09:00 AM", day: "Monday" },
-        { date: "2024-07-15", time: "11:00 AM", day: "Wednesday" },
-        { date: "2024-07-10", time: "10:30 AM", day: "Friday" },
-        { date: "2024-07-05", time: "09:45 AM", day: "Monday" },
-      ],
-      reports: [
-        {
-          category: "Assessments",
-          files: ["report1.pdf"],
-        },
-      ],
-    },
-    {
-      id: 2,
-      date: "2024-07-24",
-      time: "02:00 PM",
-      name: "Jane Smith",
-      status: "Completed",
-      typeOfCounseling: "Therapeutic",
-      appointmentHistory: [
-        { date: "2024-07-18", time: "10:00 AM", day: "Thursday" },
-        { date: "2024-07-12", time: "01:00 PM", day: "Friday" },
-      ],
-      reports: [],
-    },
-    {
-      id: 3,
-      date: "2024-07-23",
-      time: "01:00 PM",
-      name: "Mike Johnson",
-      status: "Ready",
-      typeOfCounseling: "Counseling",
-      appointmentHistory: [
-        { date: "2024-07-19", time: "03:00 PM", day: "Friday" },
-        { date: "2024-07-14", time: "02:00 PM", day: "Monday" },
-      ],
-      reports: [],
-    },
-    {
-      id: 4,
-      date: "2024-07-24",
-      time: "02:00 PM",
-      name: "Jane Smith",
-      status: "Completed",
-      typeOfCounseling: "Therapeutic",
-      appointmentHistory: [
-        { date: "2024-07-18", time: "10:00 AM", day: "Thursday" },
-        { date: "2024-07-12", time: "01:00 PM", day: "Friday" },
-      ],
-      reports: [],
-    },
-  ],
-};
-
-const getInitials = (name) => {
-  const [firstName, lastName] = name.split(" ");
-  return `${firstName[0]}${lastName[0]}`;
-};
-
-// Function to generate a random hex color
-const getRandomColor = () => {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
-
-// Function to filter data based on the selected range
-const filterAppointmentsByDateRange = (range) => {
-  const now = new Date();
-  let startDate;
-
-  switch (range) {
-    case "Daily":
-      startDate = new Date(now.setDate(now.getDate() - 1));
-      break;
-    case "Weekly":
-      startDate = new Date(now.setDate(now.getDate() - 7));
-      break;
-    case "Monthly":
-      startDate = new Date(now.setMonth(now.getMonth() - 1));
-      break;
-    default:
-      startDate = new Date("1970-01-01"); // Default to a very old date
-  }
-
-  return dummyData.patients.filter(
-    (patient) => new Date(patient.date) >= startDate
-  );
-};
 
 const Patients = () => {
-  const [patients] = useState(dummyData.patients);
+  const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activePatientIdList, setActivePatientIdList] = useState(null);
-  const [activePatientIdView, setActivePatientIdView] = useState(null);
-  const [filter, setFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("General");
+  const [activeTab, setActiveTab] = useState(null);
   const [newFolderName, setNewFolderName] = useState("");
   const [newFile, setNewFile] = useState(null);
   const [selectedFolderIndex, setSelectedFolderIndex] = useState(null);
-  const [showModal, setShowModal] = useState(false);
-  const [dataRange, setDataRange] = useState("Daily");
-  const filteredData = filterAppointmentsByDateRange(dataRange);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
-  const handleDataRangeChange = (e) => {
-    setDataRange(e.target.value);
-  };
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const data = await getPatientData();
+        setPatients(data);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+        Swal.fire("Error", "Failed to fetch patient data", "error");
+      }
+    };
 
-  const getCounts = (status) => {
-    return filteredData.filter((patient) => patient.status === status).length;
-  };
-  const itemsPerPage = 6;
-  const [position, setPosition] = useState("-50%");
+    fetchPatients();
+  }, []);
 
-  // Handlers
   const handlePatientSelect = (patient) => {
     setSelectedPatient(patient);
-    setActivePatientIdList(null);
-    setActivePatientIdView(null);
-    setPosition("2%");
   };
 
-  const handlePositionClose = () => {
-    setPosition("-100%");
-  };
-
-  const toggleActionsList = (patientId) => {
-    setActivePatientIdList((prevId) =>
-      prevId === patientId ? null : patientId
+  const handleToggleActionsList = (patientId) => {
+    setActivePatientIdList(
+      patientId === activePatientIdList ? null : patientId
     );
   };
 
-  const toggleActionsView = (patientId) => {
-    setActivePatientIdView((prevId) =>
-      prevId === patientId ? null : patientId
-    );
-  };
+  const handleNewFolder = async () => {
+    if (!newFolderName) {
+      Swal.fire("Error", "Folder name cannot be empty", "error");
+      return;
+    }
 
-  const handleFilterChange = (e) => {
-    setFilter(e.target.value);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleNewFolder = () => {
-    if (newFolderName.trim() && selectedPatient) {
-      const updatedPatient = { ...selectedPatient };
-      updatedPatient.reports.push({ category: newFolderName, files: [] });
-      setSelectedPatient(updatedPatient);
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/folders`,
+        {
+          patientId: selectedPatient.id,
+          folderName: newFolderName,
+        }
+      );
+      Swal.fire("Success", "Folder created successfully", "success");
       setNewFolderName("");
-      setShowModal(false);
+      setSelectedFolderIndex(null);
+
+      // Refresh patient data
+      const data = await getPatientData();
+      setPatients(data);
+    } catch (error) {
+      console.error("Error creating folder:", error);
+      Swal.fire("Error", "Failed to create folder", "error");
     }
   };
 
-  const handleFileUpload = () => {
-    if (newFile && selectedPatient && selectedFolderIndex !== null) {
-      const updatedPatient = { ...selectedPatient };
-      updatedPatient.reports[selectedFolderIndex].files.push(newFile.name);
-      setSelectedPatient(updatedPatient);
+  const handleFileUpload = async () => {
+    if (!newFile) {
+      Swal.fire("Error", "No file selected", "error");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", newFile);
+    formData.append("patientId", selectedPatient.id);
+    formData.append("folderIndex", selectedFolderIndex);
+
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/files`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      Swal.fire("Success", "File uploaded successfully", "success");
       setNewFile(null);
+      setSelectedFolderIndex(null);
+
+      // Refresh patient data
+      const data = await getPatientData();
+      setPatients(data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      Swal.fire("Error", "Failed to upload file", "error");
     }
   };
+
   const handleBackToFolders = () => {
     setSelectedFolderIndex(null);
   };
-  const filteredPatients = patients.filter((patient) => {
-    return (
-      (filter === "" || patient.status === filter) &&
-      patient.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
 
-  const indexOfLastPatient = currentPage * itemsPerPage;
-  const indexOfFirstPatient = indexOfLastPatient - itemsPerPage;
-  const currentPatients = filteredPatients.slice(
-    indexOfFirstPatient,
-    indexOfLastPatient
-  );
-
-  const totalPages = Math.ceil(filteredPatients.length / itemsPerPage);
-
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+  const handleCloseModal = () => {
+    setSelectedPatient(null);
   };
 
-  const renderTabContent = () => {
-    if (!selectedPatient) return null;
+  const handleAccept = async (id) => {
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${id}`
+      );
+      setPatients(patients.filter((patient) => patient.id !== id));
+      Swal.fire("Success", "Appointment accepted successfully", "success");
+    } catch (error) {
+      console.error("Error accepting appointment:", error);
+      Swal.fire("Error", "Failed to accept the appointment", "error");
+    }
+    setSelectedPatient(null);
+  };
 
-    switch (activeTab) {
-      case "General":
-        const allFiles = selectedPatient.reports.flatMap(
-          (report) => report.files
-        );
-        return (
-          <div>
-            <div className="header">
-              <h1>General Files</h1>
-            </div>
-            <div className="contPart">
-              {allFiles.length > 0 ? (
-                allFiles.map((file, index) => (
-                  <div key={index}>
-                    <a href={`/path/to/reports/${file}`} target="_blank">
-                      {file}
-                    </a>
-                  </div>
-                ))
-              ) : (
-                <div>No files available</div>
-              )}
-            </div>
-          </div>
-        );
-      case "Reports":
-        return (
-          <div>
-            <div className="header">
-              <h1>Reports</h1>
-              {selectedFolderIndex === null ? (
-                <div>
-                  <button onClick={() => setShowModal(true)}>
-                    Create New Folder
-                  </button>
-                </div>
-              ) : (
-                <div className="flex justify-between flex-wrap gap-2">
-                  <CustomFileUpload onFileChange={setNewFile} />
-                  <button onClick={handleFileUpload}>Add</button>
-                </div>
-              )}
-            </div>
-            <div className="contPart">
-              <button className="class " onClick={handleBackToFolders}>
-                <ChevronLeftIcon />
-              </button>
-              {selectedPatient.reports.length > 0 ? (
-                selectedPatient.reports.map((report, folderIndex) => (
-                  <div key={folderIndex}>
-                    <h2
-                      className="font-bold"
-                      onClick={() => setSelectedFolderIndex(folderIndex)}
-                    >
-                      {report.category}
-                    </h2>
-                    {selectedFolderIndex === folderIndex && (
-                      <div>
-                        {report.files.map((file, fileIndex) => (
-                          <div key={fileIndex}>
-                            <a
-                              href={`/path/to/reports/${file}`}
-                              target="_blank"
-                            >
-                              {file}
-                            </a>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))
-              ) : (
-                <div>No reports available</div>
-              )}
-            </div>
-          </div>
-        );
-      case "History":
-        return (
-          <div className="appointmentHistory">
-            <h1 className="font-bold">Appointment History</h1>
-            <div className="historyContainer">
-              {selectedPatient.appointmentHistory &&
-              selectedPatient.appointmentHistory.length > 0 ? (
-                selectedPatient.appointmentHistory.map((appointment, index) => (
-                  <div key={index} className="data">
-                    <div className="day">
-                      <div>{appointment.day}</div>
-                      <div>{appointment.date}</div>
-                    </div>
-                    <div>{appointment.time}</div>
-                  </div>
-                ))
-              ) : (
-                <div>No appointment history available</div>
-              )}
-            </div>
-          </div>
-        );
-      default:
-        return null;
+  const handleReject = async (id) => {
+    try {
+      await axios.patch(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/reject/${id}`
+      );
+      setPatients(patients.filter((patient) => patient.id !== id));
+      Swal.fire("Success", "Appointment rejected successfully", "success");
+    } catch (error) {
+      console.error("Error rejecting appointment:", error);
+      Swal.fire("Error", "Failed to reject the appointment", "error");
     }
   };
 
   return (
-    <div className="patients">
-      <div className="listContainer">
-        <div className="searchContainer">
-          <div className="searchIcon">
-            <SearchIcon />
-          </div>
-          <div className="searchField">
-            <input
-              type="text"
-              placeholder="Search patients..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-          </div>
-        </div>
-        <div className="list">
-          <div className="header">
-            <h1>Patients</h1>
-            <div className="dropdown">
-              <select
-                name=""
-                id=""
-                value={filter}
-                onChange={handleFilterChange}
-              >
-                <option value="">All patients</option>
-                <option value="Pending">Pending</option>
-                <option value="Cancelled">Cancelled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-          </div>
-          <div className="patientList">
-            {currentPatients.map((patient) => (
-              <div
-                key={patient.id}
-                className="patient"
-                onClick={() => handlePatientSelect(patient)}
-              >
-                <div className="dateTime">
-                  <div className="date">{patient.date}</div>|
-                  <div className="time">{patient.time}</div>
-                </div>
-                <div className="patientStatus">
-                  <div className="name">{patient.name}</div>
-                  <div className="status">{patient.status}</div>
-                  <div className="typeOfCounseling">
-                    {patient.typeOfCounseling}
-                  </div>
-                  <div className="actions">
-                    {(patient.status === "Pending" ||
-                      patient.status === "Ready") && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleActionsList(patient.id);
-                        }}
-                      >
-                        <MoreHorizIcon />
-                      </button>
-                    )}
-                    {activePatientIdList === patient.id && (
-                      <div className="dropdownMenu">
-                        {patient.status === "Pending" && (
-                          <>
-                            <button>Accept</button>
-                            <button>Decline</button>
-                          </>
-                        )}
-                        {patient.status === "Ready" && (
-                          <button className="w-full">Go to Room</button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <div className="gender">Female</div>
-              </div>
-            ))}
-          </div>
-          <div className="pages">
-            <div className="itemsPerPage">
-              {`${indexOfFirstPatient + 1}-${Math.min(
-                indexOfLastPatient,
-                filteredPatients.length
-              )} of ${filteredPatients.length}`}
-            </div>
-            <div className="pagination">
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                <ChevronLeftIcon />
-              </button>
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-              >
-                <ChevronRightIcon />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="appointmentStatistics w-1/2 h-full">
-        <div className="title items-center font-semibold flex flex-row justify-between">
-          <h1>Appointment Statistics</h1>
-          <div className="dataRange flex flex-row gap-1 items-center">
-            <p>Data Range</p>
-            <select
-              className="p-2  border border-gray-300 rounded-md"
-              value={dataRange}
-              onChange={handleDataRangeChange}
-            >
-              <option value="Daily">Daily</option>
-              <option value="Weekly">Weekly</option>
-              <option value="Monthly">Monthly</option>
-            </select>
-          </div>
-        </div>
-        <br />
-        <div className="flex flex-col justify-between gap-5">
-          <div className="card1 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist w-full flex gap-1 flex-row flex-wrap ">
-              {filteredData
-                .filter((patient) => patient.status === "Pending")
-                .slice(0, 3)
-                .map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: getRandomColor() }}
-                  >
-                    <span className="text-white text-lg">
-                      {getInitials(patient.name)}
-                    </span>
-                  </div>
-                ))}
-            </div>
-            <div className="overview flex flex-row gap-2">
-              <b className="counts">{getCounts("Pending")}</b>
-              <p>Pending Appointments</p>
-            </div>
-          </div>
-          <div className="card2 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist w-full flex gap-1 flex-row flex-wrap">
-              {filteredData
-                .filter((patient) => patient.status === "Approved")
-                .slice(0, 3)
-                .map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: getRandomColor() }}
-                  >
-                    <span className="text-white text-lg">
-                      {getInitials(patient.name)}
-                    </span>
-                  </div>
-                ))}
-            </div>
-            <div className="overview flex flex-row gap-2">
-              <b className="counts">{getCounts("Approved")}</b>
-              <p>Approved Appointments</p>
-            </div>
-          </div>
-          <div className="card3 flex flex-col gap-2 bg-white px-5 py-14 shadow-xl rounded-lg">
-            <div className="userlist w-full flex gap-1 flex-row flex-wrap">
-              {filteredData
-                .filter((patient) => patient.status === "Completed")
-                .slice(0, 3)
-                .map((patient) => (
-                  <div
-                    key={patient.id}
-                    className="avatar w-[10%] h-[5vh] rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: getRandomColor() }}
-                  >
-                    <span className="text-white text-lg">
-                      {getInitials(patient.name)}
-                    </span>
-                  </div>
-                ))}
-            </div>
-            <div className="overview flex flex-row gap-2">
-              <b className="counts">{getCounts("Completed")}</b>
-              <p>Completed Appointments</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="patientsContainer">
       {selectedPatient && (
-        <div style={{ right: position }} className="viewContainer">
-          <p onClick={handlePositionClose}>x</p>
-          <div className="top">
-            <div className="status">{selectedPatient.status}</div>
-            <div className="actions">
-              {(selectedPatient.status === "Pending" ||
-                selectedPatient.status === "Ready") && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleActionsView(selectedPatient.id);
-                  }}
-                >
-                  ...
-                </button>
-              )}
-              {activePatientIdView === selectedPatient.id && (
-                <div className="dropdownMenu">
-                  {selectedPatient.status === "Pending" && (
-                    <>
-                      <button>Accept</button>
-                      <button>Decline</button>
-                    </>
-                  )}
-                  {selectedPatient.status === "Ready" && (
-                    <button>Go to Room</button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="profile">
-            <div className="avatar">
-              <img src="https://via.placeholder.com/150" alt="Avatar" />
-            </div>
-            <div className="name">{selectedPatient.name}</div>
-          </div>
-          <div className="about">
-            <h1>About</h1>
-            <hr />
-            <div className="personalInfo">
-              <div className="firstname">
-                {selectedPatient.firstname || "N/A"}
-              </div>
-              <div className="lastname">
-                {selectedPatient.lastname || "N/A"}
-              </div>
-              <div className="emailAddress">
-                {selectedPatient.emailAddress || "N/A"}
-              </div>
-              <div className="typeOfCounseling">
-                {selectedPatient.typeOfCounseling || "N/A"}
-              </div>
-            </div>
-          </div>
-          <div className="patientHistory">
-            <div className="actionNavlink">
-              <div
-                className={`general ${activeTab === "General" ? "active" : ""}`}
-                onClick={() => setActiveTab("General")}
-              >
-                General
-              </div>
-              <div
-                className={`reports ${activeTab === "Reports" ? "active" : ""}`}
-                onClick={() => setActiveTab("Reports")}
-              >
-                Reports
-              </div>
-              <div
-                className={`history ${activeTab === "History" ? "active" : ""}`}
-                onClick={() => setActiveTab("History")}
-              >
-                Patient History
-              </div>
-            </div>
-            <div className="view">{renderTabContent()}</div>
-          </div>
-          <hr />
-        </div>
+        <PatientDetails
+          patient={selectedPatient}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          handleNewFolder={handleNewFolder}
+          newFolderName={newFolderName}
+          setNewFolderName={setNewFolderName}
+          handleFileUpload={handleFileUpload}
+          newFile={newFile}
+          setNewFile={setNewFile}
+          selectedFolderIndex={selectedFolderIndex}
+          setSelectedFolderIndex={setSelectedFolderIndex}
+          handleBackToFolders={handleBackToFolders}
+          onClose={handleCloseModal}
+          handleAccept={handleAccept}
+          handleReject={handleReject}
+        />
       )}
-
-      <NewFolderModal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onSave={handleNewFolder}
-        folderName={newFolderName}
-        onFolderNameChange={(e) => setNewFolderName(e.target.value)}
+      <PatientList
+        patients={patients}
+        currentPage={currentPage}
+        itemsPerPage={itemsPerPage}
+        onPatientSelect={handlePatientSelect}
+        onToggleActionsList={handleToggleActionsList}
+        activePatientIdList={activePatientIdList}
+        handleAccept={handleAccept}
+        handleReject={handleReject}
       />
     </div>
   );

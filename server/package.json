@@ -1,8 +1,8 @@
 {
-  "name": "your-project-name",
+  "name": "safeplace-project",
   "version": "1.0.0",
-  "description": "Your project description",
-  "main": "your_server_file.js",
+  "description": "Appointment Management System",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },

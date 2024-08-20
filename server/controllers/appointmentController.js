@@ -16,6 +16,7 @@ exports.createAppointment = [
         lastname,
         email,
         role,
+        avatar, // Added avatar
       } = req.body;
 
       if (
@@ -49,6 +50,7 @@ exports.createAppointment = [
         lastname,
         email,
         role,
+        avatar, // Included avatar
         receipt: receiptUrl,
       });
 
@@ -60,6 +62,7 @@ exports.createAppointment = [
     }
   },
 ];
+
 exports.getAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find().populate("userId");
@@ -220,50 +223,212 @@ exports.getTodaysAppointments = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch today's appointments." });
   }
 };
-const getWeeklyAppointmentCounts = (appointments) => {
-  const weekCounts = {};
 
-  appointments.forEach((appointment) => {
-    const appointmentDate = new Date(appointment.date);
-    const year = appointmentDate.getFullYear();
-    const weekNumber = getWeekNumber(appointmentDate); // Function to get week number
-
-    const weekKey = `${year}-W${weekNumber}`;
-    weekCounts[weekKey] = (weekCounts[weekKey] || 0) + 1;
-  });
-
-  return weekCounts;
-};
-
-const getWeekNumber = (date) => {
-  const start = new Date(date.getFullYear(), 0, 1);
-  const days = Math.floor((date - start) / (24 * 60 * 60 * 1000));
-  return Math.ceil((days + 1) / 7);
-};
-
-exports.getHighestWeeklyAppointments = async (req, res) => {
+exports.getCancellationRate = async (req, res) => {
   try {
-    const appointments = await Appointment.find({
-      status: "accepted",
-    }).populate("userId");
-    const weeklyCounts = getWeeklyAppointmentCounts(appointments);
+    const totalAppointments = await Appointment.countDocuments({
+      status: { $in: ["accepted", "canceled"] },
+    });
 
-    // Find the week with the maximum count
-    let maxCount = 0;
-    let maxWeek = "";
+    const canceledAppointments = await Appointment.countDocuments({
+      status: "canceled",
+    });
 
-    for (const [week, count] of Object.entries(weeklyCounts)) {
-      if (count > maxCount) {
-        maxCount = count;
-        maxWeek = week;
-      }
-    }
+    const cancellationRate =
+      totalAppointments > 0
+        ? (canceledAppointments / totalAppointments) * 100
+        : 0;
 
-    res.status(200).json({ week: maxWeek, count: maxCount });
+    res.status(200).json({
+      totalAppointments,
+      canceledAppointments,
+      cancellationRate: cancellationRate.toFixed(2) + "%",
+    });
   } catch (error) {
-    console.error("Error fetching highest weekly appointments:", error);
+    console.error("Error calculating cancellation rate:", error);
+    res.status(500).json({ message: "Failed to calculate cancellation rate." });
+  }
+};
+
+exports.getAppointmentData = async (req, res) => {
+  try {
+    const appointments = await Appointment.find().select(
+      "date time appointmentType status firstname lastname avatar"
+    );
+
+    const appointmentData = appointments.map((appointment) => ({
+      id: appointment._id,
+      date: appointment.date.toLocaleDateString(),
+      time: appointment.time,
+      name: `${appointment.firstname} ${appointment.lastname}`,
+      status: appointment.status,
+      typeOfCounseling: appointment.appointmentType,
+      avatar: appointment.avatar,
+    }));
+
+    res.status(200).json(appointmentData);
+  } catch (error) {
+    console.error("Error fetching appointment data:", error);
+    res.status(500).json({ message: "Failed to fetch appointment data." });
+  }
+};
+exports.getCurrentWeekAppointments = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfWeek = new Date(
+      today.setDate(today.getDate() - today.getDay())
+    );
+    const endOfWeek = new Date(
+      today.setDate(today.getDate() - today.getDay() + 6)
+    );
+
+    const weeklyAppointments = await Appointment.find({
+      date: { $gte: startOfWeek, $lte: endOfWeek },
+      status: "accepted",
+    });
+
+    const appointmentCount = weeklyAppointments.length;
+
+    res.status(200).json({
+      week: `${startOfWeek.toDateString()} - ${endOfWeek.toDateString()}`,
+      count: appointmentCount,
+    });
+  } catch (error) {
+    console.error("Error fetching current week appointments:", error);
     res
       .status(500)
-      .json({ message: "Failed to fetch highest weekly appointments." });
+      .json({ message: "Failed to fetch current week appointments." });
+  }
+};
+
+exports.getDailyAppointmentsForCurrentWeek = async (req, res) => {
+  try {
+    const today = new Date();
+    // Create new Date objects to avoid modifying the original `today`
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    const endOfWeek = new Date(today);
+    endOfWeek.setDate(today.getDate() - today.getDay() + 6);
+
+    const dailyAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          date: { $gte: startOfWeek, $lte: endOfWeek },
+          status: "accepted",
+        },
+      },
+      {
+        $project: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+        },
+      },
+      {
+        $group: {
+          _id: "$day",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const formattedResults = dailyAppointments.map((entry) => {
+      const date = new Date(entry._id);
+      return {
+        day: date.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        count: entry.count,
+      };
+    });
+
+    res.status(200).json({
+      week: `${startOfWeek.toDateString()} - ${endOfWeek.toDateString()}`,
+      dailyAppointments: formattedResults,
+    });
+  } catch (error) {
+    console.error("Error fetching daily appointments for current week:", error);
+    res.status(500).json({
+      message: "Failed to fetch daily appointments for current week.",
+    });
+  }
+};
+
+exports.getDailyCancelledAppointmentsForCurrentWeek = async (req, res) => {
+  try {
+    const today = new Date();
+    // Create new Date objects to avoid modifying the original `today`
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay());
+
+    const endOfWeek = new Date(today);
+    endOfWeek.setDate(today.getDate() - today.getDay() + 6);
+
+    console.log("Start of Week:", startOfWeek.toISOString());
+    console.log("End of Week:", endOfWeek.toISOString());
+
+    const dailyAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          date: { $gte: startOfWeek, $lte: endOfWeek },
+          status: "canceled",
+        },
+      },
+      {
+        $project: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+        },
+      },
+      {
+        $group: {
+          _id: "$day",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    console.log("Daily cancelled Appointments:", dailyAppointments);
+
+    // Ensure that no empty results are mistakenly returned
+    if (dailyAppointments.length === 0) {
+      res.status(200).json({
+        week: `${startOfWeek.toDateString()} - ${endOfWeek.toDateString()}`,
+        dailyAppointments: [],
+      });
+      return;
+    }
+
+    const formattedResults = dailyAppointments.map((entry) => {
+      return {
+        day: new Date(entry._id).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        count: entry.count,
+      };
+    });
+
+    res.status(200).json({
+      week: `${startOfWeek.toDateString()} - ${endOfWeek.toDateString()}`,
+      dailyAppointments: formattedResults,
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching daily canceled appointments for current week:",
+      error
+    );
+    res.status(500).json({
+      message: "Failed to fetch daily canceled appointments for current week.",
+    });
   }
 };
