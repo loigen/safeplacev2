@@ -41,4 +41,13 @@ router.get(
   appointmentController.getDailyCancelledAppointmentsForCurrentWeek
 );
 
+router.get(
+  "/dailyforMonth",
+  appointmentController.getDailyAppointmentsForCurrentMonth
+);
+
+router.get(
+  "/dailyCancelforMonth",
+  appointmentController.getDailyCancelledAppointmentsForCurrentMonth
+);
 module.exports = router;

@@ -14,6 +14,7 @@ import {
 import "../../styles/WorkloadChart.css";
 import { fetchDailyAppointments } from "../api/fetchDailyAppointments";
 import { fetchDailyCancelAppointments } from "../api/fetchDailyCancelledAppointment";
+import { fetchDailyAppointmentsofthemonth } from "../api/fetchDailyAppointmentsForMonth";
 
 ChartJS.register(
   CategoryScale,
@@ -111,35 +112,6 @@ const WorkloadChart = () => {
 
     getData();
   }, []);
-  const getDaysInMonth = (month, year) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const generateDataForMonth = () => {
-    const today = new Date();
-    const daysInMonth = getDaysInMonth(today.getMonth(), today.getFullYear());
-    const labels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
-    const completedData = Array.from({ length: daysInMonth });
-    const canceledData = Array.from({ length: 12 }, () =>
-      Math.floor(Math.random() * 10)
-    );
-
-    return {
-      labels,
-      datasets: [
-        {
-          label: "Completed",
-          data: completedData,
-          backgroundColor: "rgba(54, 162, 235, 0.6)",
-        },
-        {
-          label: "Canceled",
-          data: canceledData,
-          backgroundColor: "rgba(255, 99, 132, 0.6)",
-        },
-      ],
-    };
-  };
 
   const dataSets = {
     weekly: {
@@ -173,7 +145,69 @@ const WorkloadChart = () => {
         },
       ],
     },
-    monthly: generateDataForMonth(),
+    monthly: {
+      labels: [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "26",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+      ],
+      datasets: [
+        {
+          label: "Completed",
+          data: [
+            appointments.Sunday,
+            appointments.Monday,
+            appointments.Tuesday,
+            appointments.Wednesday,
+            appointments.Thursday,
+            appointments.Friday,
+            appointments.Saturday,
+          ],
+          backgroundColor: "#2C6975",
+        },
+        {
+          label: "Canceled",
+          data: [
+            cancelledAppointments.Sunday,
+            cancelledAppointments.Monday,
+            cancelledAppointments.Tuesday,
+            cancelledAppointments.Wednesday,
+            cancelledAppointments.Thursday,
+            cancelledAppointments.Friday,
+            cancelledAppointments.Saturday,
+          ],
+          backgroundColor: "#FF543E",
+        },
+      ],
+    },
     yearly: {
       labels: [
         "Jan",

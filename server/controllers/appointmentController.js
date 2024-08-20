@@ -432,3 +432,131 @@ exports.getDailyCancelledAppointmentsForCurrentWeek = async (req, res) => {
     });
   }
 };
+exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const dailyAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          date: { $gte: startOfMonth, $lte: endOfMonth },
+          status: "accepted",
+        },
+      },
+      {
+        $project: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+        },
+      },
+      {
+        $group: {
+          _id: "$day",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const formattedResults = dailyAppointments.map((entry) => {
+      const date = new Date(entry._id);
+      return {
+        day: date.toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        count: entry.count,
+      };
+    });
+
+    res.status(200).json({
+      month: `${startOfMonth.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })}`,
+      dailyAppointments: formattedResults,
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching daily appointments for current month:",
+      error
+    );
+    res.status(500).json({
+      message: "Failed to fetch daily appointments for current month.",
+    });
+  }
+};
+exports.getDailyCancelledAppointmentsForCurrentMonth = async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const dailyAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          date: { $gte: startOfMonth, $lte: endOfMonth },
+          status: "canceled",
+        },
+      },
+      {
+        $project: {
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+        },
+      },
+      {
+        $group: {
+          _id: "$day",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    if (dailyAppointments.length === 0) {
+      res.status(200).json({
+        month: `${startOfMonth.toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })}`,
+        dailyAppointments: [],
+      });
+      return;
+    }
+
+    const formattedResults = dailyAppointments.map((entry) => {
+      return {
+        day: new Date(entry._id).toLocaleDateString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }),
+        count: entry.count,
+      };
+    });
+
+    res.status(200).json({
+      month: `${startOfMonth.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      })}`,
+      dailyAppointments: formattedResults,
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching daily canceled appointments for current month:",
+      error
+    );
+    res.status(500).json({
+      message: "Failed to fetch daily canceled appointments for current month.",
+    });
+  }
+};
