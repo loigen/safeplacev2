@@ -2,7 +2,6 @@ const Appointment = require("../schemas/appointmentSchema");
 const cloudinary = require("../config/cloudinary");
 const { uploadReceipt } = require("../middlewares/multer");
 
-//Create Appointment
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
   async (req, res) => {
@@ -16,7 +15,7 @@ exports.createAppointment = [
         lastname,
         email,
         role,
-        avatar, // Added avatar
+        avatar,
       } = req.body;
 
       if (
@@ -50,7 +49,7 @@ exports.createAppointment = [
         lastname,
         email,
         role,
-        avatar, // Included avatar
+        avatar,
         receipt: receiptUrl,
       });
 
@@ -87,7 +86,6 @@ exports.getAppointmentById = async (req, res) => {
   }
 };
 
-// Update Appointment
 exports.updateAppointment = async (req, res) => {
   try {
     const {
@@ -144,7 +142,6 @@ exports.updateAppointment = async (req, res) => {
   }
 };
 
-// Delete Appointment
 exports.deleteAppointment = async (req, res) => {
   try {
     const appointment = await Appointment.findByIdAndDelete(req.params.id);
@@ -157,7 +154,6 @@ exports.deleteAppointment = async (req, res) => {
   }
 };
 
-// Reject Appointment
 exports.rejectAppointment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -174,7 +170,6 @@ exports.rejectAppointment = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-// Accept Appointment
 exports.acceptAppointment = async (req, res) => {
   try {
     const { id } = req.params;
@@ -192,7 +187,6 @@ exports.acceptAppointment = async (req, res) => {
   }
 };
 
-// Fetch Pending Appointments
 exports.getPendingAppointments = async (req, res) => {
   try {
     const pendingAppointments = await Appointment.find({
@@ -204,14 +198,12 @@ exports.getPendingAppointments = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch pending appointments." });
   }
 };
-// Fetch Today's Appointments
 exports.getTodaysAppointments = async (req, res) => {
   try {
     const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of today
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of today
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-    // Find appointments for today with status "accepted"
     const todaysAppointments = await Appointment.find({
       date: { $gte: startOfDay, $lte: endOfDay },
       status: "accepted",
@@ -304,7 +296,6 @@ exports.getCurrentWeekAppointments = async (req, res) => {
 exports.getDailyAppointmentsForCurrentWeek = async (req, res) => {
   try {
     const today = new Date();
-    // Create new Date objects to avoid modifying the original `today`
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());
 
@@ -362,7 +353,6 @@ exports.getDailyAppointmentsForCurrentWeek = async (req, res) => {
 exports.getDailyCancelledAppointmentsForCurrentWeek = async (req, res) => {
   try {
     const today = new Date();
-    // Create new Date objects to avoid modifying the original `today`
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());
 
@@ -397,7 +387,6 @@ exports.getDailyCancelledAppointmentsForCurrentWeek = async (req, res) => {
 
     console.log("Daily cancelled Appointments:", dailyAppointments);
 
-    // Ensure that no empty results are mistakenly returned
     if (dailyAppointments.length === 0) {
       res.status(200).json({
         week: `${startOfWeek.toDateString()} - ${endOfWeek.toDateString()}`,
@@ -438,7 +427,7 @@ exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
-    const dailyAppointments = await Appointment.aggregate([
+    const completedAppointments = await Appointment.aggregate([
       {
         $match: {
           date: { $gte: startOfMonth, $lte: endOfMonth },
@@ -447,7 +436,7 @@ exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
       },
       {
         $project: {
-          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          day: { $dayOfMonth: "$date" },
         },
       },
       {
@@ -456,22 +445,42 @@ exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
           count: { $sum: 1 },
         },
       },
+    ]);
+
+    const canceledAppointments = await Appointment.aggregate([
       {
-        $sort: { _id: 1 },
+        $match: {
+          date: { $gte: startOfMonth, $lte: endOfMonth },
+          status: "canceled",
+        },
+      },
+      {
+        $project: {
+          day: { $dayOfMonth: "$date" },
+        },
+      },
+      {
+        $group: {
+          _id: "$day",
+          count: { $sum: 1 },
+        },
       },
     ]);
 
-    const formattedResults = dailyAppointments.map((entry) => {
-      const date = new Date(entry._id);
-      return {
-        day: date.toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        count: entry.count,
-      };
+    const daysInMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    ).getDate();
+    const completedData = Array(daysInMonth).fill(0);
+    const canceledData = Array(daysInMonth).fill(0);
+
+    completedAppointments.forEach((entry) => {
+      completedData[entry._id - 1] = entry.count;
+    });
+
+    canceledAppointments.forEach((entry) => {
+      canceledData[entry._id - 1] = entry.count;
     });
 
     res.status(200).json({
@@ -479,7 +488,10 @@ exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
         month: "long",
         year: "numeric",
       })}`,
-      dailyAppointments: formattedResults,
+      datasets: {
+        completed: completedData,
+        canceled: canceledData,
+      },
     });
   } catch (error) {
     console.error(
@@ -491,27 +503,23 @@ exports.getDailyAppointmentsForCurrentMonth = async (req, res) => {
     });
   }
 };
-exports.getDailyCancelledAppointmentsForCurrentMonth = async (req, res) => {
+
+exports.getYearlyAppointments = async (req, res) => {
   try {
     const today = new Date();
-    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    const endOfYear = new Date(today.getFullYear(), 11, 31);
 
-    const dailyAppointments = await Appointment.aggregate([
+    const completedAppointments = await Appointment.aggregate([
       {
         $match: {
-          date: { $gte: startOfMonth, $lte: endOfMonth },
-          status: "canceled",
-        },
-      },
-      {
-        $project: {
-          day: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          date: { $gte: startOfYear, $lte: endOfYear },
+          status: "accepted",
         },
       },
       {
         $group: {
-          _id: "$day",
+          _id: { $month: "$date" },
           count: { $sum: 1 },
         },
       },
@@ -520,43 +528,46 @@ exports.getDailyCancelledAppointmentsForCurrentMonth = async (req, res) => {
       },
     ]);
 
-    if (dailyAppointments.length === 0) {
-      res.status(200).json({
-        month: `${startOfMonth.toLocaleDateString("en-US", {
-          month: "long",
-          year: "numeric",
-        })}`,
-        dailyAppointments: [],
-      });
-      return;
-    }
+    const canceledAppointments = await Appointment.aggregate([
+      {
+        $match: {
+          date: { $gte: startOfYear, $lte: endOfYear },
+          status: "canceled",
+        },
+      },
+      {
+        $group: {
+          _id: { $month: "$date" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
 
-    const formattedResults = dailyAppointments.map((entry) => {
-      return {
-        day: new Date(entry._id).toLocaleDateString("en-US", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        }),
-        count: entry.count,
-      };
+    const completedData = Array(12).fill(0);
+    const canceledData = Array(12).fill(0);
+
+    completedAppointments.forEach((entry) => {
+      completedData[entry._id - 1] = entry.count;
+    });
+
+    canceledAppointments.forEach((entry) => {
+      canceledData[entry._id - 1] = entry.count;
     });
 
     res.status(200).json({
-      month: `${startOfMonth.toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })}`,
-      dailyAppointments: formattedResults,
+      year: today.getFullYear(),
+      datasets: {
+        completed: completedData,
+        canceled: canceledData,
+      },
     });
   } catch (error) {
-    console.error(
-      "Error fetching daily canceled appointments for current month:",
-      error
-    );
+    console.error("Error fetching yearly appointments:", error);
     res.status(500).json({
-      message: "Failed to fetch daily canceled appointments for current month.",
+      message: "Failed to fetch yearly appointments.",
     });
   }
 };

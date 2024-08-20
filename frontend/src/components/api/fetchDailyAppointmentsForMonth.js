@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // api.js
-export const fetchDailyAppointmentsofthemonth = async () => {
+export const fetchDailyAppointmentsForMonth = async () => {
   try {
     const response = await axios.get(
       `${process.env.REACT_APP_API_URL}/Appointments/api/dailyforMonth`

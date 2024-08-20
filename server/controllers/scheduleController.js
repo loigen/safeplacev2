@@ -1,6 +1,5 @@
 const Schedule = require("../schemas/Schedule");
 
-// Fetch slots with status "Free"
 exports.getFreeTimeSlots = async (req, res) => {
   try {
     const freeSlots = await Schedule.find({ status: "free" }).sort({
@@ -14,7 +13,6 @@ exports.getFreeTimeSlots = async (req, res) => {
   }
 };
 
-// add free slots
 exports.addFreeTimeSlot = async (req, res) => {
   try {
     const { date, time } = req.body;
@@ -47,7 +45,6 @@ exports.addFreeTimeSlot = async (req, res) => {
   }
 };
 
-// Delete the time slot
 exports.deleteFreeTimeSlot = async (req, res) => {
   try {
     const { id } = req.params;
@@ -59,7 +56,6 @@ exports.deleteFreeTimeSlot = async (req, res) => {
   }
 };
 
-// Check if a time slot exists
 exports.checkTimeSlot = async (req, res) => {
   try {
     const { date, time } = req.query;
@@ -146,6 +142,30 @@ exports.acceptSlot = async (req, res) => {
     res.json(updatedSlot);
   } catch (error) {
     console.error("Error accepting slot:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Count all free slots
+exports.countFreeSlots = async (req, res) => {
+  try {
+    const freeSlotsCount = await Schedule.countDocuments({ status: "free" });
+    res.json({ count: freeSlotsCount });
+  } catch (error) {
+    console.error("Error counting free slots:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Count all pending slots
+exports.countPendingSlots = async (req, res) => {
+  try {
+    const pendingSlotsCount = await Schedule.countDocuments({
+      status: "pending",
+    });
+    res.json({ count: pendingSlotsCount });
+  } catch (error) {
+    console.error("Error counting pending slots:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

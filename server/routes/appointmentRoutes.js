@@ -26,28 +26,34 @@ router.patch("/reject/:id", appointmentController.rejectAppointment);
 // Fetch pending appointments
 router.get("/pending", appointmentController.getPendingAppointments);
 
+// Fetch today's appointments
 router.get("/today", appointmentController.getTodaysAppointments);
 
+// Fetch weekly's highest appointments
 router.get("/highest-weekly", appointmentController.getCurrentWeekAppointments);
 
+// Fetch entire rate of cancellation appointments
 router.get("/cancellation-rate", appointmentController.getCancellationRate);
 
+// Fetch patient's data appointments
 router.get("/data", appointmentController.getAppointmentData);
 
+// Fetch for the chart appointments
 router.get("/daily", appointmentController.getDailyAppointmentsForCurrentWeek);
 
+// Fetch for the chart appointments
 router.get(
   "/dailyCancel",
   appointmentController.getDailyCancelledAppointmentsForCurrentWeek
 );
 
+// Fetch for the chart monthly appointments
 router.get(
   "/dailyforMonth",
   appointmentController.getDailyAppointmentsForCurrentMonth
 );
 
-router.get(
-  "/dailyCancelforMonth",
-  appointmentController.getDailyCancelledAppointmentsForCurrentMonth
-);
+// Fetch for the chart yearly appointments
+router.get("/yearly", appointmentController.getYearlyAppointments);
+
 module.exports = router;

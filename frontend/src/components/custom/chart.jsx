@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -14,7 +13,8 @@ import {
 import "../../styles/WorkloadChart.css";
 import { fetchDailyAppointments } from "../api/fetchDailyAppointments";
 import { fetchDailyCancelAppointments } from "../api/fetchDailyCancelledAppointment";
-import { fetchDailyAppointmentsofthemonth } from "../api/fetchDailyAppointmentsForMonth";
+import { fetchDailyAppointmentsForMonth } from "../api/fetchDailyAppointmentsForMonth";
+import { fetchDailyAppointmentsForYear } from "../api/fetchDailyAppointmentsForYear";
 
 ChartJS.register(
   CategoryScale,
@@ -35,7 +35,7 @@ const WorkloadChart = () => {
     Saturday: 0,
     Sunday: 0,
   });
-  const [cancelledAppointments, setcancelledAppointments] = useState({
+  const [cancelledAppointments, setCancelledAppointments] = useState({
     Monday: 0,
     Tuesday: 0,
     Wednesday: 0,
@@ -44,6 +44,12 @@ const WorkloadChart = () => {
     Saturday: 0,
     Sunday: 0,
   });
+  const [monthlyAppointments, setMonthlyAppointments] = useState([]);
+  const [monthlyCancelledAppointments, setMonthlyCancelledAppointments] =
+    useState([]);
+  const [yearlyAppointments, setyearlyAppointments] = useState([]);
+  const [yearlyCancelledAppointments, setyearlyCancelledAppointments] =
+    useState([]);
 
   const [view, setView] = useState("weekly");
 
@@ -104,7 +110,7 @@ const WorkloadChart = () => {
           }
         });
 
-        setcancelledAppointments(daysOfWeek);
+        setCancelledAppointments(daysOfWeek);
       } catch (error) {
         console.error("Error loading data:", error);
       }
@@ -113,6 +119,40 @@ const WorkloadChart = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const result = await fetchDailyAppointmentsForMonth();
+        const { datasets } = result;
+
+        setMonthlyAppointments(datasets.completed);
+        setMonthlyCancelledAppointments(datasets.canceled);
+      } catch (error) {
+        console.error("Error loading monthly data:", error);
+      }
+    };
+
+    if (view === "monthly") {
+      getData();
+    }
+  }, [view]);
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const result = await fetchDailyAppointmentsForYear();
+        const { datasets } = result;
+
+        setyearlyAppointments(datasets.completed);
+        setyearlyCancelledAppointments(datasets.canceled);
+      } catch (error) {
+        console.error("Error loading monthly data:", error);
+      }
+    };
+
+    if (view === "yearly") {
+      getData();
+    }
+  }, [view]);
   const dataSets = {
     weekly: {
       labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
@@ -146,64 +186,16 @@ const WorkloadChart = () => {
       ],
     },
     monthly: {
-      labels: [
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13",
-        "14",
-        "15",
-        "16",
-        "17",
-        "18",
-        "19",
-        "20",
-        "21",
-        "22",
-        "23",
-        "24",
-        "26",
-        "26",
-        "27",
-        "28",
-        "29",
-        "30",
-        "31",
-      ],
+      labels: Array.from({ length: 31 }, (_, i) => (i + 1).toString()),
       datasets: [
         {
           label: "Completed",
-          data: [
-            appointments.Sunday,
-            appointments.Monday,
-            appointments.Tuesday,
-            appointments.Wednesday,
-            appointments.Thursday,
-            appointments.Friday,
-            appointments.Saturday,
-          ],
+          data: monthlyAppointments,
           backgroundColor: "#2C6975",
         },
         {
           label: "Canceled",
-          data: [
-            cancelledAppointments.Sunday,
-            cancelledAppointments.Monday,
-            cancelledAppointments.Tuesday,
-            cancelledAppointments.Wednesday,
-            cancelledAppointments.Thursday,
-            cancelledAppointments.Friday,
-            cancelledAppointments.Saturday,
-          ],
+          data: monthlyCancelledAppointments,
           backgroundColor: "#FF543E",
         },
       ],
@@ -226,17 +218,13 @@ const WorkloadChart = () => {
       datasets: [
         {
           label: "Completed",
-          data: Array.from({ length: 12 }, () =>
-            Math.floor(Math.random() * 10)
-          ),
-          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          data: yearlyAppointments,
+          backgroundColor: "#2C6975",
         },
         {
           label: "Canceled",
-          data: Array.from({ length: 12 }, () =>
-            Math.floor(Math.random() * 10)
-          ),
-          backgroundColor: "rgba(255, 99, 132, 0.6)",
+          data: yearlyCancelledAppointments,
+          backgroundColor: "#FF543E",
         },
       ],
     },

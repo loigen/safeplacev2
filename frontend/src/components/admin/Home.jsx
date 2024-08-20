@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
-import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import EqualizerOutlinedIcon from "@mui/icons-material/EqualizerOutlined";
 import { FaTimes } from "react-icons/fa";
 import axios from "axios";
-import Swal from "sweetalert2";
 import "../../styles/Home.css";
 
 import WorkloadChart from "../custom/chart";
 import AppointmentRequest from "../custom/Appointment.request";
 import AvailabilityCard from "../custom/AvailabilityCard";
 import HighestWeeklyAppointments from "../custom/HighestWeeklyAppointments";
+import { countFreeSlots, countPendingSlots } from "../api/scheduleAPi";
 
 const Home = () => {
   const [userCount, setUserCount] = useState(0);
@@ -18,7 +17,33 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
   const [error, setError] = useState(null);
+  const [freeSlotCount, setFreeSlotCount] = useState(0);
+  const [pendingSlotCount, setpendingSlotCount] = useState(0);
 
+  useEffect(() => {
+    const fetchFreeSlots = async () => {
+      try {
+        const count = await countFreeSlots();
+        setFreeSlotCount(count);
+      } catch (error) {
+        console.error("Error fetching free slots:", error);
+      }
+    };
+
+    fetchFreeSlots();
+  }, []);
+  useEffect(() => {
+    const fetchFreeSlots = async () => {
+      try {
+        const count = await countPendingSlots();
+        setpendingSlotCount(count);
+      } catch (error) {
+        console.error("Error fetching free slots:", error);
+      }
+    };
+
+    fetchFreeSlots();
+  }, []);
   useEffect(() => {
     const handleFetchTodaysAppointment = async () => {
       try {
@@ -34,6 +59,7 @@ const Home = () => {
     };
     handleFetchTodaysAppointment();
   }, []);
+
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
@@ -65,9 +91,6 @@ const Home = () => {
 
     fetchCancellationRate();
   }, []);
-
-  const patientRate = 10;
-  const appointmentRate = -3;
 
   return (
     <div className="home h-lvh px-2">
@@ -136,7 +159,10 @@ const Home = () => {
           </div>
 
           <div className="w-full bg-white rounded-lg shadow-2xl">
-            <AvailabilityCard availableSlots={17} totalSlots={20} />
+            <AvailabilityCard
+              availableSlots={freeSlotCount}
+              totalSlots={pendingSlotCount}
+            />
           </div>
           <div className="w-full bg-[#fff]">
             <div className="upcomingAppointment mt-4 p-4 shadow-2xl rounded-lg flex justify-center items-center">
