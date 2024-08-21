@@ -10,6 +10,7 @@ const {
   uploadBlogPhoto,
 } = require("../middlewares/multer");
 
+// User profile routes
 router.get("/profile", authenticateToken, userController.getProfile);
 
 router.put(
@@ -18,18 +19,13 @@ router.put(
   userController.updateProfile
 );
 
-// router.post(
-//   "/uploadreceipt",
-//   [authenticateToken, uploadReceipt.single("receipt")],
-//   userController.uploadReceipt
-// );
-
 router.post(
   "/uploadblogphoto",
   [authenticateToken, uploadBlogPhoto.single("blog_photo")],
   userController.uploadBlogPhoto
 );
 
+// Admin routes
 router.post(
   "/admin",
   [authenticateToken, checkAdmin],
@@ -38,6 +34,23 @@ router.post(
 
 router.get("/countNonAdminUsers", userController.countNonAdminUsers);
 
+// Password management routes
+router.post(
+  "/changepassword",
+  authenticateToken,
+  userController.changePassword
+);
+
+// New routes
+router.get("/users", [authenticateToken], userController.getAllUsers); // Fetch all users
+router.patch("/users/:id/block", [authenticateToken], userController.blockUser); // Block user
+router.patch(
+  "/users/:id/unblock",
+  [authenticateToken],
+  userController.unblockUser
+); // Unblock user
+
+// Logout route
 router.post("/logout", authenticateToken, authController.logout);
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const User = require("../schemas/User");
 const cloudinary = require("../config/cloudinary");
+const bcrypt = require("bcryptjs");
 
 // get user profile
 exports.getProfile = async (req, res) => {
@@ -97,5 +98,97 @@ exports.countNonAdminUsers = async (req, res) => {
   } catch (error) {
     console.error("Error counting non-admin users:", error);
     res.status(500).json({ error: "Error counting non-admin users" });
+  }
+};
+exports.changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res
+        .status(400)
+        .json({ error: "Please provide both current and new passwords" });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ error: "Current password is incorrect" });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedNewPassword;
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    res.status(500).json({ error: "Error changing password" });
+  }
+};
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: { $ne: "admin" } }).select(
+      "-password"
+    ); // Exclude password from the result
+
+    res.status(200).json({ users });
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ error: "Error fetching all users" });
+  }
+};
+
+// Block a user (Admin only)
+exports.blockUser = async (req, res) => {
+  try {
+    const userId = req.params.id; // Assuming the user ID is passed as a URL parameter
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { status: "blocked" },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Error blocking user:", error);
+    res.status(500).json({ error: "Error blocking user" });
+  }
+};
+
+exports.unblockUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { status: "active" },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Error unblocking user:", error);
+    res.status(500).json({ error: "Error unblocking user" });
   }
 };

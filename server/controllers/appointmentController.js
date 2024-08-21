@@ -241,6 +241,31 @@ exports.getCancellationRate = async (req, res) => {
     res.status(500).json({ message: "Failed to calculate cancellation rate." });
   }
 };
+exports.getCompletionRate = async (req, res) => {
+  try {
+    const totalAppointments = await Appointment.countDocuments({
+      status: { $in: ["accepted", "completed"] },
+    });
+
+    const completedAppointments = await Appointment.countDocuments({
+      status: "completed",
+    });
+
+    const completionRate =
+      totalAppointments > 0
+        ? (completedAppointments / totalAppointments) * 100
+        : 0;
+
+    res.status(200).json({
+      totalAppointments,
+      completedAppointments,
+      completionRate: completionRate.toFixed(2) + "%",
+    });
+  } catch (error) {
+    console.error("Error calculating completion rate:", error);
+    res.status(500).json({ message: "Failed to calculate completion rate." });
+  }
+};
 
 exports.getAppointmentData = async (req, res) => {
   try {
@@ -256,6 +281,7 @@ exports.getAppointmentData = async (req, res) => {
       status: appointment.status,
       typeOfCounseling: appointment.appointmentType,
       avatar: appointment.avatar,
+      email: appointment.email,
     }));
 
     res.status(200).json(appointmentData);

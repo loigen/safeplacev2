@@ -9,14 +9,16 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  status: { type: String, default: "active" }, // New field
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
+  birthdate: { type: Date, required: true }, // Set required to true
 });
 
 userSchema.methods.getGravatarUrl = function () {
-  return `https://res.cloudinary.com/dovlzzudf/image/upload/v1723689322/profile_pictures/66a1b5181567b42d75cc816b_profile.jpg`;
+  return `https://res.cloudinary.com/dovlzzudf/image/upload/v1723710022/profile_pictures/66a367e4a828e02e834561e0_profile.jpg`;
 };
 
 userSchema.pre("save", function (next) {

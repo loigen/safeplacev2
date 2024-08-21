@@ -7,7 +7,7 @@ import logo from "../images/bannerLogo.png";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function Signup() {
@@ -16,6 +16,7 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [birthdate, setBirthdate] = useState(""); // Added birthdate state
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -30,13 +31,22 @@ function Signup() {
       email.trim() &&
       password.trim() &&
       repeatPassword.trim() &&
+      birthdate.trim() && // Added birthdate check
       agreement
     ) {
       setIsButtonDisabled(false);
     } else {
       setIsButtonDisabled(true);
     }
-  }, [firstname, lastname, email, password, repeatPassword, agreement]);
+  }, [
+    firstname,
+    lastname,
+    email,
+    password,
+    repeatPassword,
+    birthdate,
+    agreement,
+  ]); // Added birthdate dependency
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,6 +66,7 @@ function Signup() {
         email,
         password,
         repeatPassword,
+        birthdate, // Included birthdate in the request payload
       });
 
       if (response.status === 201) {
@@ -66,6 +77,7 @@ function Signup() {
         setEmail("");
         setPassword("");
         setRepeatPassword("");
+        setBirthdate(""); // Reset birthdate
 
         history.push("/login");
       } else {
@@ -148,6 +160,19 @@ function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
+                required
+              />
+              <label htmlFor="birthdate">
+                <span>
+                  <PersonOutlineIcon />
+                </span>
+                Birthdate:
+              </label>
+              <input
+                type="date"
+                value={birthdate}
+                onChange={(e) => setBirthdate(e.target.value)}
+                placeholder="Birthdate"
                 required
               />
               <label htmlFor="password">

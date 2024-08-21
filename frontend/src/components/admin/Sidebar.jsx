@@ -70,7 +70,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/settings"
+              to="/AdminSettings"
               activeClassName="active"
               className="sidebar-link"
             >

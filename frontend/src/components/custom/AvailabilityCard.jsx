@@ -20,7 +20,7 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
     cutout: "40%",
     plugins: {
       legend: {
-        display: false,
+        display: true,
       },
       tooltip: {
         enabled: false,

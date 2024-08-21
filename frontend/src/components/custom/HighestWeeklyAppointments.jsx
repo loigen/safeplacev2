@@ -1,7 +1,7 @@
 // HighestWeeklyAppointments.js
 import React from "react";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-import useHighestWeeklyAppointments from "../api/useHighestWeeklyAppointments";
+import useHighestWeeklyAppointments from "../api/appointmentAPI/useHighestWeeklyAppointments";
 
 const HighestWeeklyAppointments = () => {
   const { data, loading, error } = useHighestWeeklyAppointments();

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import ReactPaginate from "react-paginate";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import "../../styles/pagination.css";
 
@@ -7,14 +8,13 @@ const PatientList = ({
   patients,
   itemsPerPage,
   onPatientSelect,
-  onToggleActionsList,
-  activePatientIdList,
   handleAccept,
   handleReject,
   handleAction,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [activePatientId, setActivePatientId] = useState(null);
 
   const handleStatusChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -36,8 +36,11 @@ const PatientList = ({
     setCurrentPage(event.selected);
   };
 
+  const startRecord = offset + 1;
+  const endRecord = Math.min(offset + itemsPerPage, filteredPatients.length);
+
   return (
-    <div className="list">
+    <div className="list w-[70%]">
       <div className="header">
         <h1>Patients</h1>
         <div className="dropdown">
@@ -51,44 +54,49 @@ const PatientList = ({
             <option value="">All patients</option>
             <option value="accepted">Accepted</option>
             <option value="pending">Pending</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="canceled">Canceled</option>
             <option value="completed">Completed</option>
           </select>
         </div>
       </div>
-      <div className="patientList">
+      <div className="patientList flex flex-col gap-2">
         {currentPatients.length > 0 ? (
           currentPatients.map((patient) => (
             <div
+              className="client m-2 p-2"
+              style={{ borderBottom: "1px solid gray" }}
               key={patient.id}
-              className="patient"
               onClick={() => onPatientSelect(patient)}
             >
               <div className="dateTime">
                 <div className="date">{patient.date}</div>|
-                <div className="time">{patient.time}</div>
+                <div className="time ">{patient.time}</div>
               </div>
               <div className="patientStatus">
-                <div className="name">{patient.name}</div>
-                <div className="status">{patient.status}</div>
-                <div className="typeOfCounseling">
-                  {patient.typeOfCounseling}
+                <div className="name capitalize">{patient.name}</div>
+                <div className="status capitalize">
+                  <b className="text-gray-800">{patient.status}</b>
+                </div>
+                <div className=" text-gray-800 capitalize">
+                  <b>{patient.typeOfCounseling}</b>
                 </div>
                 <div className="actions">
-                  {(patient.status === "Pending" ||
-                    patient.status === "Ready") && (
+                  {(patient.status === "pending" ||
+                    patient.status === "accepted") && (
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onToggleActionsList(patient.id);
+                        setActivePatientId(
+                          activePatientId === patient.id ? null : patient.id
+                        );
                       }}
                     >
                       <MoreHorizIcon />
                     </button>
                   )}
-                  {activePatientIdList === patient.id && (
+                  {activePatientId === patient.id && (
                     <div className="dropdownMenu">
-                      {patient.status === "Pending" && (
+                      {patient.status === "pending" && (
                         <>
                           <button onClick={() => handleAccept(patient.id)}>
                             Accept
@@ -98,7 +106,7 @@ const PatientList = ({
                           </button>
                         </>
                       )}
-                      {patient.status === "Accepted" && (
+                      {patient.status === "accepted" && (
                         <button
                           onClick={() => handleAction(patient.id, "goToRoom")}
                           className="w-full"
@@ -110,7 +118,6 @@ const PatientList = ({
                   )}
                 </div>
               </div>
-              <div className="gender">Female</div>
             </div>
           ))
         ) : (
@@ -121,25 +128,31 @@ const PatientList = ({
       </div>
 
       {filteredPatients.length > itemsPerPage && (
-        <ReactPaginate
-          previousLabel={"<"}
-          nextLabel={">"}
-          breakLabel={"..."}
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={3}
-          onPageChange={handlePageClick}
-          containerClassName={"pagination"}
-          pageClassName={"page-item"}
-          pageLinkClassName={"page-link"}
-          previousClassName={"page-item previous"}
-          previousLinkClassName={"page-link"}
-          nextClassName={"page-item next"}
-          nextLinkClassName={"page-link"}
-          breakClassName={"page-item"}
-          breakLinkClassName={"page-link"}
-          activeClassName={"active"}
-        />
+        <div className="paginationContainer">
+          <div className="paginationInfo">
+            {startRecord}-{endRecord} of {filteredPatients.length}
+          </div>
+          <div className="paginationControls">
+            <button
+              className={`paginationButton ${
+                currentPage === 0 ? "disabled" : ""
+              }`}
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 0}
+            >
+              <ChevronLeftIcon />
+            </button>
+            <button
+              className={`paginationButton ${
+                currentPage === pageCount - 1 ? "disabled" : ""
+              }`}
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === pageCount - 1}
+            >
+              <ChevronRightIcon />
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

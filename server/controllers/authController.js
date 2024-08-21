@@ -11,9 +11,17 @@ const validateSignupData = (
   lastname,
   email,
   password,
-  repeatPassword
+  repeatPassword,
+  birthdate
 ) => {
-  if (!firstname || !lastname || !email || !password || !repeatPassword) {
+  if (
+    !firstname ||
+    !lastname ||
+    !email ||
+    !password ||
+    !repeatPassword ||
+    !birthdate
+  ) {
     return "All fields are required";
   }
   if (password !== repeatPassword) {
@@ -22,18 +30,23 @@ const validateSignupData = (
   if (!validator.isEmail(email)) {
     return "Invalid email";
   }
+  if (!validator.isISO8601(birthdate, { strict: true })) {
+    return "Invalid birthdate";
+  }
   return null;
 };
 
 // Signup
 exports.signup = async (req, res) => {
-  const { firstname, lastname, email, password, repeatPassword } = req.body;
+  const { firstname, lastname, email, password, repeatPassword, birthdate } =
+    req.body;
   const errorMessage = validateSignupData(
     firstname,
     lastname,
     email,
     password,
-    repeatPassword
+    repeatPassword,
+    birthdate
   );
 
   if (errorMessage) {
@@ -54,6 +67,7 @@ exports.signup = async (req, res) => {
       email,
       password: hashedPassword,
       role,
+      birthdate: new Date(birthdate),
     });
     await user.save();
     res.status(201).json({ message: "User created" });

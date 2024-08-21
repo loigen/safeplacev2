@@ -68,17 +68,10 @@
   gap: 1rem;
 }
 
-.patient {
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
+.client:hover {
   cursor: pointer;
-  background: #fff;
-}
-
-.patient:hover {
-  background-color: #f7f7f7;
+  background: #699ea8;
+  transition: 0.5s ease;
 }
 
 .dateTime {

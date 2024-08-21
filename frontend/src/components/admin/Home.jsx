@@ -2,18 +2,25 @@ import React, { useState, useEffect } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import EqualizerOutlinedIcon from "@mui/icons-material/EqualizerOutlined";
 import { FaTimes } from "react-icons/fa";
-import axios from "axios";
 import "../../styles/Home.css";
 
 import WorkloadChart from "../custom/chart";
 import AppointmentRequest from "../custom/Appointment.request";
 import AvailabilityCard from "../custom/AvailabilityCard";
 import HighestWeeklyAppointments from "../custom/HighestWeeklyAppointments";
-import { countFreeSlots, countPendingSlots } from "../api/scheduleAPi";
+import {
+  countFreeSlots,
+  countPendingSlots,
+} from "../api/appointmentAPI/countFreeAndPendingSlots";
+import { fetchTodaysAppointments } from "../api/appointmentAPI/fetchTodayAppointments";
+import { fetchUserCount } from "../api/appointmentAPI/fetchUserCount";
+import { fetchCancellationRate } from "../api/appointmentAPI/fetchCancellationRate";
+import { fetchCompletionRate } from "../api/appointmentAPI/fetchCompletionRate";
 
 const Home = () => {
   const [userCount, setUserCount] = useState(0);
   const [cancellationRate, setCancellationRate] = useState(null);
+  const [completionRate, setCompletionRate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
   const [error, setError] = useState(null);
@@ -32,25 +39,25 @@ const Home = () => {
 
     fetchFreeSlots();
   }, []);
+
   useEffect(() => {
-    const fetchFreeSlots = async () => {
+    const fetchPendingSlots = async () => {
       try {
         const count = await countPendingSlots();
         setpendingSlotCount(count);
       } catch (error) {
-        console.error("Error fetching free slots:", error);
+        console.error("Error fetching pending slots:", error);
       }
     };
 
-    fetchFreeSlots();
+    fetchPendingSlots();
   }, []);
+
   useEffect(() => {
     const handleFetchTodaysAppointment = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/Appointments/api/today"
-        );
-        setTodaysAppointments(response.data);
+        const appointments = await fetchTodaysAppointments();
+        setTodaysAppointments(appointments);
       } catch (err) {
         setError("Failed to fetch today's appointments.");
       } finally {
@@ -61,27 +68,23 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    const fetchUserCount = async () => {
+    const handleFetchUserCount = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/countNonAdminUsers`
-        );
-        setUserCount(response.data.count);
+        const count = await fetchUserCount();
+        setUserCount(count);
       } catch (error) {
         console.error("Error fetching user count:", error);
       }
     };
 
-    fetchUserCount();
+    handleFetchUserCount();
   }, []);
 
   useEffect(() => {
-    const fetchCancellationRate = async () => {
+    const handleFetchCancellationRate = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/Appointments/api/cancellation-rate`
-        );
-        setCancellationRate(response.data.cancellationRate);
+        const rate = await fetchCancellationRate();
+        setCancellationRate(rate);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching cancellation rate:", error);
@@ -89,7 +92,23 @@ const Home = () => {
       }
     };
 
-    fetchCancellationRate();
+    handleFetchCancellationRate();
+  }, []);
+
+  useEffect(() => {
+    const handlefetchCompletionRate = async () => {
+      try {
+        const rate = await fetchCompletionRate();
+        console.log(rate);
+        setCompletionRate(rate);
+      } catch (error) {
+        console.error("Error fetching completion rate:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    handlefetchCompletionRate();
   }, []);
 
   return (
@@ -135,8 +154,14 @@ const Home = () => {
                 />
               </div>
               <div className="text-center sm:text-left">
-                <p className="font-extrabold text-3xl">30%</p>
-                <p className="subTitle">Conversion Rate</p>
+                {loading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <>
+                    <p className="font-extrabold text-3xl">{completionRate}</p>
+                    <p className="subTitle">Conversion Rate</p>
+                  </>
+                )}
               </div>
             </div>
             <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col sm:flex-row gap-2">

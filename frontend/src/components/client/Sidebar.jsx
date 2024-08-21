@@ -51,7 +51,7 @@ const Sidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/profile"
+              to="/clientSettings"
               activeClassName="active"
               className="sidebar-link"
             >

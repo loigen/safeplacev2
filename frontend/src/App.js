@@ -7,7 +7,7 @@ import About from "./components/About.component";
 import Contact from "./components/contact.component";
 import NotFound from "./components/NotFound";
 import PrivateRoute from "./PrivateRoute";
-import Profile from "./components/custom/Profile";
+import Profile from "./components/admin/Profile";
 import Home from "./components/admin/Home";
 import Patients from "./components/admin/Patients";
 import Schedules from "./components/admin/Schedules";
@@ -15,8 +15,10 @@ import BLog from "./components/admin/BLog";
 import Settings from "./components/admin/Settings";
 import MrJebBlog from "./components/client/MrJebBlog";
 import PatientsCalendar from "./components/client/PatientsCalendar";
-import AppointmentsPage from "./components/custom/AppointmentsPage";
+import AppointmentsPage from "./components/client/AppointmentsPage";
 import PatientDetail from "./components/custom/PatientDetail";
+import AdminSettings from "./components/admin/Settings";
+import ClientSettings from "./components/client/Settings";
 
 const App = () => {
   return (
@@ -34,13 +36,18 @@ const App = () => {
         <PrivateRoute path="/profile" component={Profile} />
         <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
         <PrivateRoute path="/Booking" component={AppointmentsPage} />
+        <PrivateRoute path="/clientSettings" component={ClientSettings} />
 
         {/* Admin-Only Private Routes */}
         <PrivateRoute path="/home" component={Home} adminOnly />
         <PrivateRoute path="/patients" component={Patients} adminOnly />
         <PrivateRoute path="/schedule" component={Schedules} adminOnly />
         <PrivateRoute path="/blog" component={BLog} adminOnly />
-        <PrivateRoute path="/settings" component={Settings} adminOnly />
+        <PrivateRoute
+          path="/AdminSettings"
+          component={AdminSettings}
+          adminOnly
+        />
 
         {/* Catch-All Route for 404 */}
         <Route path="*" component={NotFound} />

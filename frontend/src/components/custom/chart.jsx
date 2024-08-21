@@ -11,10 +11,10 @@ import {
   Legend,
 } from "chart.js";
 import "../../styles/WorkloadChart.css";
-import { fetchDailyAppointments } from "../api/fetchDailyAppointments";
-import { fetchDailyCancelAppointments } from "../api/fetchDailyCancelledAppointment";
-import { fetchDailyAppointmentsForMonth } from "../api/fetchDailyAppointmentsForMonth";
-import { fetchDailyAppointmentsForYear } from "../api/fetchDailyAppointmentsForYear";
+import { fetchDailyAppointments } from "../api/appointmentAPI/fetchDailyAppointments";
+import { fetchDailyCancelAppointments } from "../api/appointmentAPI/fetchDailyCancelledAppointment";
+import { fetchDailyAppointmentsForMonth } from "../api/appointmentAPI/fetchDailyAppointmentsForMonth";
+import { fetchDailyAppointmentsForYear } from "../api/appointmentAPI/fetchDailyAppointmentsForYear";
 
 ChartJS.register(
   CategoryScale,
@@ -158,7 +158,7 @@ const WorkloadChart = () => {
       labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
       datasets: [
         {
-          label: "Completed",
+          label: "Accepted",
           data: [
             appointments.Sunday,
             appointments.Monday,

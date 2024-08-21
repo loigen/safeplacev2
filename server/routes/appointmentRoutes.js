@@ -35,6 +35,8 @@ router.get("/highest-weekly", appointmentController.getCurrentWeekAppointments);
 // Fetch entire rate of cancellation appointments
 router.get("/cancellation-rate", appointmentController.getCancellationRate);
 
+router.get("/completion-rate", appointmentController.getCompletionRate);
+
 // Fetch patient's data appointments
 router.get("/data", appointmentController.getAppointmentData);
 

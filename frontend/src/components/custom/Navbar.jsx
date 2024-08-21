@@ -26,7 +26,7 @@ const Navpar = () => {
           >
             Home
           </div>
-          <div className="nav-link" onClick={() => handleCardClick("/Apout")}>
+          <div className="nav-link" onClick={() => handleCardClick("/About")}>
             About
           </div>
           <div className="nav-link" onClick={() => handleCardClick("/Contact")}>
