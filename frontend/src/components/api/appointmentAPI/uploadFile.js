@@ -1,5 +1,5 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../../config/axiosConfig";
 export const uploadFile = async (patientId, folderIndex, file) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -7,7 +7,7 @@ export const uploadFile = async (patientId, folderIndex, file) => {
   formData.append("folderIndex", folderIndex);
 
   try {
-    await axios.post(
+    await axiosInstance.post(
       `${process.env.REACT_APP_API_URL}/Appointments/api/files`,
       formData,
       {

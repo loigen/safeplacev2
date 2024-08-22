@@ -3,14 +3,13 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import "../../styles/pagination.css";
-
+import Swal from "sweetalert2";
 const PatientList = ({
   patients,
   itemsPerPage,
   onPatientSelect,
   handleAccept,
   handleReject,
-  handleAction,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState("");
@@ -107,16 +106,33 @@ const PatientList = ({
                         </>
                       )}
                       {patient.status === "accepted" && (
-                        <button
-                          onClick={() => handleAction(patient.id, "goToRoom")}
-                          className="w-full"
-                        >
-                          Go to Room
-                        </button>
+                        <>
+                          <a
+                            href={patient.meetLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!patient.meetLink) {
+                                e.preventDefault();
+                                Swal.fire(
+                                  "Error",
+                                  "Meeting link is not available",
+                                  "error"
+                                );
+                              }
+                            }}
+                          >
+                            Go to Room
+                          </a>
+                        </>
                       )}
                     </div>
                   )}
                 </div>
+              </div>
+              <div>
+                <div>{patient.sex}</div>
               </div>
             </div>
           ))

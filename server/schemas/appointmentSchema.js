@@ -52,6 +52,14 @@ const appointmentSchema = new Schema(
       type: String,
       required: false,
     },
+    meetLink: {
+      type: String,
+      required: false,
+    },
+    sex: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields

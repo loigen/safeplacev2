@@ -1,4 +1,5 @@
-import axios from "axios";
+import axiosInstance from "../../../config/axiosConfig";
+
 export const updateProfile = async (formData, localFile) => {
   try {
     const formPayload = new FormData();
@@ -10,7 +11,7 @@ export const updateProfile = async (formData, localFile) => {
       formPayload.append("profile_picture", localFile);
     }
 
-    const response = await axios.put(
+    const response = await axiosInstance.put(
       `${process.env.REACT_APP_API_URL}/user/updateprofile`,
       formPayload,
       {

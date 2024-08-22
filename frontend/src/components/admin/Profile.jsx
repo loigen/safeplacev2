@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import LoadingSpinner from "../custom/LoadingSpinner";
+import axiosInstance from "../../config/axiosConfig";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -16,11 +16,12 @@ const Profile = () => {
     role: "",
   });
   const [lastUpdate, setLastUpdate] = useState(null);
+  const [loading, setLoading] = useState(false); // Loading state
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );
@@ -81,6 +82,8 @@ const Profile = () => {
       return;
     }
 
+    setLoading(true); // Set loading state to true
+
     try {
       const formPayload = new FormData();
       formPayload.append("firstname", formData.firstname);
@@ -92,7 +95,7 @@ const Profile = () => {
         formPayload.append("profile_picture", localFile); // Match field name with backend configuration
       }
 
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${process.env.REACT_APP_API_URL}/user/updateprofile`,
         formPayload,
         {
@@ -120,6 +123,8 @@ const Profile = () => {
     } catch (error) {
       setError("Error updating profile.");
       console.error("Error updating profile:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -217,10 +222,10 @@ const Profile = () => {
           <>
             <button
               onClick={handleSaveChanges}
-              disabled={!validateForm()}
+              disabled={!validateForm() || loading}
               className="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 disabled:opacity-50"
             >
-              Save Changes
+              {loading ? "Saving..." : "Save Changes"}
             </button>
             <button
               onClick={handleCancel}

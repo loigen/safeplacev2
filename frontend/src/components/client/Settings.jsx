@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
@@ -11,6 +10,7 @@ import { NavLink } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Profile from "./Profile";
 import ChangePassword from "../custom/ChangePassword";
+import axiosInstance from "../../config/axiosConfig";
 
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
@@ -22,7 +22,7 @@ const AdminSettings = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );

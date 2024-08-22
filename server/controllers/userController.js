@@ -141,7 +141,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find({ role: { $ne: "admin" } }).select(
       "-password"
-    ); // Exclude password from the result
+    );
 
     res.status(200).json({ users });
   } catch (error) {

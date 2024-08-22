@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const crypto = require("crypto");
+const { type } = require("os");
 
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
@@ -9,12 +10,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  status: { type: String, default: "active" }, // New field
+  sex: { type: String, required: true, enum: ["Male", "Female"] },
+
+  status: { type: String, default: "active" },
   password: { type: String, required: true },
   role: { type: String, enum: ["user", "admin"], default: "user" },
   profilePicture: { type: String, default: "" },
   bio: { type: String, default: "" },
-  birthdate: { type: Date, required: true }, // Set required to true
+  birthdate: { type: Date, required: true },
 });
 
 userSchema.methods.getGravatarUrl = function () {

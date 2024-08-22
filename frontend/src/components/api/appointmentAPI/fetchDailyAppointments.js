@@ -1,9 +1,9 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../../config/axiosConfig";
 
 export const fetchDailyAppointments = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosInstance.get(
       `${process.env.REACT_APP_API_URL}/Appointments/api/daily`
     );
     return response.data;

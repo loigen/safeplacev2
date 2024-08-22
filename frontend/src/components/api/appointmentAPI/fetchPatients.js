@@ -1,9 +1,9 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../../config/axiosConfig";
 
 export const fetchPatients = async () => {
   try {
-    const response = await axios.get(
+    const response = await axiosInstance.get(
       `${process.env.REACT_APP_API_URL}/Appointments/api/data`
     );
     return response.data;

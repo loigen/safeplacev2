@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InfoIcon from "@mui/icons-material/Info";
+import Swal from "sweetalert2"; // Import SweetAlert
+import MeetLinkModal from "./MeetLinkModal"; // Import the modal
+import axiosInstance from "../../config/axiosConfig";
+import LoadingSpinner from "./LoadingSpinner";
 
 const AppointmentRequest = () => {
-  const today = new Date();
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [appointments, setAppointments] = useState([]);
   const [filteredAppointments, setFilteredAppointments] = useState([]);
@@ -12,6 +14,8 @@ const AppointmentRequest = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [appointmentToAccept, setAppointmentToAccept] = useState(null);
 
   const handleShowDetails = (appointment) => {
     setSelectedAppointment(appointment);
@@ -21,20 +25,16 @@ const AppointmentRequest = () => {
     setSelectedAppointment(null);
   };
 
-  const handleAccept = async (id) => {
-    try {
-      await axios.patch(`http://localhost:5000/Appointments/api/accept/${id}`);
-      setAppointments((prevAppointments) =>
-        prevAppointments.filter((app) => app._id !== id)
-      );
-    } catch (error) {
-      setMessage("Failed to accept the appointment.");
-    }
+  const handleAccept = (appointment) => {
+    setAppointmentToAccept(appointment);
+    setIsModalOpen(true);
   };
 
   const handleReject = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/Appointments/api/reject/${id}`);
+      await axiosInstance.patch(
+        `http://localhost:5000/Appointments/api/reject/${id}`
+      );
       setAppointments((prevAppointments) =>
         prevAppointments.filter((app) => app._id !== id)
       );
@@ -43,10 +43,42 @@ const AppointmentRequest = () => {
     }
   };
 
+  const handleModalSubmit = async (meetLink) => {
+    if (!meetLink || !meetLink.startsWith("https://meet.google.com")) {
+      Swal.fire({
+        title: "Invalid Link",
+        text: "Please provide a valid Google Meet link.",
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
+      return;
+    }
+
+    if (appointmentToAccept) {
+      try {
+        await axiosInstance.patch(
+          `http://localhost:5000/Appointments/api/accept/${appointmentToAccept._id}`,
+          {
+            meetLink,
+          }
+        );
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter((app) => app._id !== appointmentToAccept._id)
+        );
+        setMessage("Appointment accepted successfully.");
+      } catch (error) {
+        setMessage("Failed to accept the appointment.");
+      } finally {
+        setIsModalOpen(false);
+        setAppointmentToAccept(null);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           "http://localhost:5000/Appointments/api/pending"
         );
         setAppointments(response.data);
@@ -68,9 +100,9 @@ const AppointmentRequest = () => {
           .includes(searchTerm.toLowerCase())
       )
     );
-  }, [appointments]);
+  }, [appointments, searchTerm]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <div>{error}</div>;
 
   return (
@@ -142,7 +174,7 @@ const AppointmentRequest = () => {
                 </p>
                 <div className="mt-4 flex justify-end">
                   <button
-                    onClick={() => handleAccept(appointment._id)}
+                    onClick={() => handleAccept(appointment)}
                     className="bg-[#2c6975] text-white font-semibold px-10 py-2 rounded hover:bg-[#1f4f5f]"
                   >
                     Accept
@@ -153,6 +185,7 @@ const AppointmentRequest = () => {
           })}
         </ul>
       )}
+
       {selectedAppointment && (
         <div
           className="fixed inset-0 bg-gray-800 bg-opacity-70 flex justify-center items-center z-50"
@@ -245,6 +278,13 @@ const AppointmentRequest = () => {
           </div>
         </div>
       )}
+
+      <MeetLinkModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleModalSubmit}
+      />
+
       {message && (
         <div className="fixed bottom-0 right-0 p-4 bg-red-500 text-white">
           {message}

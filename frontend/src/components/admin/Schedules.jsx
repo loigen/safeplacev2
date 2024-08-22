@@ -6,11 +6,9 @@ import CustomTimePicker from "../custom/CustomTimePicker";
 import Swal from "sweetalert2";
 import "../../styles/Schedules.css";
 import DeleteIcon from "@mui/icons-material/Delete";
-import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import InfoIcon from "@mui/icons-material/Info";
-import axios from "axios";
 import dayjs from "dayjs";
 import AppointmentRequest from "../custom/Appointment.request";
+import axiosInstance from "../../config/axiosConfig";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -30,7 +28,7 @@ const Schedules = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           "http://localhost:5000/Appointments/api/pending"
         );
         setAppointments(response.data);
@@ -46,7 +44,7 @@ const Schedules = () => {
   useEffect(() => {
     const handleFetchTodaysAppointment = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           "http://localhost:5000/Appointments/api/today"
         );
         setTodaysAppointments(response.data);
@@ -59,26 +57,10 @@ const Schedules = () => {
     handleFetchTodaysAppointment();
   }, []);
 
-  const handleAccept = async (id) => {
-    try {
-      await axios.patch(`http://localhost:5000/Appointments/api/accept/${id}`);
-      setAppointments(appointments.filter((app) => app._id !== id));
-    } catch (error) {
-      setMessage("Failed to accept the appointment.");
-    }
-  };
-  const handleReject = async (id) => {
-    try {
-      await axios.patch(`http://localhost:5000/Appointments/api/reject/${id}`);
-      setAppointments(appointments.filter((app) => app._id !== id));
-    } catch (error) {
-      setMessage("Failed to reject the appointment.");
-    }
-  };
   useEffect(() => {
     const fetchFreeSlots = async () => {
       try {
-        const response = await axios.get(`${API_URL}/schedules/slots`);
+        const response = await axiosInstance.get(`${API_URL}/schedules/slots`);
         setFreeSlots(response.data);
       } catch (error) {
         console.error("Error fetching free slots:", error);
@@ -106,7 +88,7 @@ const Schedules = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`${API_URL}/schedules/slots/${id}`);
+        await axiosInstance.delete(`${API_URL}/schedules/slots/${id}`);
         setFreeSlots(freeSlots.filter((slot) => slot._id !== id));
         Swal.fire("Success", "Free time slot deleted", "success");
       } catch (error) {
@@ -133,7 +115,7 @@ const Schedules = () => {
       console.log("Constructed New Time Date:", newTimeDate);
 
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/schedules/slots/check`,
           {
             params: {
@@ -153,10 +135,13 @@ const Schedules = () => {
           return;
         }
 
-        await axios.post(`${process.env.REACT_APP_API_URL}/schedules/slots`, {
-          date: selectedDate.toDateString(),
-          time,
-        });
+        await axiosInstance.post(
+          `${process.env.REACT_APP_API_URL}/schedules/slots`,
+          {
+            date: selectedDate.toDateString(),
+            time,
+          }
+        );
 
         setFreeSchedules((prevSchedules) => {
           const dateKey = selectedDate.toDateString();

@@ -6,13 +6,12 @@ import PatientDetails from "../custom/PatientDetail";
 import PatientList from "../custom/PatientList";
 import "../../styles/patient.css";
 import AppointmentStats from "../custom/AppointmentStats";
+import axiosInstance from "../../config/axiosConfig";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [activePatientIdList, setActivePatientIdList] = useState(null);
-  const [activeTab, setActiveTab] = useState("Reports");
-  const [newReports, setNewReports] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
@@ -46,7 +45,7 @@ const Patients = () => {
 
   const handleAccept = async (id) => {
     try {
-      await axios.patch(
+      await axiosInstance.patch(
         `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${id}`
       );
       setPatients(patients.filter((patient) => patient.id !== id));
@@ -60,7 +59,7 @@ const Patients = () => {
 
   const handleReject = async (id) => {
     try {
-      await axios.patch(
+      await axiosInstance.patch(
         `${process.env.REACT_APP_API_URL}/Appointments/api/reject/${id}`
       );
       setPatients(patients.filter((patient) => patient.id !== id));

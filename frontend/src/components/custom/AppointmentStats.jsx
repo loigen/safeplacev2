@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchPatients } from "../api/appointmentAPI/fetchPatients";
+import LoadingSpinner from "./LoadingSpinner";
 
 const AppointmentStats = () => {
   const [appointments, setAppointments] = useState({
@@ -39,7 +40,7 @@ const AppointmentStats = () => {
     setDateRange(e.target.value);
   };
 
-  if (loading) return <p className="text-center">Loading...</p>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   const renderAvatars = (appointments) => {

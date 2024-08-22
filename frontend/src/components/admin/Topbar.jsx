@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import "../../styles/topbar.css";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import profile from "../../images/defaultAvatar.jpg";
 import { NavLink } from "react-router-dom";
+import axiosInstance from "../../config/axiosConfig";
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
@@ -28,7 +28,7 @@ const Topbar = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );
@@ -46,15 +46,15 @@ const Topbar = () => {
 
     const fetchUnreadCounts = async () => {
       try {
-        const messagesResponse = await axios.get(
+        const messagesResponse = await axiosInstance.get(
           "http://localhost:5000/messages/unreadCount",
           { withCredentials: true }
         );
-        const notificationsResponse = await axios.get(
+        const notificationsResponse = await axiosInstance.get(
           "http://localhost:5000/notifications/unreadCount",
           { withCredentials: true }
         );
-        const notificationsListResponse = await axios.get(
+        const notificationsListResponse = await axiosInstance.get(
           "http://localhost:5000/notifications",
           { withCredentials: true }
         );
@@ -100,7 +100,7 @@ const Topbar = () => {
       }
 
       if (process.env.NODE_ENV !== "development") {
-        await axios.post(
+        await axiosInstance.post(
           `http://localhost:5000/notifications/markAsRead/${notificationId}`,
           {},
           { withCredentials: true }

@@ -18,7 +18,6 @@ const ChangePasswordForm = () => {
     if (blockTime) {
       const timeDifference = currentTime - blockTime;
       if (timeDifference < 86400000) {
-        // 24 hours in milliseconds
         setIsBlocked(true);
         Swal.fire({
           title: "Blocked!",
@@ -34,7 +33,6 @@ const ChangePasswordForm = () => {
     if (lastChangeTime) {
       const timeDifference = currentTime - lastChangeTime;
       if (timeDifference < 86400000) {
-        // 24 hours in milliseconds
         setIsDisabled(true);
         Swal.fire({
           title: "Please wait!",

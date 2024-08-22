@@ -1,8 +1,8 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../../config/axiosConfig";
 export const createAppointment = async (appointmentData) => {
   try {
-    const response = await axios.post(
+    const response = await axiosInstance.post(
       `${process.env.REACT_APP_API_URL}/Appointments/api/appointments`,
       appointmentData,
       {

@@ -3,6 +3,7 @@ import { Route, Redirect } from "react-router-dom";
 import axios from "axios";
 import UserDashboard from "./components/client/userDashboard";
 import AdminDashboard from "./components/admin/Dashboard";
+import LoadingSpinner from "./components/custom/LoadingSpinner";
 
 const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,7 +31,7 @@ const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!isAuthenticated) {

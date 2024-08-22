@@ -1,6 +1,7 @@
 const Appointment = require("../schemas/appointmentSchema");
 const cloudinary = require("../config/cloudinary");
 const { uploadReceipt } = require("../middlewares/multer");
+const mongoose = require("mongoose");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
@@ -16,6 +17,7 @@ exports.createAppointment = [
         email,
         role,
         avatar,
+        sex, // Added sex field
       } = req.body;
 
       if (
@@ -27,11 +29,12 @@ exports.createAppointment = [
         !lastname ||
         !email ||
         !role ||
+        !sex || // Check for sex field
         !req.file
       ) {
-        return res
-          .status(400)
-          .json({ message: "All fields are required, including the receipt." });
+        return res.status(400).json({
+          message: "All fields are required, including the receipt and sex.",
+        });
       }
 
       const result = await cloudinary.uploader.upload(req.file.path, {
@@ -50,6 +53,7 @@ exports.createAppointment = [
         email,
         role,
         avatar,
+        sex, // Include sex in the appointment
         receipt: receiptUrl,
       });
 
@@ -72,17 +76,32 @@ exports.getAppointments = async (req, res) => {
   }
 };
 
-exports.getAppointmentById = async (req, res) => {
+exports.getAppointmentsByUserId = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id).populate(
-      "userId"
-    );
-    if (!appointment)
-      return res.status(404).json({ message: "Appointment not found" });
-    res.status(200).json(appointment);
+    const { userId } = req.params;
+    console.log("Fetching appointments for userId:", userId);
+
+    // Validate the userId
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      console.error("Invalid userId:", userId);
+      return res.status(400).json({ error: "Invalid userId" });
+    }
+
+    // Find appointments by userId
+    const appointments = await Appointment.find({ userId });
+    console.log("Found appointments:", appointments);
+
+    if (appointments.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No appointments found for this user" });
+    }
+
+    // Return the appointments
+    return res.status(200).json({ appointments });
   } catch (error) {
-    console.error("Error fetching appointment:", error);
-    res.status(500).json({ message: "Failed to fetch appointment." });
+    console.error("Error fetching appointments:", error.message, error.stack);
+    return res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -173,11 +192,22 @@ exports.rejectAppointment = async (req, res) => {
 exports.acceptAppointment = async (req, res) => {
   try {
     const { id } = req.params;
+    const { meetLink } = req.body;
+
+    if (!meetLink) {
+      return res
+        .status(400)
+        .json({ message: "Meet link is required to accept the appointment" });
+    }
+
     const appointment = await Appointment.findById(id);
-    if (!appointment)
+    if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
+    }
 
     appointment.status = "accepted";
+    appointment.meetLink = meetLink;
+
     await appointment.save();
 
     res.status(200).json({ message: "Appointment accepted", appointment });
@@ -270,7 +300,7 @@ exports.getCompletionRate = async (req, res) => {
 exports.getAppointmentData = async (req, res) => {
   try {
     const appointments = await Appointment.find().select(
-      "date time appointmentType status firstname lastname avatar"
+      "date time appointmentType status firstname lastname avatar sex meetLink"
     );
 
     const appointmentData = appointments.map((appointment) => ({
@@ -282,6 +312,8 @@ exports.getAppointmentData = async (req, res) => {
       typeOfCounseling: appointment.appointmentType,
       avatar: appointment.avatar,
       email: appointment.email,
+      sex: appointment.sex,
+      meetLink: appointment.meetLink,
     }));
 
     res.status(200).json(appointmentData);

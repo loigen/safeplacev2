@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { NavLink } from "react-router-dom";
 import "../../styles/sidebar.css";
 import logo from "../../images/bigLogo.png";
@@ -7,11 +6,12 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
+import axiosInstance from "../../config/axiosConfig";
 
 const Sidebar = () => {
   const handleLogout = async () => {
     try {
-      await axios.post(
+      await axiosInstance.post(
         "http://localhost:5000/auth/logout",
         {},
         { withCredentials: true }

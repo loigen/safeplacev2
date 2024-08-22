@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import Swal from "sweetalert2";
 import LoadingSpinner from "../custom/LoadingSpinner";
+import axiosInstance from "../../config/axiosConfig";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -20,7 +20,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );
@@ -92,7 +92,7 @@ const Profile = () => {
         formPayload.append("profile_picture", localFile); // Match field name with backend configuration
       }
 
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${process.env.REACT_APP_API_URL}/user/updateprofile`,
         formPayload,
         {

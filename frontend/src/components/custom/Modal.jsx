@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
-import axios from "axios";
+import axiosInstance from "../../config/axiosConfig";
 
 Modal.setAppElement("#root"); // Make sure to set the root element for accessibility
 
@@ -22,7 +22,7 @@ const UpdateProfileModal = ({ user, isOpen, onRequestClose, updateUser }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         "http://localhost:5000/user/profile",
         formData,
         { withCredentials: true }

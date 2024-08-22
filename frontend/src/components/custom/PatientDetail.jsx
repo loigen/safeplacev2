@@ -1,6 +1,4 @@
 import React from "react";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import CustomFileUpload from "../custom/customInputField";
 import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";

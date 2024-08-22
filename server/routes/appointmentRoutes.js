@@ -9,7 +9,10 @@ router.post("/appointments", appointmentController.createAppointment);
 router.get("/appointments", appointmentController.getAppointments);
 
 // Get appointment by ID
-router.get("/appointments/:id", appointmentController.getAppointmentById);
+router.get(
+  "/myAppointment/:userId",
+  appointmentController.getAppointmentsByUserId
+);
 
 // Update appointment
 router.put("/appointments/:id", appointmentController.updateAppointment);

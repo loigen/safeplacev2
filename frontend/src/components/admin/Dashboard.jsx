@@ -14,7 +14,7 @@ const Dashboard = ({ children }) => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Check on component mount
+    handleResize();
 
     return () => {
       window.removeEventListener("resize", handleResize);

@@ -16,7 +16,8 @@ function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [birthdate, setBirthdate] = useState(""); // Added birthdate state
+  const [birthdate, setBirthdate] = useState("");
+  const [sex, setSex] = useState(""); // Added sex state
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -31,7 +32,8 @@ function Signup() {
       email.trim() &&
       password.trim() &&
       repeatPassword.trim() &&
-      birthdate.trim() && // Added birthdate check
+      birthdate.trim() &&
+      sex && // Added sex check
       agreement
     ) {
       setIsButtonDisabled(false);
@@ -45,8 +47,9 @@ function Signup() {
     password,
     repeatPassword,
     birthdate,
+    sex,
     agreement,
-  ]); // Added birthdate dependency
+  ]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,7 +69,8 @@ function Signup() {
         email,
         password,
         repeatPassword,
-        birthdate, // Included birthdate in the request payload
+        birthdate,
+        sex, // Added sex field
       });
 
       if (response.status === 201) {
@@ -77,7 +81,8 @@ function Signup() {
         setEmail("");
         setPassword("");
         setRepeatPassword("");
-        setBirthdate(""); // Reset birthdate
+        setBirthdate("");
+        setSex(""); // Reset sex field
 
         history.push("/login");
       } else {
@@ -95,7 +100,7 @@ function Signup() {
   };
 
   const handleBackClick = () => {
-    history.push("/LandingPage");
+    history.push("/");
   };
 
   return (
@@ -123,32 +128,38 @@ function Signup() {
         <div className="form">
           <form onSubmit={handleSubmit}>
             <div className="inputFields">
-              <label htmlFor="firstname">
-                <span>
-                  <PersonOutlineIcon />
-                </span>
-                First Name:
-              </label>
-              <input
-                type="text"
-                value={firstname}
-                onChange={(e) => setFirstname(e.target.value)}
-                placeholder="First Name"
-                required
-              />
-              <label htmlFor="lastname">
-                <span>
-                  <PersonOutlineIcon />
-                </span>
-                Last Name:
-              </label>
-              <input
-                type="text"
-                value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
-                placeholder="Last Name"
-                required
-              />
+              <div className="flex flex-row justify-between">
+                <div>
+                  <label htmlFor="firstname">
+                    <span>
+                      <PersonOutlineIcon />
+                    </span>
+                    First Name:
+                  </label>
+                  <input
+                    type="text"
+                    value={firstname}
+                    onChange={(e) => setFirstname(e.target.value)}
+                    placeholder="First Name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lastname">
+                    <span>
+                      <PersonOutlineIcon />
+                    </span>
+                    Last Name:
+                  </label>
+                  <input
+                    type="text"
+                    value={lastname}
+                    onChange={(e) => setLastname(e.target.value)}
+                    placeholder="Last Name"
+                    required
+                  />
+                </div>
+              </div>
               <label htmlFor="email">
                 <span>
                   <ContactMailIcon />
@@ -175,6 +186,32 @@ function Signup() {
                 placeholder="Birthdate"
                 required
               />
+              <label htmlFor="sex">
+                <span>
+                  <PersonOutlineIcon />
+                </span>
+                Gender:
+              </label>
+              <div className="radioGroup flex gap-2">
+                <label>
+                  <input
+                    type="radio"
+                    value="Male"
+                    checked={sex === "Male"}
+                    onChange={(e) => setSex(e.target.value)}
+                  />
+                  Male
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="Female"
+                    checked={sex === "Female"}
+                    onChange={(e) => setSex(e.target.value)}
+                  />
+                  Female
+                </label>
+              </div>
               <label htmlFor="password">
                 <span>
                   <LockOpenIcon />

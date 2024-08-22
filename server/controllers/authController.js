@@ -12,7 +12,8 @@ const validateSignupData = (
   email,
   password,
   repeatPassword,
-  birthdate
+  birthdate,
+  sex
 ) => {
   if (
     !firstname ||
@@ -20,7 +21,8 @@ const validateSignupData = (
     !email ||
     !password ||
     !repeatPassword ||
-    !birthdate
+    !birthdate ||
+    !sex
   ) {
     return "All fields are required";
   }
@@ -33,20 +35,31 @@ const validateSignupData = (
   if (!validator.isISO8601(birthdate, { strict: true })) {
     return "Invalid birthdate";
   }
+  if (!["Male", "Female"].includes(sex)) {
+    return "Sex must be either 'Male' or 'Female'";
+  }
   return null;
 };
 
-// Signup
 exports.signup = async (req, res) => {
-  const { firstname, lastname, email, password, repeatPassword, birthdate } =
-    req.body;
+  const {
+    firstname,
+    lastname,
+    email,
+    password,
+    repeatPassword,
+    birthdate,
+    sex,
+  } = req.body;
+
   const errorMessage = validateSignupData(
     firstname,
     lastname,
     email,
     password,
     repeatPassword,
-    birthdate
+    birthdate,
+    sex
   );
 
   if (errorMessage) {
@@ -61,6 +74,7 @@ exports.signup = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const role = email === "jebBohol@gmail.com" ? "admin" : "user";
+
     const user = new User({
       firstname,
       lastname,
@@ -68,7 +82,9 @@ exports.signup = async (req, res) => {
       password: hashedPassword,
       role,
       birthdate: new Date(birthdate),
+      sex,
     });
+
     await user.save();
     res.status(201).json({ message: "User created" });
   } catch (error) {
@@ -99,7 +115,6 @@ exports.login = async (req, res) => {
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
     req.session.token = token;
 
-    // Send back the token and user role
     res.status(200).json({ token, role: user.role });
   } catch (error) {
     console.error("Login error:", error);

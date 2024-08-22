@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import Swal from "sweetalert2";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -12,18 +10,17 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import Profile from "./Profile";
 import ChangePassword from "../custom/ChangePassword";
 import ManageUsers from "./ManageUsers";
+import axiosInstance from "../../config/axiosConfig";
 
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [avatar, setAvatar] = useState(null);
-  const [name, setName] = useState(null);
-  const [view, setView] = useState("settings"); // State to manage which component is displayed
+  const [view, setView] = useState("settings");
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );

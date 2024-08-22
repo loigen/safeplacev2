@@ -73,7 +73,8 @@
 
 .cardSignup .form form input[type="text"],
 .cardSignup .form form input[type="email"],
-.cardSignup .form form input[type="password"] {
+.cardSignup .form form input[type="password"],
+.cardSignup .form form input[type="date"] {
   box-shadow: 2px 2px 5px gray;
   padding: 10px;
   border-radius: 10px;
@@ -82,7 +83,8 @@
 
 .cardSignup .form form input[type="text"]:focus,
 .cardSignup .form form input[type="email"]:focus,
-.cardSignup .form form input[type="password"]:focus {
+.cardSignup .form form input[type="password"]:focus,
+.cardSignup .form form input[type="date"]:focus {
   outline: #2c6975 2px solid;
 }
 

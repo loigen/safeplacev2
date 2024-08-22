@@ -1,8 +1,8 @@
-import axios from "axios";
 import Swal from "sweetalert2";
+import axiosInstance from "../../../config/axiosConfig";
 export const createFolder = async (patientId, folderName) => {
   try {
-    await axios.post(
+    await axiosInstance.post(
       `${process.env.REACT_APP_API_URL}/Appointments/api/folders`,
       {
         patientId,

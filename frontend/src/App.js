@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "./App.css";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
 import LandingPage from "./components/LandingPage.component";
@@ -12,9 +13,7 @@ import Home from "./components/admin/Home";
 import Patients from "./components/admin/Patients";
 import Schedules from "./components/admin/Schedules";
 import BLog from "./components/admin/BLog";
-import Settings from "./components/admin/Settings";
 import MrJebBlog from "./components/client/MrJebBlog";
-import PatientsCalendar from "./components/client/PatientsCalendar";
 import AppointmentsPage from "./components/client/AppointmentsPage";
 import PatientDetail from "./components/custom/PatientDetail";
 import AdminSettings from "./components/admin/Settings";

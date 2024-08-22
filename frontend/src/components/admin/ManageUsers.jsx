@@ -105,6 +105,7 @@ const ManageUsers = () => {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Sex</th>
             <th>Email</th>
             <th>Status</th>
             <th>Actions</th>
@@ -116,6 +117,7 @@ const ManageUsers = () => {
               <td>
                 {user.firstname} {user.lastname}
               </td>
+              <td>{user.sex}</td>
               <td>{user.email}</td>
               <td>{user.status}</td>
               <td>
