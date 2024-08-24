@@ -6,7 +6,7 @@ import {
   getUsers,
   blockUser,
   unblockUser,
-} from "../api/manageUsers/userService";
+} from "../../api/manageUsers/userService";
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);

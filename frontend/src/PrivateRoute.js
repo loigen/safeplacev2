@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Route, Redirect } from "react-router-dom";
 import axios from "axios";
-import UserDashboard from "./components/client/userDashboard";
-import AdminDashboard from "./components/admin/Dashboard";
+import UserDashboard from "./pages/client/userDashboard";
+import AdminDashboard from "./pages/admin/Dashboard";
 import LoadingSpinner from "./components/custom/LoadingSpinner";
 
 const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {

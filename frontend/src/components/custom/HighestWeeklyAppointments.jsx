@@ -1,6 +1,6 @@
 import React from "react";
 import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-import useHighestWeeklyAppointments from "../api/appointmentAPI/useHighestWeeklyAppointments";
+import useHighestWeeklyAppointments from "../../api/appointmentAPI/useHighestWeeklyAppointments";
 import LoadingSpinner from "./LoadingSpinner";
 
 const HighestWeeklyAppointments = () => {

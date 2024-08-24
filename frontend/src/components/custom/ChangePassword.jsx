@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { changePassword } from "../api/userAPI/changePassword";
+import { changePassword } from "../../api/userAPI/changePassword";
 
 const ChangePasswordForm = () => {
   const [currentPassword, setCurrentPassword] = useState("");

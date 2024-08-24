@@ -20,10 +20,7 @@ const Navpar = () => {
           <img src={logo} alt="" className="logo" />
         </div>
         <div className={`nav-links ${isOpen ? "hidden md:flex" : "md:flex"}`}>
-          <div
-            className="nav-link"
-            onClick={() => handleCardClick("/landingpage")}
-          >
+          <div className="nav-link" onClick={() => handleCardClick("/")}>
             Home
           </div>
           <div className="nav-link" onClick={() => handleCardClick("/About")}>
@@ -35,7 +32,10 @@ const Navpar = () => {
           <div className="nav-link" onClick={() => handleCardClick("/Contact")}>
             Contact
           </div>
-          <div className="nav-link" onClick={() => handleCardClick("/Contact")}>
+          <div
+            className="nav-link"
+            onClick={() => handleCardClick("/guestBlog")}
+          >
             Blog
           </div>
           <div className="nav-link" onClick={() => handleCardClick("/login")}>

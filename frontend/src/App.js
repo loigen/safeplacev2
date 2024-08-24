@@ -1,23 +1,27 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
-import Signup from "./components/Signup";
-import Login from "./components/Login";
-import LandingPage from "./components/LandingPage.component";
-import About from "./components/About.component";
-import Contact from "./components/contact.component";
-import NotFound from "./components/NotFound";
+
 import PrivateRoute from "./PrivateRoute";
 import Profile from "./components/admin/Profile";
-import Home from "./components/admin/Home";
-import Patients from "./components/admin/Patients";
-import Schedules from "./components/admin/Schedules";
-import BLog from "./components/admin/BLog";
-import MrJebBlog from "./components/client/MrJebBlog";
-import AppointmentsPage from "./components/client/AppointmentsPage";
+import Home from "./pages/admin/Home";
+import Patients from "./pages/admin/Patients";
+import MrJebBlog from "./pages/client/MrJebBlog";
+import AppointmentsPage from "./pages/client/AppointmentsPage";
 import PatientDetail from "./components/custom/PatientDetail";
-import AdminSettings from "./components/admin/Settings";
-import ClientSettings from "./components/client/Settings";
+import AdminSettings from "./pages/admin/Settings";
+import ClientSettings from "./pages/client/Settings";
+import BLog from "./pages/admin/BLog";
+import Schedules from "./pages/admin/Schedules";
+import {
+  BlogGuestPage,
+  Contact,
+  NotFound,
+  LandingPage,
+  About,
+  Signup,
+  Login,
+} from "./components";
 
 const App = () => {
   return (
@@ -27,6 +31,7 @@ const App = () => {
         <Route exact path="/" component={LandingPage} />
         <Route path="/about" component={About} />
         <Route path="/contact" component={Contact} />
+        <Route path="/guestBlog" component={BlogGuestPage} />
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
         <Route path="/patients/:id" element={PatientDetail} />

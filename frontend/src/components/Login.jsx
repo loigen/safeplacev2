@@ -24,7 +24,7 @@ const Login = () => {
   }, [email, password]);
 
   const handleBackClick = () => {
-    history.push("/LandingPage");
+    history.push("/");
   };
 
   const handleLogin = async (e) => {

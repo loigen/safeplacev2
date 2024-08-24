@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchAppointmentsByUserId } from "../api/appointmentAPI/fetchAppointmentsByUserId";
+import { fetchAppointmentsByUserId } from "../../api/appointmentAPI/fetchAppointmentsByUserId";
 import axiosInstance from "../../config/axiosConfig";
 
 const Appointments = () => {
@@ -31,7 +31,6 @@ const Appointments = () => {
       if (!user) return;
       try {
         const data = await fetchAppointmentsByUserId(user._id);
-        // Filter appointments to show only 'pending' and 'accepted'
         const filteredAppointments = data.filter(
           (appointment) =>
             appointment.status === "pending" ||

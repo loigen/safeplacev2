@@ -1,11 +1,9 @@
-import About from "./About.component"
-import Contact from "./contact.component"
-import LandingPage from "./LandingPage.component"
-import NotFound from "./NotFound"
+import About from "./About.component";
+import BlogGuestPage from "./BlogGuestPage";
+import Contact from "./contact.component";
+import LandingPage from "./LandingPage.component";
+import Login from "./Login";
+import NotFound from "./NotFound";
+import Signup from "./Signup";
 
-export {
-    About,
-    Contact,
-    LandingPage,
-    NotFound
-}
+export { About, Contact, LandingPage, NotFound, BlogGuestPage, Login, Signup };

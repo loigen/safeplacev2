@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchPatients } from "../api/appointmentAPI/fetchPatients";
+import { fetchPatients } from "../../api/appointmentAPI/fetchPatients";
 import LoadingSpinner from "./LoadingSpinner";
 
 const AppointmentStats = () => {

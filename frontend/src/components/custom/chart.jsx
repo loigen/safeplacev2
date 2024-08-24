@@ -10,10 +10,10 @@ import {
   Legend,
 } from "chart.js";
 import "../../styles/WorkloadChart.css";
-import { fetchDailyAppointments } from "../api/appointmentAPI/fetchDailyAppointments";
-import { fetchDailyCancelAppointments } from "../api/appointmentAPI/fetchDailyCancelledAppointment";
-import { fetchDailyAppointmentsForMonth } from "../api/appointmentAPI/fetchDailyAppointmentsForMonth";
-import { fetchDailyAppointmentsForYear } from "../api/appointmentAPI/fetchDailyAppointmentsForYear";
+import { fetchDailyAppointments } from "../../api/appointmentAPI/fetchDailyAppointments";
+import { fetchDailyCancelAppointments } from "../../api/appointmentAPI/fetchDailyCancelledAppointment";
+import { fetchDailyAppointmentsForMonth } from "../../api/appointmentAPI/fetchDailyAppointmentsForMonth";
+import { fetchDailyAppointmentsForYear } from "../../api/appointmentAPI/fetchDailyAppointmentsForYear";
 
 ChartJS.register(
   CategoryScale,
