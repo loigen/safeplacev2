@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
 import { NavLink } from "react-router-dom";
@@ -17,7 +17,7 @@ const AdminSettings = () => {
   const [error, setError] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const [name, setName] = useState(null);
-  const [view, setView] = useState("settings"); // State to manage which component is displayed
+  const [view, setView] = useState("settings");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -126,9 +126,9 @@ const AdminSettings = () => {
       {view !== "settings" && (
         <button
           onClick={() => setView("settings")}
-          className="bg-gray-600 text-white rounded-lg px-4 py-2 hover:bg-gray-700 mb-4"
+          className="text-[#2c6975]  rounded-lg px-4 py-2  mb-4"
         >
-          Back
+          <ArrowBackIcon style={{ fontSize: "3rem" }} />
         </button>
       )}
       {renderView()}

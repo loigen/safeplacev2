@@ -11,7 +11,7 @@ import Profile from "./Profile";
 import ChangePassword from "../custom/ChangePassword";
 import ManageUsers from "./ManageUsers";
 import axiosInstance from "../../config/axiosConfig";
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
   const [avatar, setAvatar] = useState(null);
@@ -135,9 +135,9 @@ const AdminSettings = () => {
       {view !== "settings" && (
         <button
           onClick={() => setView("settings")}
-          className="bg-gray-600 text-white rounded-lg px-4 py-2 hover:bg-gray-700 mb-4"
+          className=" text-[#2c6975] rounded-lg px-4 py-2 mb-4"
         >
-          Back
+          <ArrowBackIcon style={{ fontSize: "3rem" }} />
         </button>
       )}
       {renderView()}

@@ -171,3 +171,19 @@ exports.getNewestBlogs = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch newest blogs" });
   }
 };
+exports.getAllDrafts = async (req, res) => {
+  try {
+    const drafts = await Blog.find({ status: "draft" }).sort({
+      createdDate: -1,
+    });
+
+    if (!drafts.length) {
+      return res.status(404).json({ message: "No drafts found" });
+    }
+
+    res.status(200).json({ drafts });
+  } catch (error) {
+    console.error("Error fetching drafts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

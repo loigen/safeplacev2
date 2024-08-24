@@ -9,6 +9,7 @@ import AddIcon from "@mui/icons-material/Add";
 import dayjs from "dayjs";
 import BlogModal from "./CreateBlogForm"; // Ensure this path is correct
 import { useHistory } from "react-router-dom"; // Assuming you use react-router-dom
+import DraftsPage from "./DraftsPAge";
 
 const categories = [
   { id: "Technology", name: "Technology" },
@@ -57,10 +58,6 @@ const BLog = () => {
               title: "Error",
               text: "No favorite blogs. Please add favorites.",
               confirmButtonText: "Add Favorites",
-              customClass: {
-                confirmButton: "swal-button-confirm",
-              },
-              buttonsStyling: false,
             }).then((result) => {
               if (result.isConfirmed) {
                 setView("all");
@@ -155,7 +152,7 @@ const BLog = () => {
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="px-[10%] py-[3%]">
+    <div className="px-[10%] bg-white py-[3%]">
       <div className="mb-4 flex items-center gap-20">
         <button
           onClick={openModal}
@@ -172,7 +169,7 @@ const BLog = () => {
           placeholder="Search blogs..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-none py-3 px-10 rounded-full mr-4 flex-1"
+          className="border border-none shadow-2xl py-3 px-10 rounded-full mr-4 flex-1"
         />
         <div>
           <label htmlFor="view" className="mr-2 font-semibold text-gray-700">
@@ -187,87 +184,97 @@ const BLog = () => {
             <option value="all">All Blogs</option>
             <option value="favorites">Favorites</option>
             <option value="newest">Newest</option>
+            <option value="drafts">Drafts</option>
           </select>
         </div>
       </div>
       <BlogModal isOpen={isModalOpen} onClose={closeModal} />
-      <div className="flex flex-col w-full justify-center items-center mx-auto p-6 bg-transparent rounded-lg">
-        <div className="mb-4 w-full justify-between flex border-b border-gray-300">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 text-sm font-semibold ${
-                selectedCategory === category.id
-                  ? "border-b-4 border-t-0 border-l-0 border-r-0  border-b-[#2C6975] text-black"
-                  : "border-none bg-transparent text-gray-800"
-              } border rounded-t-md hover:border-b-[#2C6975] hover:border-b-4 hover:border-solid focus:outline-none `}
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
 
-        {filteredBlogs.length === 0 ? (
-          <div className="text-center text-gray-600">
-            {view === "favorites" ? (
-              <>
-                <p>No favorites found, please add some favorites.</p>
-                <button onClick={() => setView("all")}>go to newsfeed</button>
-              </>
-            ) : (
-              <p>No blogs available for this category.</p>
-            )}
+      {view === "drafts" ? (
+        <DraftsPage searchQuery={searchQuery} />
+      ) : (
+        <div className="flex flex-col w-full justify-center items-center mx-auto p-6 bg-transparent rounded-lg">
+          <div className="mb-4 w-full justify-between flex border-b border-gray-300">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className={`px-4 py-2 text-sm font-semibold ${
+                  selectedCategory === category.id
+                    ? "border-b-4 border-t-0 border-l-0 border-r-0  border-b-[#2C6975] text-black"
+                    : "border-none bg-transparent text-gray-800"
+                } border rounded-t-md hover:border-b-[#2C6975] hover:border-b-4 hover:border-solid focus:outline-none `}
+              >
+                {category.name}
+              </button>
+            ))}
           </div>
-        ) : (
-          filteredBlogs.map((blog) => (
-            <div
-              key={blog._id}
-              className="border w-[40vw] border-gray-300 p-4 rounded-md shadow-sm mb-4"
-            >
-              <div className="flex gap-2 items-center">
-                <h2>{blog.author}</h2>·
-                <h2 className="text-gray-700 text-sm">
-                  {dayjs(blog.createdDate).format("YYYY-MM-DD")}
-                </h2>
-              </div>
-              <h3 className="text-2xl capitalize font-medium">{blog.title}</h3>
-              <p className="mb-4 text-sm w-full">
-                {expandedBlogs.has(blog._id)
-                  ? blog.content
-                  : blog.content.length > 200
-                  ? blog.content.substring(0, 200) + "..."
-                  : blog.content}
-                {blog.content.length > 200 && (
-                  <button
-                    onClick={() => handleToggleExpand(blog._id)}
-                    className="text-blue-600 hover:underline "
-                  >
-                    {expandedBlogs.has(blog._id) ? "Read Less" : "Read More"}
-                  </button>
-                )}
-              </p>
-              <div className="flex justify-end">
-                <button
-                  onClick={() => handleToggleFavorite(blog._id)}
-                  className=" relative group"
-                >
-                  {favoriteBlogs.some((favBlog) => favBlog._id === blog._id) ? (
-                    <FavoriteIcon className="text-red-500" />
-                  ) : (
-                    <FavoriteBorderIcon />
-                  )}
-                  <span className="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 bottom-full mb-2">
-                    {favoriteBlogs.some((favBlog) => favBlog._id === blog._id)
-                      ? "Remove from Favorites"
-                      : "Add to Favorites"}
-                  </span>
-                </button>
-              </div>
+
+          {filteredBlogs.length === 0 ? (
+            <div className="text-center text-gray-600">
+              {view === "favorites" ? (
+                <>
+                  <p>No favorites found, please add some favorites.</p>
+                  <button onClick={() => setView("all")}>go to newsfeed</button>
+                </>
+              ) : (
+                <p>No blogs available for this category.</p>
+              )}
             </div>
-          ))
-        )}
-      </div>
+          ) : (
+            filteredBlogs.map((blog) => (
+              <div
+                key={blog._id}
+                className="border w-[40vw] border-gray-300 p-4 rounded-md shadow-sm mb-4"
+              >
+                <div className="flex gap-2 items-center">
+                  <h2>{blog.author}</h2>·
+                  <h2 className="text-gray-700 text-sm">
+                    {dayjs(blog.createdDate).format("YYYY-MM-DD")}
+                  </h2>
+                </div>
+                <h3 className="text-2xl capitalize font-medium">
+                  {blog.title}
+                </h3>
+                <p className="mb-4 text-sm w-full">
+                  {expandedBlogs.has(blog._id)
+                    ? blog.content
+                    : blog.content.length > 200
+                    ? blog.content.substring(0, 200) + "..."
+                    : blog.content}
+                  {blog.content.length > 200 && (
+                    <button
+                      onClick={() => handleToggleExpand(blog._id)}
+                      className="text-blue-600 hover:underline "
+                    >
+                      {expandedBlogs.has(blog._id) ? "Read Less" : "Read More"}
+                    </button>
+                  )}
+                </p>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => handleToggleFavorite(blog._id)}
+                    className=" relative group"
+                  >
+                    {favoriteBlogs.some(
+                      (favBlog) => favBlog._id === blog._id
+                    ) ? (
+                      <FavoriteIcon className="text-red-500" />
+                    ) : (
+                      <FavoriteBorderIcon />
+                    )}
+                    <span className="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 bottom-full mb-2">
+                      {favoriteBlogs.some((favBlog) => favBlog._id === blog._id)
+                        ? "Remove from Favorites"
+                        : "Add to Favorites"}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -22,4 +22,6 @@ router.get("/all", blogController.getAllBlogs);
 
 router.get("/allBlogs", blogController.getAllBlogs);
 
+router.get("/drafts", blogController.getAllDrafts);
+
 module.exports = router;
