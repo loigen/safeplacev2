@@ -8,6 +8,7 @@ import LoadingSpinner from "../custom/LoadingSpinner";
 import AddIcon from "@mui/icons-material/Add";
 import dayjs from "dayjs";
 import BlogModal from "./CreateBlogForm"; // Ensure this path is correct
+import { useHistory } from "react-router-dom"; // Assuming you use react-router-dom
 
 const categories = [
   { id: "Technology", name: "Technology" },
@@ -22,18 +23,20 @@ const BLog = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [view, setView] = useState("all");
+  const [view, setView] = useState("favorites");
   const [selectedCategory, setSelectedCategory] = useState("Technology");
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteBlogs, setFavoriteBlogs] = useState([]);
   const [expandedBlogs, setExpandedBlogs] = useState(new Set());
+
+  const history = useHistory();
 
   useEffect(() => {
     const fetchUserProfileAndBlogs = async () => {
       setLoading(true);
       try {
         const userProfile = await fetchUserProfile();
-        setUserId(userProfile._id); // or the correct field for user ID
+        setUserId(userProfile._id);
 
         const blogsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/blog/allBlogs`
@@ -41,10 +44,29 @@ const BLog = () => {
         setBlogs(blogsResponse.data.blogs);
 
         if (view === "favorites" && userProfile._id) {
-          const favoritesResponse = await axios.get(
-            `${process.env.REACT_APP_API_URL}/blog/userFavorites/${userProfile._id}`
-          );
-          setFavoriteBlogs(favoritesResponse.data.blogs || []);
+          try {
+            const favoritesResponse = await axios.get(
+              `${process.env.REACT_APP_API_URL}/blog/userFavorites/${userProfile._id}`
+            );
+            setFavoriteBlogs(favoritesResponse.data.blogs || []);
+          } catch (favoriteError) {
+            console.error("Error fetching favorites:", favoriteError);
+
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "No favorite blogs. Please add favorites.",
+              confirmButtonText: "Add Favorites",
+              customClass: {
+                confirmButton: "swal-button-confirm",
+              },
+              buttonsStyling: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                setView("all");
+              }
+            });
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -71,7 +93,7 @@ const BLog = () => {
 
       const response = await axios.post(url);
       Swal.fire({
-        icon: isFavorite ? "success" : "info",
+        icon: isFavorite ? "success" : "success",
         title: isFavorite ? "Removed from Favorites" : "Added to Favorites",
         text: response.data.message,
       });
@@ -187,16 +209,21 @@ const BLog = () => {
         </div>
 
         {filteredBlogs.length === 0 ? (
-          <p className="text-center text-gray-600">
-            {view === "favorites"
-              ? "No favorites found, please add some favorites."
-              : "No blogs available for this category."}
-          </p>
+          <div className="text-center text-gray-600">
+            {view === "favorites" ? (
+              <>
+                <p>No favorites found, please add some favorites.</p>
+                <button onClick={() => setView("all")}>go to newsfeed</button>
+              </>
+            ) : (
+              <p>No blogs available for this category.</p>
+            )}
+          </div>
         ) : (
           filteredBlogs.map((blog) => (
             <div
               key={blog._id}
-              className="border w-[60%] border-gray-300 p-4 rounded-md shadow-sm mb-4"
+              className="border w-[40vw] border-gray-300 p-4 rounded-md shadow-sm mb-4"
             >
               <div className="flex gap-2 items-center">
                 <h2>{blog.author}</h2>·
@@ -205,7 +232,7 @@ const BLog = () => {
                 </h2>
               </div>
               <h3 className="text-2xl capitalize font-medium">{blog.title}</h3>
-              <p className="mb-4 text-sm">
+              <p className="mb-4 text-sm w-full">
                 {expandedBlogs.has(blog._id)
                   ? blog.content
                   : blog.content.length > 200
@@ -214,25 +241,27 @@ const BLog = () => {
                 {blog.content.length > 200 && (
                   <button
                     onClick={() => handleToggleExpand(blog._id)}
-                    className="text-blue-600 hover:underline ml-2"
+                    className="text-blue-600 hover:underline "
                   >
                     {expandedBlogs.has(blog._id) ? "Read Less" : "Read More"}
                   </button>
                 )}
               </p>
-              <div className="flex justify-end items-center mt-4">
-                <span className="text-sm text-gray-600">
-                  {blog.readerIDs ? blog.readerIDs.length : 0} Hearts
-                </span>
+              <div className="flex justify-end">
                 <button
                   onClick={() => handleToggleFavorite(blog._id)}
-                  className="text-gray-600 hover:text-gray-800 focus:outline-none"
+                  className=" relative group"
                 >
                   {favoriteBlogs.some((favBlog) => favBlog._id === blog._id) ? (
-                    <FavoriteIcon className="text-red-600" />
+                    <FavoriteIcon className="text-red-500" />
                   ) : (
-                    <FavoriteBorderIcon className="text-gray-400" />
+                    <FavoriteBorderIcon />
                   )}
+                  <span className="absolute hidden group-hover:block bg-gray-700 text-white text-xs rounded px-2 py-1 bottom-full mb-2">
+                    {favoriteBlogs.some((favBlog) => favBlog._id === blog._id)
+                      ? "Remove from Favorites"
+                      : "Add to Favorites"}
+                  </span>
                 </button>
               </div>
             </div>

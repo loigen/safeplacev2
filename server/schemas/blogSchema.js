@@ -18,12 +18,15 @@ const blogSchema = new Schema({
   },
   createdDate: {
     type: Date,
-    required: true,
+    required: false,
     default: Date.now,
   },
   createdTime: {
     type: String,
-    required: true,
+    default: function () {
+      return new Date().toTimeString().split(" ")[0];
+    },
+    required: false,
   },
 
   status: {
@@ -37,7 +40,7 @@ const blogSchema = new Schema({
   },
   readerIDs: [
     {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: false,
     },
