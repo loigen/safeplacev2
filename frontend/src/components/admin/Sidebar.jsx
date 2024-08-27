@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "../../styles/sidebar.css";
 import logo from "../../images/bigLogo.png";
@@ -11,7 +11,10 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import axiosInstance from "../../config/axiosConfig";
 
 const Sidebar = () => {
+  const [loading, setLoading] = useState(false);
+
   const handleLogout = async () => {
+    setLoading(true);
     try {
       await axiosInstance.post(
         "http://localhost:5000/auth/logout",
@@ -22,6 +25,7 @@ const Sidebar = () => {
       window.location.href = "/login";
     } catch (error) {
       console.error("Error logging out:", error);
+      setLoading(false);
     }
   };
 
@@ -82,8 +86,13 @@ const Sidebar = () => {
           <button
             className="flex text-[#2c6975] font-bold flex-row justify-center items-center"
             onClick={handleLogout}
+            disabled={loading}
           >
-            <LogoutIcon fontSize="large" />
+            {loading ? (
+              <span>Logging out...</span>
+            ) : (
+              <LogoutIcon fontSize="large" />
+            )}
           </button>
         </div>
       </div>
