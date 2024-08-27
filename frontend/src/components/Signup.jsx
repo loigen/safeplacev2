@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import Swal from "sweetalert2";
 import "./../styles/Signup.css";
 import logo from "../images/bannerLogo.png";
 
@@ -17,7 +18,7 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [birthdate, setBirthdate] = useState("");
-  const [sex, setSex] = useState(""); // Added sex state
+  const [sex, setSex] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -33,7 +34,7 @@ function Signup() {
       password.trim() &&
       repeatPassword.trim() &&
       birthdate.trim() &&
-      sex && // Added sex check
+      sex &&
       agreement
     ) {
       setIsButtonDisabled(false);
@@ -56,7 +57,7 @@ function Signup() {
     setError("");
 
     if (password !== repeatPassword) {
-      setError("Passwords do not match");
+      Swal.fire("Error", "Passwords do not match", "error");
       return;
     }
 
@@ -70,11 +71,11 @@ function Signup() {
         password,
         repeatPassword,
         birthdate,
-        sex, // Added sex field
+        sex,
       });
 
       if (response.status === 201) {
-        alert("Account created successfully");
+        Swal.fire("Success", "Account created successfully", "success");
 
         setFirstname("");
         setLastname("");
@@ -82,17 +83,17 @@ function Signup() {
         setPassword("");
         setRepeatPassword("");
         setBirthdate("");
-        setSex(""); // Reset sex field
+        setSex("");
 
         history.push("/login");
       } else {
-        setError("Failed to create account");
+        Swal.fire("Error", "Failed to create account", "error");
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        setError(error.response.data.error);
+        Swal.fire("Error", error.response.data.error, "error");
       } else {
-        setError("An unexpected error occurred");
+        Swal.fire("Error", "An unexpected error occurred", "error");
       }
     } finally {
       setLoading(false);
@@ -238,7 +239,6 @@ function Signup() {
                 placeholder="Repeat Password"
                 required
               />
-              {error && <p style={{ color: "red" }}>{error}</p>}
             </div>
 
             <div className="agreement">
@@ -262,7 +262,7 @@ function Signup() {
                 accepted the Terms of Use and Privacy Policy.
               </p>
             </div>
-            <div className="bottompart">
+            <div className="bottompart w-full">
               <div></div>
               <button
                 type="submit"

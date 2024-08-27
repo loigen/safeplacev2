@@ -34,7 +34,7 @@
 }
 
 .back .subtitle h1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   font-weight: 500;
 }
 
@@ -115,7 +115,7 @@ label span {
 }
 
 .cardSignup .bottompart {
-  width: 80%;
+  width: 100%;
 }
 
 .checkbox {

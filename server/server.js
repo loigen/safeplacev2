@@ -64,13 +64,14 @@ app.use(
     },
   })
 );
+app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/schedules", scheduleRoutes);
 app.use("/Appointments/api", appointmentRoutes);
 app.use("/blog", blogRoutes);
-
+app.set("view engine", "ejs");
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

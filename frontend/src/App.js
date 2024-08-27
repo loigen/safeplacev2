@@ -22,6 +22,7 @@ import {
   Signup,
   Login,
 } from "./components";
+import Reset from "./components/custom/Reset";
 
 const App = () => {
   return (
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="/signup" component={Signup} />
         <Route path="/login" component={Login} />
         <Route path="/patients/:id" element={PatientDetail} />
+        <Route path="/forgot-password" component={Reset} />
 
         {/* Private Routes for All Authenticated Users */}
         <PrivateRoute path="/profile" component={Profile} />

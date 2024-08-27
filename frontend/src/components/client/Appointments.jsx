@@ -32,10 +32,8 @@ const Appointments = () => {
       try {
         const data = await fetchAppointmentsByUserId(user._id);
 
-        // Get today's date
         const today = new Date().setHours(0, 0, 0, 0);
 
-        // Filter appointments to include only those for today and onwards
         const filteredAppointments = data.filter((appointment) => {
           const appointmentDate = new Date(appointment.date).setHours(
             0,

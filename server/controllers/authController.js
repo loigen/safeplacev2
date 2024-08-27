@@ -130,3 +130,70 @@ exports.logout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
   });
 };
+
+exports.forgotpassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const oldUser = await User.findOne({ email });
+    if (!oldUser) {
+      return res.json({ status: "User not existed" });
+    }
+
+    const secret = JWT_SECRET + oldUser.password;
+    const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
+      expiresIn: "5m",
+    });
+
+    const link = `http://localhost:5000/auth/reset-password/${oldUser._id}/${token}`;
+    return res.json({ status: "success", link });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ status: "error", message: "An error occurred" });
+  }
+};
+
+exports.resetpassword = async (req, res) => {
+  const { id, token } = req.params;
+  console.log(req.params);
+
+  try {
+    const oldUser = await User.findOne({ _id: id });
+    if (!oldUser) {
+      return res.status(404).render("error", { message: "User not found" });
+    }
+
+    const secret = JWT_SECRET + oldUser.password;
+
+    const decoded = jwt.verify(token, secret);
+
+    return res.render("index", { email: decoded.email });
+  } catch (error) {
+    return res.status(400).render("error", { message: "Verification failed" });
+  }
+};
+exports.updatePassword = async (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+
+  try {
+    const oldUser = await User.findOne({ _id: id });
+    if (!oldUser) {
+      return res.status(404).json({ status: "User not found" });
+    }
+
+    const secret = JWT_SECRET + oldUser.password;
+    jwt.verify(token, secret);
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    await User.updateOne(
+      { _id: id },
+      { $set: { password: encryptedPassword } }
+    );
+
+    return res.json({ status: "Password Updated" });
+  } catch (error) {
+    return res.status(400).json({ status: "Something went wrong" });
+  }
+};

@@ -7,6 +7,7 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Swal from "sweetalert2";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,15 @@ const Login = () => {
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const history = useHistory();
+  const [rememberMe, setRememberMe] = useState(false);
+  useEffect(() => {
+    const remembered = localStorage.getItem("rememberMe");
+    if (remembered) {
+      setEmail(localStorage.getItem("rememberedEmail") || "");
+      setPassword(localStorage.getItem("rememberedPassword") || "");
+      setRememberMe(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (email.trim() && password.trim()) {
@@ -37,6 +47,17 @@ const Login = () => {
       );
 
       localStorage.setItem("token", response.data.token);
+
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", true);
+        localStorage.setItem("rememberedEmail", email);
+        localStorage.setItem("rememberedPassword", password);
+      } else {
+        localStorage.removeItem("rememberMe");
+        localStorage.removeItem("rememberedEmail");
+        localStorage.removeItem("rememberedPassword");
+      }
+
       const userRole = response.data.role;
 
       if (userRole === "user") {
@@ -45,9 +66,17 @@ const Login = () => {
         history.push("/home");
       }
     } catch (error) {
-      setError("Invalid credentials, Please try again!");
-      setEmail("");
-      setPassword("");
+      if (error.response && error.response.status === 403) {
+        Swal.fire({
+          icon: "error",
+          title: "Account Blocked",
+          text: error.response.data.error,
+        });
+      } else {
+        setError("Invalid credentials, Please try again!");
+        setEmail("");
+        setPassword("");
+      }
       console.error(
         "Login error:",
         error.response ? error.response.data : error.message
@@ -101,7 +130,7 @@ const Login = () => {
                 </span>
                 Password:
               </label>
-              <p>Forgot Password?</p>
+              <Link to="/forgot-password">Forgot Password?</Link>
             </div>
             <input
               type="password"
@@ -116,9 +145,15 @@ const Login = () => {
             {error && <p className="errorMessage">{error}</p>}
             <div className="bottompart">
               <div className="forgotpass">
-                <input type="checkbox" /> <span>Remember password</span>
+                <input
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={() => setRememberMe(!rememberMe)}
+                />{" "}
+                <span>Remember password</span>
               </div>
             </div>
+
             <div className="buttonSubmit">
               <button
                 type="submit"
