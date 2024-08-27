@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const scheduleController = require("../controllers/scheduleController");
+const { patch } = require("./scheduleRoutes");
 
 router.post("/slots", scheduleController.addFreeTimeSlot);
 
@@ -18,4 +19,6 @@ router.patch("accept-slot/:id", scheduleController.acceptSlot);
 
 router.get("/count-free", scheduleController.countFreeSlots);
 router.get("/count-pending", scheduleController.countPendingSlots);
+
+router.patch("/updateByDateTime", scheduleController.updateSlotsByDateTime);
 module.exports = router;

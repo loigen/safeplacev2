@@ -256,20 +256,26 @@ const Schedules = () => {
 
         <div className="mt-4 bg-white shadow-2xl rounded-2xl">
           <div className="p-4">
-            {freeSlots.map((slot) => (
-              <li
-                key={slot._id}
-                className="mb-2 w-full shadow-2xl flex justify-between"
-              >
-                {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
-                <button
-                  onClick={() => handleDeleteFreeSlot(slot._id)}
-                  className=" text-red-600 p-1 rounded ml-4"
+            {freeSlots.length > 0 ? (
+              freeSlots.map((slot) => (
+                <li
+                  key={slot._id}
+                  className="mb-2 w-full shadow-2xl flex justify-between"
                 >
-                  <DeleteIcon />
-                </button>
-              </li>
-            ))}
+                  {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
+                  <button
+                    onClick={() => handleDeleteFreeSlot(slot._id)}
+                    className="text-red-600 p-1 rounded ml-4"
+                  >
+                    <DeleteIcon />
+                  </button>
+                </li>
+              ))
+            ) : (
+              <p className="text-gray-500 w-full text-center">
+                No Time slots today
+              </p>
+            )}
           </div>
         </div>
       </div>

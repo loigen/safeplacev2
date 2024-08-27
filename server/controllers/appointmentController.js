@@ -2,6 +2,7 @@ const Appointment = require("../schemas/appointmentSchema");
 const cloudinary = require("../config/cloudinary");
 const { uploadReceipt } = require("../middlewares/multer");
 const mongoose = require("mongoose");
+const { query, json } = require("express");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
@@ -627,5 +628,45 @@ exports.getYearlyAppointments = async (req, res) => {
     res.status(500).json({
       message: "Failed to fetch yearly appointments.",
     });
+  }
+};
+// In your appointments controller
+
+// Endpoint to fetch appointments for a specific date
+exports.getAppointmentsForDate = async (req, res) => {
+  const { date } = req.query;
+
+  try {
+    const appointments = await Appointment.find({
+      date: new Date(date),
+      status: "accepted",
+    }).select("time"); // Only select the time field for simplicity
+
+    res.status(200).json({ appointments });
+  } catch (error) {
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ message: "Failed to fetch appointments." });
+  }
+};
+
+// Endpoint to check time conflict
+exports.checkTimeConflict = async (req, res) => {
+  const { date, time } = req.query;
+
+  try {
+    const conflict = await Appointment.findOne({
+      date: new Date(date),
+      time: time,
+      status: "accepted",
+    });
+
+    if (conflict) {
+      res.status(200).json({ conflict: true });
+    } else {
+      res.status(200).json({ conflict: false });
+    }
+  } catch (error) {
+    console.error("Error checking time conflict:", error);
+    res.status(500).json({ message: "Failed to check time conflict." });
   }
 };

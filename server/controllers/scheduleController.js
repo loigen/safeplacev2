@@ -1,11 +1,19 @@
+const { json } = require("express");
 const Schedule = require("../schemas/Schedule");
 
 exports.getFreeTimeSlots = async (req, res) => {
   try {
-    const freeSlots = await Schedule.find({ status: "free" }).sort({
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Set time to start of today
+
+    const freeSlots = await Schedule.find({
+      status: "free",
+      date: { $gte: startOfDay }, // Only find slots from today onwards
+    }).sort({
       date: 1,
       time: 1,
     });
+
     res.json(freeSlots);
   } catch (error) {
     console.error("Error fetching free time slots:", error);
@@ -166,6 +174,25 @@ exports.countPendingSlots = async (req, res) => {
     res.json({ count: pendingSlotsCount });
   } catch (error) {
     console.error("Error counting pending slots:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}; // Update the status of slots with the same date and time
+exports.updateSlotsByDateTime = async (req, res) => {
+  try {
+    const { date, time } = req.body;
+
+    if (!date || !time) {
+      return res.status(400).json({ message: "Date and time are required" });
+    }
+
+    const updatedSlots = await Schedule.updateMany(
+      { date: new Date(date), time },
+      { status: "free" }
+    );
+
+    res.json({ message: `${updatedSlots.nModified} slots updated to free` });
+  } catch (error) {
+    console.error("Error updating slots by date and time:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -30,11 +30,23 @@ const AppointmentRequest = () => {
     setIsModalOpen(true);
   };
 
-  const handleReject = async (id) => {
+  const handleReject = async (id, date, time) => {
     try {
+      // First, reject the appointment
       await axiosInstance.patch(
         `http://localhost:5000/Appointments/api/reject/${id}`
       );
+
+      // Then, update the slots with the same date and time
+      await axiosInstance.patch(
+        "http://localhost:5000/schedules/updateByDateTime",
+        {
+          date,
+          time,
+        }
+      );
+
+      // Remove the rejected appointment from the state
       setAppointments((prevAppointments) =>
         prevAppointments.filter((app) => app._id !== id)
       );
@@ -151,7 +163,13 @@ const AppointmentRequest = () => {
                       <InfoIcon />
                     </button>
                     <button
-                      onClick={() => handleReject(appointment._id)}
+                      onClick={() =>
+                        handleReject(
+                          appointment._id,
+                          appointment.date,
+                          appointment.time
+                        )
+                      }
                       className="text-red-600 hover:text-red-800"
                     >
                       <HighlightOffIcon />

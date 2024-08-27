@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2"; // Import SweetAlert
+import axios from "axios"; // Import Axios
 
 const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
   const [startHour, setStartHour] = useState("01");
   const [startMinute, setStartMinute] = useState("00");
   const [startPeriod, setStartPeriod] = useState("AM");
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     if (typeof initialStartTime === "string" && initialStartTime.trim()) {
@@ -13,7 +16,26 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
       setStartMinute(m);
       setStartPeriod(ampm);
     }
-  }, [initialStartTime]);
+
+    // Fetch existing appointments for the selected date
+    const fetchAppointments = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/Appointments/api/get-appointments`,
+          {
+            params: {
+              date: selectedDate,
+            },
+          }
+        );
+        setAppointments(response.data.appointments);
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    };
+
+    fetchAppointments();
+  }, [initialStartTime, selectedDate]);
 
   const handleStartHourChange = (e) => {
     setStartHour(e.target.value);
@@ -27,9 +49,58 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
     setStartPeriod(newPeriod);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const formattedTime = `${startHour}:${startMinute} ${startPeriod}`;
-    onTimeChange(formattedTime);
+    const selectedDateTime = new Date(`${selectedDate} ${formattedTime}`);
+
+    try {
+      // Check for direct time slot conflict
+      const conflictResponse = await axios.get(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/check-time`,
+        {
+          params: {
+            date: selectedDate,
+            time: formattedTime,
+          },
+        }
+      );
+
+      if (conflictResponse.data.conflict) {
+        Swal.fire({
+          icon: "error",
+          title: "Time Slot Taken",
+          text: "This time slot is already taken for the selected day.",
+        });
+        return;
+      }
+
+      // Check if the selected time has a 2-hour gap from existing appointments
+      const hasConflict = appointments.some((appointment) => {
+        const appointmentDateTime = new Date(
+          `${selectedDate} ${appointment.time}`
+        );
+        const timeDifference =
+          Math.abs(appointmentDateTime - selectedDateTime) / 36e5; // Convert milliseconds to hours
+        return timeDifference < 2;
+      });
+
+      if (hasConflict) {
+        Swal.fire({
+          icon: "error",
+          title: "Time Conflict",
+          text: "Selected time must have at least a 2-hour gap from other appointments.",
+        });
+      } else {
+        onTimeChange(formattedTime);
+      }
+    } catch (error) {
+      console.error("Error checking time conflict:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to check time conflict.",
+      });
+    }
   };
 
   const hours = Array.from({ length: 12 }, (_, i) =>

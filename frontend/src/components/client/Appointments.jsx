@@ -31,11 +31,25 @@ const Appointments = () => {
       if (!user) return;
       try {
         const data = await fetchAppointmentsByUserId(user._id);
-        const filteredAppointments = data.filter(
-          (appointment) =>
-            appointment.status === "pending" ||
-            appointment.status === "accepted"
-        );
+
+        // Get today's date
+        const today = new Date().setHours(0, 0, 0, 0);
+
+        // Filter appointments to include only those for today and onwards
+        const filteredAppointments = data.filter((appointment) => {
+          const appointmentDate = new Date(appointment.date).setHours(
+            0,
+            0,
+            0,
+            0
+          );
+          return (
+            (appointment.status === "pending" ||
+              appointment.status === "accepted") &&
+            appointmentDate >= today
+          );
+        });
+
         setAppointments(filteredAppointments);
       } catch (err) {
         setError(err.message);
