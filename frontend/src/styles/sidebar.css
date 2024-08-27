@@ -1,8 +1,9 @@
 .sidebar {
   /* Your sidebar styles */
-  height: 91.3vh;
+  height: 90%;
 }
 
+/* General styling for sidebar links */
 .sidebar-link {
   color: gray;
   text-decoration: none;
@@ -25,6 +26,8 @@
   border-left: 10px solid #2c6975;
   transition: 0.5s;
 }
+
+/* Logout button styles */
 .logout {
   display: flex;
   justify-content: center;
@@ -41,9 +44,12 @@
   cursor: pointer;
 }
 
+/* Icon styling */
 #icon {
   font-size: 2rem;
 }
+
+/* Styling for list items in links */
 .links li {
   padding: 0 !important;
   margin: 0;
@@ -53,6 +59,8 @@
   justify-content: center;
   align-items: center;
 }
+
+/* Tablet view adjustments */
 @media (max-width: 768px) {
   .sidebar {
     width: 80px; /* Adjust width for mobile */
@@ -85,6 +93,7 @@
   }
 }
 
+/* Small mobile view adjustments */
 @media (max-width: 480px) {
   .sidebar {
     width: 60px; /* Even smaller width for very small screens */
@@ -100,5 +109,28 @@
 
   .sidebar-icon {
     font-size: 20px; /* Further reduce icon size */
+  }
+}
+
+/* Laptop view adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 120px; /* Adjust width for laptop view */
+  }
+
+  .sidebar img {
+    width: 80px; /* Adjust logo size for laptop view */
+  }
+
+  .sidebar-link {
+    font-size: 16px; /* Adjust font size for laptop view */
+  }
+
+  .sidebar-icon {
+    font-size: 28px; /* Adjust icon size for laptop view */
+  }
+
+  .logout {
+    padding: 12px; /* Adjust padding for laptop view */
   }
 }
