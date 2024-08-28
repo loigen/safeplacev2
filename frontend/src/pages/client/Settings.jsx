@@ -51,6 +51,7 @@ const AdminSettings = () => {
         return <Profile />;
       case "Security":
         return <ChangePassword />;
+
       default:
         return (
           <div className="flex flex-row justify-center py-16">
@@ -108,15 +109,12 @@ const AdminSettings = () => {
                   <LocalLibraryIcon className="text-[#2c6975]" />
                   <p className=" font-semibold text-gray-700">User Guide</p>
                 </button>
-                <button
-                  className="flex gap-2 px-2"
-                  onClick={() => setView("profile")}
-                >
+                <NavLink to="/contactSupport" className="flex gap-2 px-2">
                   <EmailIcon className="text-[#2c6975]" />
                   <p className=" font-semibold text-gray-700">
                     Contact Support
                   </p>
-                </button>
+                </NavLink>
                 <button
                   className="flex gap-2 px-2"
                   onClick={() => setView("profile")}

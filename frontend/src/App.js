@@ -23,6 +23,7 @@ import {
   Login,
 } from "./components";
 import Reset from "./components/custom/Reset";
+import ContactSupport from "./components/custom/ContactSupport";
 
 const App = () => {
   return (
@@ -43,6 +44,7 @@ const App = () => {
         <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
         <PrivateRoute path="/Booking" component={AppointmentsPage} />
         <PrivateRoute path="/clientSettings" component={ClientSettings} />
+        <PrivateRoute path="/contactSupport" component={ContactSupport} />
 
         {/* Admin-Only Private Routes */}
         <PrivateRoute path="/home" component={Home} adminOnly />
