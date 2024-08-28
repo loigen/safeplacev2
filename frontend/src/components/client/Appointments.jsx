@@ -50,7 +50,6 @@ const Appointments = () => {
 
         setAppointments(filteredAppointments);
       } catch (err) {
-        setError(err.message);
       } finally {
         setLoading(false);
       }

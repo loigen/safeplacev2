@@ -1,8 +1,14 @@
 const Appointment = require("../schemas/appointmentSchema");
 const cloudinary = require("../config/cloudinary");
-const { uploadReceipt } = require("../middlewares/multer");
+const {
+  uploadReceipt,
+  uploadQRCode,
+  uploadRefundReceipt,
+} = require("../middlewares/multer");
 const mongoose = require("mongoose");
-const { query, json } = require("express");
+const { json } = require("express");
+const { file } = require("googleapis/build/src/apis/file");
+const { save } = require("node-cron/src/storage");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
@@ -18,7 +24,7 @@ exports.createAppointment = [
         email,
         role,
         avatar,
-        sex, // Added sex field
+        sex,
       } = req.body;
 
       if (
@@ -30,7 +36,7 @@ exports.createAppointment = [
         !lastname ||
         !email ||
         !role ||
-        !sex || // Check for sex field
+        !sex ||
         !req.file
       ) {
         return res.status(400).json({
@@ -54,7 +60,7 @@ exports.createAppointment = [
         email,
         role,
         avatar,
-        sex, // Include sex in the appointment
+        sex,
         receipt: receiptUrl,
       });
 
@@ -82,13 +88,11 @@ exports.getAppointmentsByUserId = async (req, res) => {
     const { userId } = req.params;
     console.log("Fetching appointments for userId:", userId);
 
-    // Validate the userId
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       console.error("Invalid userId:", userId);
       return res.status(400).json({ error: "Invalid userId" });
     }
 
-    // Find appointments by userId
     const appointments = await Appointment.find({ userId });
     console.log("Found appointments:", appointments);
 
@@ -98,11 +102,9 @@ exports.getAppointmentsByUserId = async (req, res) => {
         .json({ message: "No appointments found for this user" });
     }
 
-    // Return the appointments
     return res.status(200).json({ appointments });
   } catch (error) {
-    console.error("Error fetching appointments:", error.message, error.stack);
-    return res.status(500).json({ error: "Server error" });
+    console.error("You have no Records");
   }
 };
 
@@ -630,9 +632,7 @@ exports.getYearlyAppointments = async (req, res) => {
     });
   }
 };
-// In your appointments controller
 
-// Endpoint to fetch appointments for a specific date
 exports.getAppointmentsForDate = async (req, res) => {
   const { date } = req.query;
 
@@ -644,12 +644,11 @@ exports.getAppointmentsForDate = async (req, res) => {
 
     res.status(200).json({ appointments });
   } catch (error) {
-    console.error("Error fetching appointments:", error);
+    console.error("You have no records", error);
     res.status(500).json({ message: "Failed to fetch appointments." });
   }
 };
 
-// Endpoint to check time conflict
 exports.checkTimeConflict = async (req, res) => {
   const { date, time } = req.query;
 
@@ -670,3 +669,75 @@ exports.checkTimeConflict = async (req, res) => {
     res.status(500).json({ message: "Failed to check time conflict." });
   }
 };
+
+exports.returnRefund = [
+  uploadRefundReceipt.single("refundReceipt"),
+  async (req, res) => {
+    try {
+      const { appointmentId } = req.body;
+      if (!appointmentId || !req.file) {
+        return res.status(400).json({ message: "Invalid request." });
+      }
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "refund_receipts",
+        resource_type: "auto",
+      });
+      const receiptRefundURL = result.secure_url;
+      const appointment = await Appointment.findById(appointmentId);
+      if (!appointment) {
+        return res.status(404).json({ error: "Appointment not found." });
+      }
+
+      appointment.refundReceipt = receiptRefundURL;
+      appointment.status = "refunded";
+      await appointment.save();
+      res
+        .status(200)
+        .json({ message: "Refund request submitted successfully." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error submitting refund request." });
+    }
+  },
+];
+
+exports.updateAppointmentWithBankAccount = [
+  uploadQRCode.single("qrCode"),
+  async (req, res) => {
+    try {
+      const { appointmentId } = req.body;
+
+      if (!appointmentId || !req.file) {
+        return res.status(400).json({
+          error: "Appointment ID and QR code are required.",
+        });
+      }
+
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "qr_codes",
+        resource_type: "auto",
+      });
+
+      const qrUrl = result.secureAppointment._url;
+
+      const appointment = await Appointment.findById(appointmentId);
+
+      if (!appointment) {
+        return res.status(404).json({ error: "Appointment not found." });
+      }
+
+      appointment.qrCode = qrUrl;
+      appointment.status = "requested";
+
+      await appointment.save();
+
+      res
+        .status(200)
+        .json({ message: "Refund request submitted successfully." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Error submitting refund request." });
+    }
+  },
+];

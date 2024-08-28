@@ -19,7 +19,15 @@ const appointmentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "accepted", "rejected", "canceled", "completed"],
+      enum: [
+        "pending",
+        "accepted",
+        "rejected",
+        "canceled",
+        "completed",
+        "requested",
+        "refunded",
+      ],
       default: "pending", // Default to 'pending'
       required: true,
     },
@@ -60,9 +68,18 @@ const appointmentSchema = new Schema(
       type: String,
       required: true,
     },
+    refundReceipt: {
+      type: String,
+      required: false,
+    },
+
+    qrCode: {
+      type: String,
+      required: false,
+    },
   },
   {
-    timestamps: true, // Automatically adds createdAt and updatedAt fields
+    timestamps: true,
   }
 );
 appointmentSchema.index({ status: 1 });

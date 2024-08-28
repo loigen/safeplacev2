@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import axios from "axios";
 import { getPatientData } from "../../api/appointmentAPI/getPatientDataApi";
 import PatientDetails from "../../components/custom/PatientDetail";
 import PatientList from "../../components/custom/PatientList";
@@ -70,6 +69,31 @@ const Patients = () => {
     }
   };
 
+  const handleRefund = async (id, file) => {
+    const formData = new FormData();
+    formData.append("refundReceipt", file);
+    formData.append("appointmentId", id);
+
+    console.log("Sending refund request with formData:", formData);
+
+    try {
+      await axiosInstance.post(
+        `${process.env.REACT_APP_API_URL}/Appointments/api/refund`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      Swal.fire("Success", "Refund processed successfully", "success");
+      setSelectedPatient(null);
+    } catch (error) {
+      console.error("Error processing refund:", error);
+      Swal.fire("Error", "Failed to process refund", "error");
+    }
+  };
+
   return (
     <div className="patientsContainer">
       {selectedPatient && (
@@ -78,6 +102,7 @@ const Patients = () => {
           onClose={handleCloseModal}
           handleAccept={handleAccept}
           handleReject={handleReject}
+          handleRefund={handleRefund}
         />
       )}
       <div className="p-2 flex flex-wrap w-full flex-row justify-center">

@@ -11,6 +11,10 @@ const storage = multer.diskStorage({
       folder = "uploads/receipts";
     } else if (file.fieldname === "blog_photo") {
       folder = "uploads/blog_photos";
+    } else if (file.fieldname === "qrCode") {
+      folder = "uploads/qr_codes"; // Define folder for QR codes
+    } else if (file.fieldname === "refundReceipt") {
+      folder = "uploads/refund_receipts"; // Define folder for QR codes
     } else {
       return cb(new Error("Invalid file field name"));
     }
@@ -74,4 +78,44 @@ const uploadBlogPhoto = multer({
   },
 });
 
-module.exports = { uploadProfilePicture, uploadReceipt, uploadBlogPhoto };
+const uploadRefundReceipt = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpg|jpeg|png/;
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Error: PDFs, JPGs, JPEGs, and PNGs Only!"));
+    }
+  },
+});
+// Method for uploading QR codes
+const uploadQRCode = multer({
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const filetypes = /png|jpg|jpeg/; // Add QR code file types if different
+    const extname = filetypes.test(
+      path.extname(file.originalname).toLowerCase()
+    );
+    const mimetype = filetypes.test(file.mimetype);
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error("Error: PNG, JPG, and JPEG QR Codes Only!"));
+    }
+  },
+});
+
+module.exports = {
+  uploadProfilePicture,
+  uploadReceipt,
+  uploadBlogPhoto,
+  uploadRefundReceipt,
+  uploadQRCode,
+};

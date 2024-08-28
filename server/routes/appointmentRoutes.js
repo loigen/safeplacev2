@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const appointmentController = require("../controllers/appointmentController"); // Adjust the path as needed
-const { get } = require("mongoose");
+
+const { uploadQRCode } = require("../middlewares/multer");
 
 // Create a new appointment
 router.post("/appointments", appointmentController.createAppointment);
@@ -63,5 +64,11 @@ router.get("/get-appointments", appointmentController.getAppointmentsForDate);
 
 // Fetch for the chart yearly appointments
 router.get("/yearly", appointmentController.getYearlyAppointments);
+
+router.post(
+  "/appointments/update-with-bank-account",
+  appointmentController.updateAppointmentWithBankAccount
+);
+router.post("/refund", appointmentController.returnRefund);
 
 module.exports = router;

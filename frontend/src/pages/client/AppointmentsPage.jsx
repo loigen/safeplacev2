@@ -8,6 +8,9 @@ import Appointments from "../../components/client/Appointments";
 import LoadingSpinner from "../../components/custom/LoadingSpinner";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import CanceledAppointments from "../../components/client/CanceledAppointments";
+import RejectedAppointments from "../../components/client/RejectedAppointments";
+import RefundedAppointments from "../../components/client/Refunded";
 
 const AppointmentsPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -484,7 +487,13 @@ const AppointmentsPage = () => {
 
   return (
     <div className="flex flex-row p-10 justify-around">
-      <div>reviews</div>
+      <div>
+        <CanceledAppointments />
+        <br />
+        <RejectedAppointments />
+        <br />
+        <RefundedAppointments />
+      </div>
       <form
         className="bg-white w-1/3 shadow-2xl rounded-md"
         onSubmit={(e) => e.preventDefault()}

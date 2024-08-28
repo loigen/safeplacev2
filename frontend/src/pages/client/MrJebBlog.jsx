@@ -50,7 +50,7 @@ const MrJebBlog = () => {
 
             Swal.fire({
               icon: "error",
-              title: "Error",
+              title: "Ooops!",
               text: "No favorite blogs. Please add favorites.",
               confirmButtonText: "Add Favorites",
             }).then((result) => {
