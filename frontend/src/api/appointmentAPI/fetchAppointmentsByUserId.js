@@ -6,5 +6,7 @@ export const fetchAppointmentsByUserId = async (userId) => {
       `${process.env.REACT_APP_API_URL}/Appointments/api/myAppointment/${userId}`
     );
     return response.data.appointments;
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 };

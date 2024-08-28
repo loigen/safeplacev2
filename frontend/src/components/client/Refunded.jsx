@@ -48,7 +48,6 @@ const RefundedAppointments = () => {
 
         setAppointments(filteredAppointments);
       } catch (err) {
-        setError("Error fetching appointments.");
       } finally {
         setLoading(false);
       }
