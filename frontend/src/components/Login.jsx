@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import "../styles/login.css";
 import logo from "../images/bigLogo.png";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Swal from "sweetalert2";
+import { AuthContext } from "../context/AuthContext"; // Import the context
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +17,8 @@ const Login = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const history = useHistory();
   const [rememberMe, setRememberMe] = useState(false);
+  const { setUser } = useContext(AuthContext); // Get setUser from AuthContext
+
   useEffect(() => {
     const remembered = localStorage.getItem("rememberMe");
     if (remembered) {
@@ -59,6 +62,19 @@ const Login = () => {
       }
 
       const userRole = response.data.role;
+      const userData = {
+        token: response.data.token,
+        role: userRole,
+        email,
+      };
+
+      // Set user data in AuthContext and localStorage
+      if (setUser) {
+        setUser(userData);
+      } else {
+        console.error("setUser is not a function");
+      }
+      localStorage.setItem("User", JSON.stringify(userData));
 
       if (userRole === "user") {
         history.push("/booking");

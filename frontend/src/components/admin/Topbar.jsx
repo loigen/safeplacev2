@@ -6,6 +6,7 @@ import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutline
 import profile from "../../images/defaultAvatar.jpg";
 import { NavLink } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig";
+import Notification from "../custom/Notification";
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
@@ -128,16 +129,7 @@ const Topbar = () => {
       <div className="flex flex-row w-full justify-end gap-10">
         <ul className="flex flex-row gap-4 md:gap-6 items-center">
           <li>
-            <NavLink to="/messenger">
-              <div className="relative">
-                <ChatBubbleOutlineOutlinedIcon />
-                {unreadMessages > 0 && (
-                  <span className="badge text-white left-4 bg-red-600 px-1 rounded-full absolute">
-                    {unreadMessages}
-                  </span>
-                )}
-              </div>
-            </NavLink>
+            <Notification />
           </li>
           <li onClick={handleNotificationClick} className="relative">
             <NotificationsNoneOutlinedIcon />
