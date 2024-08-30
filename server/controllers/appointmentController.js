@@ -6,9 +6,6 @@ const {
   uploadRefundReceipt,
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
-const { json } = require("express");
-const { file } = require("googleapis/build/src/apis/file");
-const { save } = require("node-cron/src/storage");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),

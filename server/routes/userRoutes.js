@@ -9,6 +9,7 @@ const {
   uploadProfilePicture,
   uploadBlogPhoto,
 } = require("../middlewares/multer");
+const { get } = require("mongoose");
 
 // User profile routes
 router.get("/profile", authenticateToken, userController.getProfile);
@@ -49,8 +50,12 @@ router.patch(
   [authenticateToken],
   userController.unblockUser
 ); // Unblock user
+router.get("/all", authenticateToken, userController.getAll);
 
 // Logout route
 router.post("/logout", authenticateToken, authController.logout);
 
+router.get("/find/:userId", userController.findUser);
+
+router.get("/", userController.getUser);
 module.exports = router;

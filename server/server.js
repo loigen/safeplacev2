@@ -10,6 +10,8 @@ const userRoutes = require("./routes/userRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes"); // Import appointment routes
 const blogRoutes = require("./routes/blogRoutes");
+const chatRoute = require("./routes/chatRoutes");
+const messageRoute = require("./routes/messageRoutes");
 
 const app = express();
 app.use(express.json());
@@ -71,6 +73,9 @@ app.use("/user", userRoutes);
 app.use("/schedules", scheduleRoutes);
 app.use("/Appointments/api", appointmentRoutes);
 app.use("/blog", blogRoutes);
+app.use("/api/chats", chatRoute);
+app.use("/api/messages", messageRoute);
+
 app.set("view engine", "ejs");
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
