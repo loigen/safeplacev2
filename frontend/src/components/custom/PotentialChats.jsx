@@ -5,7 +5,9 @@ import axiosInstance from "../../config/axiosConfig";
 const PotentialChats = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-
+  useEffect(() => {
+    console.log("Chat component mounted");
+  }, []);
   useEffect(() => {
     const fetchProfile = async () => {
       try {

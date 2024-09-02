@@ -60,14 +60,18 @@ const Notification = () => {
       {isOpen ? (
         <div className="notifications-box">
           <div className="notifications-header">
-            <h3>notifications</h3>
             <div
               className="mark-as-read"
               onClick={() => markAllNotificationAsRead(notifications)}
             >
               Mark all as read
             </div>
+            <a className="text-green-800 text-right w-full" href="/messenger">
+              Go to messenger
+            </a>
           </div>
+
+          <br />
           {modifiedNotifications?.length === 0 ? <span>no notif</span> : null}
           {modifiedNotifications &&
             modifiedNotifications.map((n, index) => {

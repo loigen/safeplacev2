@@ -73,15 +73,7 @@ const Sidebar = () => {
               <EventAvailableIcon fontSize="large" className="sidebar-icon" />
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/messenger"
-              activeClassName="active"
-              className="sidebar-link"
-            >
-              <ChatBubbleIcon fontSize="large" className="sidebar-icon" />
-            </NavLink>
-          </li>
+
           <li>
             <NavLink
               to="/AdminSettings"

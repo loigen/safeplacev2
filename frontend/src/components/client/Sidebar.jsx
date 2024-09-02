@@ -55,24 +55,14 @@ const Sidebar = () => {
               <EventAvailableIcon className="sidebar-icon" />
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to="/messenger"
-              activeClassName="active"
-              className="sidebar-link"
-            >
-              <ChatBubbleIcon fontSize="large" className="sidebar-icon" />
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              to="/clientSettings"
-              activeClassName="active"
-              className="sidebar-link"
-            >
-              <SettingsIcon className="sidebar-icon" />
-            </NavLink>
-          </li>
+
+          <NavLink
+            to="/clientSettings"
+            activeClassName="active"
+            className="sidebar-link"
+          >
+            <SettingsIcon className="sidebar-icon" />
+          </NavLink>
         </ul>
         <div className="logout p-4  mb-10">
           <button
