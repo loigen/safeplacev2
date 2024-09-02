@@ -48,15 +48,12 @@ const Appointments = () => {
           );
         });
 
-        // Sort appointments by date (nearest first)
         const sortedAppointments = filteredAppointments.sort((a, b) => {
           return new Date(a.date) - new Date(b.date);
         });
 
         setAppointments(sortedAppointments);
       } catch (err) {
-        setError("Error fetching appointments.");
-        console.error("Error fetching appointments:", err);
       } finally {
         setLoading(false);
       }
