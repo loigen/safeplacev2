@@ -221,6 +221,7 @@ const Home = () => {
                             {" "}
                             <strong>Type:</strong> {appointment.appointmentType}
                           </p>
+                          <a href={appointment.meetLink}>Go to room</a>
                         </li>
                       ))
                     )}

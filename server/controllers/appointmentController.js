@@ -6,6 +6,7 @@ const {
   uploadRefundReceipt,
 } = require("../middlewares/multer");
 const mongoose = require("mongoose");
+const { json } = require("express");
 
 exports.createAppointment = [
   uploadReceipt.single("receipt"),
@@ -300,7 +301,7 @@ exports.getCompletionRate = async (req, res) => {
 exports.getAppointmentData = async (req, res) => {
   try {
     const appointments = await Appointment.find().select(
-      "date time appointmentType status firstname lastname avatar sex meetLink"
+      "date time appointmentType status firstname lastname avatar sex meetLink qrCode"
     );
 
     const appointmentData = appointments.map((appointment) => ({
@@ -314,6 +315,7 @@ exports.getAppointmentData = async (req, res) => {
       email: appointment.email,
       sex: appointment.sex,
       meetLink: appointment.meetLink,
+      qrCode: appointment.qrCode,
     }));
 
     res.status(200).json(appointmentData);
@@ -716,7 +718,7 @@ exports.updateAppointmentWithBankAccount = [
         resource_type: "auto",
       });
 
-      const qrUrl = result.secureAppointment._url;
+      const qrUrl = result.secure_url; // Fixed line
 
       const appointment = await Appointment.findById(appointmentId);
 

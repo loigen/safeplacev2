@@ -13,7 +13,7 @@ const PatientDetails = ({
 }) => {
   const [refundFile, setRefundFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-
+  console.log("qr", patient.qrCode);
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setRefundFile(file);
@@ -91,6 +91,16 @@ const PatientDetails = ({
           </div>
           {patient.status === "requested" && (
             <div className="flex flex-col items-center gap-1">
+              {patient.qrCode && (
+                <div className="qr-code mt-4 flex flex-col items-center">
+                  <strong>Patient's QR Code</strong>
+                  <img
+                    src={patient.qrCode}
+                    alt="QR Code"
+                    className="w-32 h-32 object-cover border border-black p-2 rounded-md"
+                  />
+                </div>
+              )}
               <input
                 type="file"
                 accept="image/*"
@@ -102,7 +112,7 @@ const PatientDetails = ({
                 htmlFor="refund-file"
                 className="button border-b-2 cursor-pointer text-[#2c6975] font-bold text-center border-[#2c6975]"
               >
-                CLick to Upload
+                Click to Upload Receipt
               </label>
               {previewUrl && (
                 <div className="preview mt-4">

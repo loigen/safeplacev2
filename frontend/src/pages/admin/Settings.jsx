@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ChangePasswordForm, LoadingSpinner } from "../../components/custom";
+import {
+  ChangePasswordForm,
+  LoadingSpinner,
+  RatesandReview,
+} from "../../components/custom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
@@ -9,6 +13,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { Profile, ManageUsers } from "../../components/admin";
 import axiosInstance from "../../config/axiosConfig";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Help from "../../components/custom/Help";
 
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
@@ -47,6 +52,10 @@ const AdminSettings = () => {
         return <ChangePasswordForm />;
       case "manage":
         return <ManageUsers />;
+      case "Rates and Review":
+        return <RatesandReview />;
+      case "Help":
+        return <Help />;
       default:
         return (
           <div className="flex flex-row justify-center py-16">
@@ -108,7 +117,7 @@ const AdminSettings = () => {
                 <p className="text-gray-700 font-bold capitalize">More</p>
                 <button
                   className="flex gap-2 px-2"
-                  onClick={() => setView("profile")}
+                  onClick={() => setView("Rates and Review")}
                 >
                   <StarBorderOutlinedIcon className="text-[#2c6975]" />
                   <p className=" font-semibold text-gray-700">
@@ -117,7 +126,7 @@ const AdminSettings = () => {
                 </button>
                 <button
                   className="flex gap-2 px-2"
-                  onClick={() => setView("profile")}
+                  onClick={() => setView("Help")}
                 >
                   <QuestionMarkOutlinedIcon className="text-[#2c6975]" />
                   <p className="capitalize font-semibold text-gray-700">Help</p>

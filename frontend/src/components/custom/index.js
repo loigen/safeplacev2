@@ -24,6 +24,9 @@ import PatientList from "./PatientList";
 import PotentialChats from "./PotentialChats";
 import Reset from "./Reset";
 import UserChat from "./UserChat";
+import UserGuide from "./UserGuide";
+import FAQs from "./FAQs";
+import RatesandReview from "./RatesandReview";
 
 export {
   AllBlogs,
@@ -52,4 +55,7 @@ export {
   PotentialChats,
   Reset,
   UserChat,
+  UserGuide,
+  FAQs,
+  RatesandReview,
 };

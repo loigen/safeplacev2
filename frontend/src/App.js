@@ -3,16 +3,15 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import "./App.css";
 
 import PrivateRoute from "./PrivateRoute";
-import Profile from "./components/admin/Profile";
 import Home from "./pages/admin/Home";
 import Patients from "./pages/admin/Patients";
 import MrJebBlog from "./pages/client/MrJebBlog";
 import AppointmentsPage from "./pages/client/AppointmentsPage";
-import PatientDetail from "./components/custom/PatientDetail";
 import AdminSettings from "./pages/admin/Settings";
 import ClientSettings from "./pages/client/Settings";
 import BLog from "./pages/admin/BLog";
 import Schedules from "./pages/admin/Schedules";
+
 import {
   BlogGuestPage,
   Contact,
@@ -21,10 +20,15 @@ import {
   About,
   Signup,
   Login,
+  Services,
 } from "./components";
-import Reset from "./components/custom/Reset";
-import ContactSupport from "./components/custom/ContactSupport";
-import Chat from "./components/custom/chat";
+
+import {
+  Reset,
+  ContactSupport,
+  Chat,
+  PatientDetails,
+} from "./components/custom";
 import { ChatContextProvider } from "./context/ChatContext";
 import axiosInstance from "./config/axiosConfig";
 
@@ -59,11 +63,11 @@ const App = () => {
           <Route path="/guestBlog" component={BlogGuestPage} />
           <Route path="/signup" component={Signup} />
           <Route path="/login" component={Login} />
-          <Route path="/patients/:id" element={PatientDetail} />
+          <Route path="/patients/:id" element={PatientDetails} />
+          <Route path="/Services" component={Services} />
           <Route path="/forgot-password" component={Reset} />
 
           {/* Private Routes for All Authenticated Users */}
-          <PrivateRoute path="/profile" component={Profile} />
           <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
           <PrivateRoute path="/Booking" component={AppointmentsPage} />
           <PrivateRoute path="/clientSettings" component={ClientSettings} />

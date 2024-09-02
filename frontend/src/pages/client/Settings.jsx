@@ -10,13 +10,16 @@ import { NavLink } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Profile } from "../../components/client";
 import axiosInstance from "../../config/axiosConfig";
-import { ChangePasswordForm, LoadingSpinner } from "../../components/custom";
+import {
+  ChangePasswordForm,
+  UserGuide,
+  LoadingSpinner,
+  FAQs,
+} from "../../components/custom";
 
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
   const [avatar, setAvatar] = useState(null);
-  const [name, setName] = useState(null);
   const [view, setView] = useState("settings");
 
   useEffect(() => {
@@ -49,7 +52,10 @@ const AdminSettings = () => {
         return <Profile />;
       case "Security":
         return <ChangePasswordForm />;
-
+      case "UserGuide":
+        return <UserGuide />;
+      case "FAQs":
+        return <FAQs />;
       default:
         return (
           <div className="flex flex-row justify-center py-16">
@@ -102,7 +108,7 @@ const AdminSettings = () => {
                 <p className="text-gray-700 font-bold capitalize">More</p>
                 <button
                   className="flex gap-2 px-2"
-                  onClick={() => setView("profile")}
+                  onClick={() => setView("UserGuide")}
                 >
                   <LocalLibraryIcon className="text-[#2c6975]" />
                   <p className=" font-semibold text-gray-700">User Guide</p>
@@ -115,7 +121,7 @@ const AdminSettings = () => {
                 </NavLink>
                 <button
                   className="flex gap-2 px-2"
-                  onClick={() => setView("profile")}
+                  onClick={() => setView("FAQs")}
                 >
                   <QuestionMarkOutlinedIcon className="text-[#2c6975]" />
                   <p className="capitalize font-semibold text-gray-700">FAQs</p>
