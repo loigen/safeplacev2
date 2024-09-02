@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import Swal from "sweetalert2";
 import "../../styles/fileUpload.css";
 
-const MAX_FILENAME_LENGTH = 50; // Adjust this value as needed
+const MAX_FILENAME_LENGTH = 50;
 
 const CustomFileUpload = ({ onFileChange }) => {
   const [dragging, setDragging] = useState(false);

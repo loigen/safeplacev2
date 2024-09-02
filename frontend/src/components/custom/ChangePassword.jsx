@@ -76,7 +76,6 @@ const ChangePasswordForm = () => {
         icon: "error",
         confirmButtonText: "OK",
       }).then(() => {
-        // Clear the new password and confirm password fields
         setNewPassword("");
         setConfirmPassword("");
       });
@@ -101,11 +100,9 @@ const ChangePasswordForm = () => {
       setIncorrectAttempts(0);
       setIsDisabled(true);
 
-      // Update the last change time in localStorage
       const currentTime = Date.now();
       localStorage.setItem("lastChangeTime", currentTime);
 
-      // Clear the current password field
       setCurrentPassword("");
     } catch (err) {
       const newAttempts = incorrectAttempts + 1;

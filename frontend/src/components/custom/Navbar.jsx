@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import logo from "../../images/logo.png";
 import "../../styles/navlink.css";
 
-const Navpar = () => {
+const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleCardClick = (route) => {
@@ -85,4 +85,4 @@ const Navpar = () => {
   );
 };
 
-export default Navpar;
+export default Navbar;

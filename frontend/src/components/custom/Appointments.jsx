@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import dayjs from "dayjs"; // Import dayjs for date formatting
+import dayjs from "dayjs";
 import axiosInstance from "../../config/axiosConfig";
 
 const API_URL = process.env.REACT_APP_API_URL;

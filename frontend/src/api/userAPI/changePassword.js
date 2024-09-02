@@ -1,5 +1,6 @@
 import axiosInstance from "../../config/axiosConfig";
 
+//chanspas jpg
 export const changePassword = async (currentPassword, newPassword, token) => {
   try {
     const response = await axiosInstance.post(

@@ -1,6 +1,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 
+//para sa profile page
 export const fetchUserProfile = async () => {
   try {
     const response = await axios.get(

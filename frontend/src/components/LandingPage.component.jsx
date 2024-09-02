@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from "./custom/Navbar";
 import "../styles/landingpage.css";
 import clock from "../images/ph_clock-thin.png";
 import exp from "../images/experience.png";
@@ -7,9 +6,7 @@ import hq from "../images/hq.png";
 import quote from "../images/quote.png";
 import clientPhoto from "../images/clientPhoto.png";
 import dice from "../images/dice.png";
-
-import Courosel from "./custom/Courosel";
-import Footer from "./custom/Footer";
+import { Navbar, Courosel, Footer } from "./custom";
 
 const testimonies = [
   {

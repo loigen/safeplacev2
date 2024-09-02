@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Define the Appointment schema
 const appointmentSchema = new Schema(
   {
     date: {
@@ -13,7 +12,6 @@ const appointmentSchema = new Schema(
       required: true,
     },
     appointmentType: {
-      // Field for the type of appointment
       type: String,
       required: true,
     },
@@ -28,7 +26,7 @@ const appointmentSchema = new Schema(
         "requested",
         "refunded",
       ],
-      default: "pending", // Default to 'pending'
+      default: "pending",
       required: true,
     },
     userId: {
@@ -84,7 +82,6 @@ const appointmentSchema = new Schema(
 );
 appointmentSchema.index({ status: 1 });
 
-// Create the model
 const Appointment = mongoose.model("Appointment", appointmentSchema);
 
 module.exports = Appointment;

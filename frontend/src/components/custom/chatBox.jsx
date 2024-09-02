@@ -58,7 +58,7 @@ const ChatBox = () => {
 
   const handleSendMessage = () => {
     sendTextMessage(textMessage, user, currentChat._id, setTextMessage);
-    setTextMessage(""); // Clear the input after sending the message
+    setTextMessage("");
   };
 
   return (
@@ -106,7 +106,7 @@ const ChatBox = () => {
       <Stack
         direction="horizontal"
         gap={3}
-        className="chat-input flex items-center flex-1"
+        className="chat-input flex items-center flex-grow-0"
       >
         <InputEmoji
           value={textMessage}

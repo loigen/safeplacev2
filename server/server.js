@@ -8,13 +8,15 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
-const appointmentRoutes = require("./routes/appointmentRoutes"); // Import appointment routes
+const appointmentRoutes = require("./routes/appointmentRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const chatRoute = require("./routes/chatRoutes");
 const messageRoute = require("./routes/messageRoutes");
+const socketServer = require("./socket/socket");
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 const allowedOrigins = [
   "http://localhost:3000",
@@ -66,7 +68,6 @@ app.use(
     },
   })
 );
-app.use(express.urlencoded({ extended: false }));
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
@@ -77,6 +78,14 @@ app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
 
 app.set("view engine", "ejs");
-app.listen(PORT, () => {
+
+const server = app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+socketServer(server);
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import LoadingSpinner from "../custom/LoadingSpinner";
+import { LoadingSpinner } from "../custom";
 import axiosInstance from "../../config/axiosConfig";
 
 const Profile = () => {
@@ -51,6 +51,17 @@ const Profile = () => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid File Type",
+          text: "Please upload a photo in JPEG, JPG, or PNG format.",
+        });
+        setLocalFile(null);
+        return;
+      }
+
       setLocalFile(file);
       const objectURL = URL.createObjectURL(file);
       setAvatar(objectURL);
@@ -74,7 +85,7 @@ const Profile = () => {
 
     const now = new Date();
     const lastUpdateDate = new Date(lastUpdate);
-    const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+    const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000;
 
     if (now - lastUpdateDate < oneMonthInMillis) {
       setError("You can only update your profile once a month.");
@@ -89,7 +100,7 @@ const Profile = () => {
       formPayload.append("role", formData.role);
 
       if (localFile) {
-        formPayload.append("profile_picture", localFile); // Match field name with backend configuration
+        formPayload.append("profile_picture", localFile);
       }
 
       const response = await axiosInstance.put(

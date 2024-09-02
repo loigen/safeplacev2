@@ -4,10 +4,13 @@ import EqualizerOutlinedIcon from "@mui/icons-material/EqualizerOutlined";
 import { FaTimes } from "react-icons/fa";
 import "../../styles/Home.css";
 
-import WorkloadChart from "../../components/custom/chart";
-import AppointmentRequest from "../../components/custom/Appointment.request";
-import AvailabilityCard from "../../components/custom/AvailabilityCard";
-import HighestWeeklyAppointments from "../../components/custom/HighestWeeklyAppointments";
+import {
+  WorkloadChart,
+  AppointmentRequest,
+  AvailabilityCard,
+  LoadingSpinner,
+  HighestWeeklyAppointments,
+} from "../../components/custom";
 import {
   countFreeSlots,
   countPendingSlots,
@@ -16,7 +19,6 @@ import { fetchTodaysAppointments } from "../../api/appointmentAPI/fetchTodayAppo
 import { fetchUserCount } from "../../api/appointmentAPI/fetchUserCount";
 import { fetchCancellationRate } from "../../api/appointmentAPI/fetchCancellationRate";
 import { fetchCompletionRate } from "../../api/appointmentAPI/fetchCompletionRate";
-import LoadingSpinner from "../../components/custom/LoadingSpinner";
 
 const Home = () => {
   const [userCount, setUserCount] = useState(0);

@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-
-import LoadingSpinner from "../components/custom/LoadingSpinner";
 import dayjs from "dayjs";
-import { useHistory } from "react-router-dom";
-import Navpar from "./custom/Navbar";
-
+import { LoadingSpinner, Navbar } from "./custom";
 const categories = [
   { id: "Technology", name: "Technology" },
   { id: "Health", name: "Health" },
@@ -23,8 +19,6 @@ const BlogGuestPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteBlogs, setFavoriteBlogs] = useState([]);
   const [expandedBlogs, setExpandedBlogs] = useState(new Set());
-
-  const history = useHistory();
 
   useEffect(() => {
     const fetchUserProfileAndBlogs = async () => {
@@ -49,35 +43,6 @@ const BlogGuestPage = () => {
 
     fetchUserProfileAndBlogs();
   }, [view]);
-
-  const handleToggleFavorite = async (blogId) => {
-    try {
-      const isFavorite = favoriteBlogs.some((blog) => blog._id === blogId);
-      const url = isFavorite
-        ? `${process.env.REACT_APP_API_URL}/blog/removeFromFavorites/${blogId}/${userId}`
-        : `${process.env.REACT_APP_API_URL}/blog/addToFavorites/${blogId}/${userId}`;
-
-      const response = await axios.post(url);
-      Swal.fire({
-        icon: isFavorite ? "success" : "success",
-        title: isFavorite ? "Removed from Favorites" : "Added to Favorites",
-        text: response.data.message,
-      });
-
-      setFavoriteBlogs((prev) =>
-        isFavorite
-          ? prev.filter((blog) => blog._id !== blogId)
-          : [...prev, { _id: blogId }]
-      );
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Failed to update favorites",
-      });
-    }
-  };
 
   const handleToggleExpand = (blogId) => {
     setExpandedBlogs((prev) => {
@@ -114,7 +79,7 @@ const BlogGuestPage = () => {
 
   return (
     <div>
-      <Navpar />
+      <Navbar />
       <br />
       <div className="px-[10%] py-[5%]">
         <div className="mb-4 flex items-center gap-20">

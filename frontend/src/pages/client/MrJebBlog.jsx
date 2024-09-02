@@ -4,7 +4,7 @@ import Swal from "sweetalert2";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
-import LoadingSpinner from "../../components/custom/LoadingSpinner";
+import { LoadingSpinner } from "../../components/custom";
 import dayjs from "dayjs";
 import { useHistory } from "react-router-dom";
 

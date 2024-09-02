@@ -3,13 +3,12 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
-import LoadingSpinner from "../../components/custom/LoadingSpinner";
-import AddIcon from "@mui/icons-material/Add";
 import dayjs from "dayjs";
-import BlogModal from "../../components/admin/CreateBlogForm"; // Ensure this path is correct
-import { useHistory } from "react-router-dom"; // Assuming you use react-router-dom
-import DraftsPage from "../../components/admin/DraftsPAge";
+import { useHistory } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
+import { LoadingSpinner } from "../../components/custom";
+import { DraftsPage, BlogModal } from "../../components/admin";
 
 const categories = [
   { id: "Technology", name: "Technology" },

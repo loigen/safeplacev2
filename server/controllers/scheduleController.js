@@ -4,11 +4,11 @@ const Schedule = require("../schemas/Schedule");
 exports.getFreeTimeSlots = async (req, res) => {
   try {
     const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Set time to start of today
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
 
     const freeSlots = await Schedule.find({
       status: "free",
-      date: { $gte: startOfDay }, // Only find slots from today onwards
+      date: { $gte: startOfDay },
     }).sort({
       date: 1,
       time: 1,
@@ -91,7 +91,7 @@ exports.updateSlotStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    console.log(`Updating slot with ID: ${id} to status: ${status}`); // Add this line
+    console.log(`Updating slot with ID: ${id} to status: ${status}`);
 
     if (!status) {
       return res.status(400).json({ message: "Status is required" });
@@ -114,7 +114,6 @@ exports.updateSlotStatus = async (req, res) => {
   }
 };
 
-// Fetch pending Slots
 exports.getPendingSlots = async (req, res) => {
   try {
     const pendingSlots = await Schedule.find({ status: "pending" }).sort({
@@ -128,15 +127,12 @@ exports.getPendingSlots = async (req, res) => {
   }
 };
 
-// Accept a time slot
 exports.acceptSlot = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Log the ID for debugging purposes
     console.log(`Accepting slot with ID: ${id}`);
 
-    // Update the slot's status to "accepted"
     const updatedSlot = await Schedule.findByIdAndUpdate(
       id,
       { status: "accepted" },
@@ -154,7 +150,6 @@ exports.acceptSlot = async (req, res) => {
   }
 };
 
-// Count all free slots
 exports.countFreeSlots = async (req, res) => {
   try {
     const freeSlotsCount = await Schedule.countDocuments({ status: "free" });
@@ -165,7 +160,6 @@ exports.countFreeSlots = async (req, res) => {
   }
 };
 
-// Count all pending slots
 exports.countPendingSlots = async (req, res) => {
   try {
     const pendingSlotsCount = await Schedule.countDocuments({
@@ -176,7 +170,8 @@ exports.countPendingSlots = async (req, res) => {
     console.error("Error counting pending slots:", error);
     res.status(500).json({ message: "Server error" });
   }
-}; // Update the status of slots with the same date and time
+};
+
 exports.updateSlotsByDateTime = async (req, res) => {
   try {
     const { date, time } = req.body;

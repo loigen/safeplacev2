@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import Sidebar from "../../components/client/Sidebar";
-import Topbar from "../../components/client/Topbar";
+import { Sidebar, Topbar } from "../../components/client";
 
 const UserDashboard = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

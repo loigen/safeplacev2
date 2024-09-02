@@ -1,7 +1,6 @@
 const multer = require("multer");
 const path = require("path");
 
-// Put the photos in the folder first before uploading
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     let folder = "";
@@ -12,9 +11,9 @@ const storage = multer.diskStorage({
     } else if (file.fieldname === "blog_photo") {
       folder = "uploads/blog_photos";
     } else if (file.fieldname === "qrCode") {
-      folder = "uploads/qr_codes"; // Define folder for QR codes
+      folder = "uploads/qr_codes";
     } else if (file.fieldname === "refundReceipt") {
-      folder = "uploads/refund_receipts"; // Define folder for QR codes
+      folder = "uploads/refund_receipts";
     } else {
       return cb(new Error("Invalid file field name"));
     }
@@ -25,7 +24,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Method for uploading profile in CLoudinary
 const uploadProfilePicture = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },
@@ -42,7 +40,6 @@ const uploadProfilePicture = multer({
     }
   },
 });
-// Method for uploading receipt in CLoudinary
 
 const uploadReceipt = multer({
   storage: storage,
@@ -57,23 +54,6 @@ const uploadReceipt = multer({
       return cb(null, true);
     } else {
       cb(new Error("Error: PDFs, JPGs, JPEGs, and PNGs Only!"));
-    }
-  },
-});
-// method to upload photos for blog
-const uploadBlogPhoto = multer({
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png/;
-    const extname = filetypes.test(
-      path.extname(file.originalname).toLowerCase()
-    );
-    const mimetype = filetypes.test(file.mimetype);
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error("Error: Images Only!"));
     }
   },
 });
@@ -94,12 +74,12 @@ const uploadRefundReceipt = multer({
     }
   },
 });
-// Method for uploading QR codes
+
 const uploadQRCode = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    const filetypes = /png|jpg|jpeg/; // Add QR code file types if different
+    const filetypes = /png|jpg|jpeg/;
     const extname = filetypes.test(
       path.extname(file.originalname).toLowerCase()
     );
@@ -115,7 +95,6 @@ const uploadQRCode = multer({
 module.exports = {
   uploadProfilePicture,
   uploadReceipt,
-  uploadBlogPhoto,
   uploadRefundReceipt,
   uploadQRCode,
 };

@@ -1,5 +1,7 @@
 import Swal from "sweetalert2";
 
+//get the datas of patients
+
 export const getPatientData = async () => {
   try {
     const response = await fetch(

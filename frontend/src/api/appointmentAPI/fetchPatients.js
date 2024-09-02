@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
+//get list of patients
 
 export const fetchPatients = async () => {
   try {

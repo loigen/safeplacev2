@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { fetchUserProfile } from "../api/userAPI/fetchUserProfile";
 import axiosInstance from "../../config/axiosConfig";
+import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
 
 const categories = [
   { id: "Technology", name: "Technology" },
@@ -45,6 +45,7 @@ const AllBlogs = () => {
     const fetchUser = async () => {
       try {
         const user = await fetchUserProfile();
+
         setUserId(user._id);
 
         const favoritesResponse = await axiosInstance.get(
@@ -102,7 +103,6 @@ const AllBlogs = () => {
       return blog.status === "draft" && blog.category === selectedCategory;
     }
 
-    // Default view is "all"
     return (
       blog.category === selectedCategory &&
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) &&

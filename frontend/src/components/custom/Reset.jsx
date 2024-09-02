@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import emailjs from "emailjs-com"; // Import EmailJS
+import emailjs from "emailjs-com";
 
 export default class Reset extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ export default class Reset extends Component {
       .then((data) => {
         if (data.status === "success") {
           this.setState({ submitted: true });
-          this.sendEmail(email, data.link); // Pass the email and link directly to sendEmail
+          this.sendEmail(email, data.link);
         } else {
           alert(data.status);
         }

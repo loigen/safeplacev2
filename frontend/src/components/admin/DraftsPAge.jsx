@@ -9,7 +9,7 @@ const DraftsPage = ({ searchQuery }) => {
   useEffect(() => {
     const fetchDrafts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/blog/drafts"); // Adjust the URL if needed
+        const response = await axios.get("http://localhost:5000/blog/drafts");
         setDrafts(response.data.drafts);
       } catch (error) {
         setError("Failed to fetch drafts");

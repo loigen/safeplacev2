@@ -1,5 +1,6 @@
 import axiosInstance from "../../config/axiosConfig";
 
+//get all appointments based on user's ID
 export const fetchAppointmentsByUserId = async (userId) => {
   try {
     const response = await axiosInstance.get(

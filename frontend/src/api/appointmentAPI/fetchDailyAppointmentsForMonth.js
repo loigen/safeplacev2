@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get the number of appointments monthly
 export const fetchDailyAppointmentsForMonth = async () => {
   try {
     const response = await axiosInstance.get(

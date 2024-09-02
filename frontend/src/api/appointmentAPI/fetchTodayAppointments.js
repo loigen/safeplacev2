@@ -1,6 +1,8 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get toda's appointments
+
 export const fetchTodaysAppointments = async () => {
   try {
     const response = await axiosInstance.get(

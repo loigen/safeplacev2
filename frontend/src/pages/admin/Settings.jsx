@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
-import LoadingSpinner from "../../components/custom/LoadingSpinner";
+import { ChangePasswordForm, LoadingSpinner } from "../../components/custom";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import StarBorderOutlinedIcon from "@mui/icons-material/StarBorderOutlined";
 import QuestionMarkOutlinedIcon from "@mui/icons-material/QuestionMarkOutlined";
-import { NavLink } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
-import Profile from "../../components/admin/Profile";
-import ChangePassword from "../../components/custom/ChangePassword";
-import ManageUsers from "../../components/admin/ManageUsers";
+import { Profile, ManageUsers } from "../../components/admin";
 import axiosInstance from "../../config/axiosConfig";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
 const AdminSettings = () => {
   const [user, setUser] = useState(null);
   const [avatar, setAvatar] = useState(null);
@@ -46,7 +44,7 @@ const AdminSettings = () => {
       case "profile":
         return <Profile />;
       case "Security":
-        return <ChangePassword />;
+        return <ChangePasswordForm />;
       case "manage":
         return <ManageUsers />;
       default:

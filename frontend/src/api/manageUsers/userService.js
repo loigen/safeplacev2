@@ -1,7 +1,7 @@
 import axiosInstance from "../../config/axiosConfig";
 
 const API_URL = `${process.env.REACT_APP_API_URL}/user/users`;
-
+//for manage users
 const getUsers = async (token) => {
   return axiosInstance.get(API_URL, {
     headers: {

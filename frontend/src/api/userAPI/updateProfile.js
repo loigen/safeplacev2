@@ -1,5 +1,6 @@
 import axiosInstance from "../../../config/axiosConfig";
 
+//paras settigns
 export const updateProfile = async (formData, localFile) => {
   try {
     const formPayload = new FormData();

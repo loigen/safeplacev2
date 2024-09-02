@@ -637,7 +637,7 @@ exports.getAppointmentsForDate = async (req, res) => {
     const appointments = await Appointment.find({
       date: new Date(date),
       status: "accepted",
-    }).select("time"); // Only select the time field for simplicity
+    }).select("time");
 
     res.status(200).json({ appointments });
   } catch (error) {

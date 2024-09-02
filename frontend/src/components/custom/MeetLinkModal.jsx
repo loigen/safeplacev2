@@ -21,6 +21,7 @@ const MeetLinkModal = ({ isOpen, onClose, onSubmit }) => {
           placeholder="https://meet.example.com/your-link"
           className="w-full p-2 border rounded-lg mb-4"
         />
+        <a href="https://meet.google.com/landing">Create a link here.</a>
         <div className="flex justify-end">
           <button
             onClick={onClose}

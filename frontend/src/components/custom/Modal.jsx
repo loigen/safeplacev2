@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import axiosInstance from "../../config/axiosConfig";
 
-Modal.setAppElement("#root"); // Make sure to set the root element for accessibility
+Modal.setAppElement("#root");
 
 const UpdateProfileModal = ({ user, isOpen, onRequestClose, updateUser }) => {
   const [formData, setFormData] = useState({
@@ -30,7 +30,7 @@ const UpdateProfileModal = ({ user, isOpen, onRequestClose, updateUser }) => {
       if (response.data.success) {
         updateUser(response.data.user);
         alert("Profile updated successfully");
-        onRequestClose(); // Close modal on success
+        onRequestClose();
       } else {
         alert("Failed to update profile");
       }

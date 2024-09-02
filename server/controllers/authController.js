@@ -5,7 +5,6 @@ const validator = require("validator");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Signup Validator
 const validateSignupData = (
   firstname,
   lastname,

@@ -6,8 +6,8 @@
   border-radius: 4px;
   position: relative;
   font-size: 14px;
-  overflow: hidden; /* Ensures content doesn't overflow */
-  white-space: nowrap; /* Keeps text in a single line */
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .dropzone.dragging {

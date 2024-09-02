@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Topbar from "../../components/admin/Topbar";
-import Sidebar from "../../components/admin/Sidebar";
+import { Topbar, Sidebar } from "../../components/admin";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 

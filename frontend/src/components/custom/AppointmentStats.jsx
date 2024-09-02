@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchPatients } from "../../api/appointmentAPI/fetchPatients";
-import LoadingSpinner from "./LoadingSpinner";
+import { LoadingSpinner } from "./index";
 
 const AppointmentStats = () => {
   const [appointments, setAppointments] = useState({
@@ -49,7 +49,7 @@ const AppointmentStats = () => {
         <img
           src={appointment.avatar}
           alt="Profile"
-          style={{ width: "40px", height: "40px", border: "3px solid gray" }} // Custom size
+          style={{ width: "40px", height: "40px", border: "3px solid gray" }}
           className="rounded-full"
         />
       </div>

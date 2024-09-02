@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-// Define the schema for the Blog
 const blogSchema = new Schema({
   title: {
     type: String,
@@ -47,7 +46,6 @@ const blogSchema = new Schema({
   ],
 });
 
-// Create a model based on the schema
 const Blog = mongoose.model("Blog", blogSchema);
 
 module.exports = Blog;

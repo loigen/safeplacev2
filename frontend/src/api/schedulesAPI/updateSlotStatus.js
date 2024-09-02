@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//update the status if ma trigger
 export const updateSlotStatus = async (slotId, status) => {
   try {
     const response = await axiosInstance.patch(

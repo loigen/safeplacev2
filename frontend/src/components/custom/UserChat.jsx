@@ -73,7 +73,7 @@ const UserChat = ({ chat, user }) => {
       <div className="d-flex flex-col flex items-end p-2">
         <div className="date">
           {latestMessage?.createdAt
-            ? moment(latestMessage.createdAt).calendar() // Use format to ensure date is shown correctly
+            ? moment(latestMessage.createdAt).calendar()
             : "No Date"}
         </div>
         <div

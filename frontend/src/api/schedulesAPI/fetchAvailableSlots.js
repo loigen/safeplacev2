@@ -1,5 +1,7 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
+
+//magkuhag available slots
 export const fetchAvailableSlots = async () => {
   try {
     const response = await axiosInstance.get(

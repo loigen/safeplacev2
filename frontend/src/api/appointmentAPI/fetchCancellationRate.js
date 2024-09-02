@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get the rate of cancellation
 export const fetchCancellationRate = async () => {
   try {
     const response = await axiosInstance.get(

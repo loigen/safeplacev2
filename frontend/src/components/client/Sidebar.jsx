@@ -7,6 +7,7 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import axiosInstance from "../../config/axiosConfig";
+import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 
 const Sidebar = () => {
   const [loading, setLoading] = useState(false);
@@ -52,6 +53,15 @@ const Sidebar = () => {
               className="sidebar-link"
             >
               <EventAvailableIcon className="sidebar-icon" />
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/messenger"
+              activeClassName="active"
+              className="sidebar-link"
+            >
+              <ChatBubbleIcon fontSize="large" className="sidebar-icon" />
             </NavLink>
           </li>
           <li>

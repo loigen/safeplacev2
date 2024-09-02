@@ -4,13 +4,15 @@ import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
 import { fetchAvailableSlots } from "../../api/schedulesAPI/fetchAvailableSlots";
 import { createAppointment } from "../../api/appointmentAPI/createAppointmentApi";
 import { updateSlotStatus } from "../../api/schedulesAPI/updateSlotStatus";
-import Appointments from "../../components/client/Appointments";
-import LoadingSpinner from "../../components/custom/LoadingSpinner";
+import { LoadingSpinner } from "../../components/custom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { FaCloudUploadAlt } from "react-icons/fa";
-import CanceledAppointments from "../../components/client/CanceledAppointments";
-import RejectedAppointments from "../../components/client/RejectedAppointments";
-import RefundedAppointments from "../../components/client/Refunded";
+import {
+  CanceledAppointments,
+  RejectedAppointments,
+  RefundedAppointments,
+  Appointments,
+} from "../../components/client";
 
 const AppointmentsPage = () => {
   const [currentStep, setCurrentStep] = useState(1);

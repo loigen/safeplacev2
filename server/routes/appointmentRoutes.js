@@ -65,10 +65,14 @@ router.get("/get-appointments", appointmentController.getAppointmentsForDate);
 // Fetch for the chart yearly appointments
 router.get("/yearly", appointmentController.getYearlyAppointments);
 
+// update the qr
+
 router.post(
   "/appointments/update-with-bank-account",
   appointmentController.updateAppointmentWithBankAccount
 );
+
+//for QR
 router.post("/refund", appointmentController.returnRefund);
 
 module.exports = router;

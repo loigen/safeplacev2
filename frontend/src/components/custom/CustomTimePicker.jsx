@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2"; // Import SweetAlert
-import axios from "axios"; // Import Axios
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
   const [startHour, setStartHour] = useState("01");
@@ -17,7 +17,6 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
       setStartPeriod(ampm);
     }
 
-    // Fetch existing appointments for the selected date
     const fetchAppointments = async () => {
       try {
         const response = await axios.get(
@@ -54,7 +53,6 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
     const selectedDateTime = new Date(`${selectedDate} ${formattedTime}`);
 
     try {
-      // Check for direct time slot conflict
       const conflictResponse = await axios.get(
         `${process.env.REACT_APP_API_URL}/Appointments/api/check-time`,
         {
@@ -74,13 +72,12 @@ const CustomTimePicker = ({ initialStartTime, onTimeChange, selectedDate }) => {
         return;
       }
 
-      // Check if the selected time has a 2-hour gap from existing appointments
       const hasConflict = appointments.some((appointment) => {
         const appointmentDateTime = new Date(
           `${selectedDate} ${appointment.time}`
         );
         const timeDifference =
-          Math.abs(appointmentDateTime - selectedDateTime) / 36e5; // Convert milliseconds to hours
+          Math.abs(appointmentDateTime - selectedDateTime) / 36e5;
         return timeDifference < 2;
       });
 

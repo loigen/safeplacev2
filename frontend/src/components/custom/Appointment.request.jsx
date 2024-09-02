@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InfoIcon from "@mui/icons-material/Info";
-import Swal from "sweetalert2"; // Import SweetAlert
-import MeetLinkModal from "./MeetLinkModal"; // Import the modal
+import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
-import LoadingSpinner from "./LoadingSpinner";
+import { LoadingSpinner, MeetLinkModal } from "./index";
+import emailjs, { send } from "emailjs-com";
 
 const AppointmentRequest = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -32,31 +32,65 @@ const AppointmentRequest = () => {
 
   const handleReject = async (id, date, time) => {
     try {
-      // First, reject the appointment
       await axiosInstance.patch(
         `http://localhost:5000/Appointments/api/reject/${id}`
       );
-
-      // Then, update the slots with the same date and time
       await axiosInstance.patch(
         "http://localhost:5000/schedules/updateByDateTime",
-        {
-          date,
-          time,
-        }
+        { date, time }
       );
-
-      // Remove the rejected appointment from the state
       setAppointments((prevAppointments) =>
         prevAppointments.filter((app) => app._id !== id)
       );
     } catch (error) {
-      setMessage("Failed to reject the appointment.");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to reject the appointment.",
+        icon: "error",
+        confirmButtonText: "Close",
+      });
+    }
+  };
+
+  const sendEmailNotification = async (appointment) => {
+    try {
+      const response = await emailjs.send(
+        "service_hpvcujb",
+        "template_uwrgbem",
+        {
+          to_email: appointment.email,
+          meet_link: appointment.meetLink,
+          date: appointment.date,
+          time: appointment.time,
+          appointment_type: appointment.appointmentType,
+        },
+        "rJ5kPXerBg9bonHix"
+      );
+      console.log(appointment.email);
+      console.log("Email sent successfully:", response);
+    } catch (error) {
+      console.error("Failed to send email notification:", error);
     }
   };
 
   const handleModalSubmit = async (meetLink) => {
-    if (!meetLink || !meetLink.startsWith("https://meet.google.com")) {
+    if (!meetLink) {
+      Swal.fire({
+        title: "Invalid Link",
+        text: "Please provide a valid Google Meet link.",
+        icon: "error",
+        confirmButtonText: "Try Again",
+      });
+      return;
+    }
+
+    let validMeetLink;
+
+    if (meetLink.startsWith("meet.google.com")) {
+      validMeetLink = `https://${meetLink}`;
+    } else if (meetLink.startsWith("https://meet.google.com")) {
+      validMeetLink = meetLink;
+    } else {
       Swal.fire({
         title: "Invalid Link",
         text: "Please provide a valid Google Meet link.",
@@ -71,15 +105,25 @@ const AppointmentRequest = () => {
         await axiosInstance.patch(
           `http://localhost:5000/Appointments/api/accept/${appointmentToAccept._id}`,
           {
-            meetLink,
+            meetLink: validMeetLink,
           }
         );
+        console.log("Appointment to accept:", appointmentToAccept);
+        await sendEmailNotification({
+          ...appointmentToAccept,
+          meetLink: validMeetLink,
+        });
         setAppointments((prevAppointments) =>
           prevAppointments.filter((app) => app._id !== appointmentToAccept._id)
         );
         setMessage("Appointment accepted successfully.");
       } catch (error) {
-        setMessage("Failed to accept the appointment.");
+        Swal.fire({
+          title: "Error",
+          text: "Failed to accept the appointment.",
+          icon: "error",
+          confirmButtonText: "Close",
+        });
       } finally {
         setIsModalOpen(false);
         setAppointmentToAccept(null);
@@ -188,7 +232,7 @@ const AppointmentRequest = () => {
                   {appointment.appointmentType}
                 </p>
                 <p className="mt-2">
-                  <strong>{appointment.time}</strong>
+                  <strong>{formattedTime}</strong>
                 </p>
                 <div className="mt-4 flex justify-end">
                   <button

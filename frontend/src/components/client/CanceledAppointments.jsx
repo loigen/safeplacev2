@@ -78,8 +78,8 @@ const CanceledAppointments = () => {
       );
 
       setResponseMessage(response.data.message);
-      setSelectedAppointmentId(null); // Reset after successful request
-      setQrCodeFile(null); // Clear the file input after successful request
+      setSelectedAppointmentId(null);
+      setQrCodeFile(null);
     } catch (error) {
       console.error("Error submitting refund request:", error);
       setError("Error submitting refund request.");

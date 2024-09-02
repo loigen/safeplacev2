@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from "react";
-import LoadingSpinner from "../custom/LoadingSpinner";
 import "../../styles/topbar.css";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import profile from "../../images/defaultAvatar.jpg";
-import { NavLink } from "react-router-dom";
 import axiosInstance from "../../config/axiosConfig";
-import Notification from "../custom/Notification";
+import { Notification, LoadingSpinner } from "../custom";
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
-  const [unreadMessages, setUnreadMessages] = useState(0);
-  const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState(null);
   const [avatar, setAvatar] = useState(null);
-  const [showNotificationDropdown, setShowNotificationDropdown] =
-    useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -45,80 +36,12 @@ const Topbar = () => {
       }
     };
 
-    const fetchUnreadCounts = async () => {
-      try {
-        const messagesResponse = await axiosInstance.get(
-          "http://localhost:5000/messages/unreadCount",
-          { withCredentials: true }
-        );
-        const notificationsResponse = await axiosInstance.get(
-          "http://localhost:5000/notifications/unreadCount",
-          { withCredentials: true }
-        );
-        const notificationsListResponse = await axiosInstance.get(
-          "http://localhost:5000/notifications",
-          { withCredentials: true }
-        );
-
-        setUnreadMessages(messagesResponse.data.count);
-        setUnreadNotifications(notificationsResponse.data.count);
-        setNotifications(notificationsListResponse.data.notifications);
-      } catch (error) {
-        if (process.env.NODE_ENV === "development") {
-          setUnreadMessages(3);
-          setUnreadNotifications(3);
-          setNotifications([
-            { id: 1, message: "Notification 1", read: false },
-            { id: 2, message: "Notification 2", read: false },
-            { id: 3, message: "Notification 3", read: false },
-          ]);
-        } else {
-          console.error("Error fetching unread counts:", error);
-        }
-      }
-    };
-
     fetchProfile();
-    fetchUnreadCounts();
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const handleNotificationClick = () => {
-    setShowNotificationDropdown(!showNotificationDropdown);
-  };
-
-  const markNotificationAsRead = async (notificationId) => {
-    try {
-      const notification = notifications.find(
-        (notif) => notif.id === notificationId
-      );
-
-      if (notification.read) {
-        return;
-      }
-
-      if (process.env.NODE_ENV !== "development") {
-        await axiosInstance.post(
-          `http://localhost:5000/notifications/markAsRead/${notificationId}`,
-          {},
-          { withCredentials: true }
-        );
-      }
-
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((notif) =>
-          notif.id === notificationId ? { ...notif, read: true } : notif
-        )
-      );
-
-      setUnreadNotifications((prevCount) => prevCount - 1);
-    } catch (error) {
-      console.error("Error marking notification as read:", error);
-    }
-  };
 
   if (!user) {
     return <LoadingSpinner />;
@@ -130,31 +53,6 @@ const Topbar = () => {
         <ul className="flex flex-row gap-4 md:gap-6 items-center">
           <li>
             <Notification />
-          </li>
-          <li onClick={handleNotificationClick} className="relative">
-            <NotificationsNoneOutlinedIcon />
-            {unreadNotifications > 0 && (
-              <span className="badge text-white absolute bg-red-600 px-1 rounded-full left-4">
-                {unreadNotifications}
-              </span>
-            )}
-            {showNotificationDropdown && (
-              <div className="notificationDropdown absolute top-8 right-0 w-64 bg-white shadow-lg p-4">
-                <ul className="flex flex-col gap-2">
-                  {notifications.map((notification) => (
-                    <li
-                      key={notification.id}
-                      className={`notificationItem ${
-                        notification.read ? "read" : "unread"
-                      }`}
-                      onClick={() => markNotificationAsRead(notification.id)}
-                    >
-                      {notification.message}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </li>
         </ul>
         <div className="profilePart flex flex-row gap-4 md:gap-6 items-center justify-center">

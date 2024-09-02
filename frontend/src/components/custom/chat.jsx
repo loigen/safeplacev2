@@ -2,11 +2,8 @@ import React, { useContext, useState, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import { Container } from "react-bootstrap";
 import Stack from "react-bootstrap/Stack";
-import LoadingSpinner from "./LoadingSpinner";
-import UserChat from "./UserChat";
+import { LoadingSpinner, PotentialChats, ChatBox, UserChat } from "./index";
 import axiosInstance from "../../config/axiosConfig";
-import PotentialChats from "./PotentialChats";
-import ChatBox from "./chatBox";
 
 const Chat = () => {
   const [user, setUser] = useState(null);

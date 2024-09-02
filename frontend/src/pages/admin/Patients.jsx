@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { getPatientData } from "../../api/appointmentAPI/getPatientDataApi";
-import PatientDetails from "../../components/custom/PatientDetail";
-import PatientList from "../../components/custom/PatientList";
+import {
+  PatientList,
+  PatientDetails,
+  AppointmentStats,
+} from "../../components/custom";
 import "../../styles/patient.css";
-import AppointmentStats from "../../components/custom/AppointmentStats";
 import axiosInstance from "../../config/axiosConfig";
 
 const Patients = () => {

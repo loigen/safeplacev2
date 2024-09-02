@@ -108,7 +108,6 @@ exports.addToFavorites = async (req, res) => {
 exports.removeFromFavorites = async (req, res) => {
   const { blogId, userId } = req.params;
 
-  // Validate the provided IDs
   if (
     !mongoose.Types.ObjectId.isValid(userId) ||
     !mongoose.Types.ObjectId.isValid(blogId)
@@ -117,18 +116,15 @@ exports.removeFromFavorites = async (req, res) => {
   }
 
   try {
-    // Find the blog by ID
     const blog = await Blog.findById(blogId);
     if (!blog) {
       return res.status(404).json({ message: "Blog not found" });
     }
 
-    // Remove the user ID from the blog's readerIDs array
     blog.readerIDs = blog.readerIDs.filter(
       (id) => id.toString() !== userId.toString()
     );
 
-    // Save the updated blog document
     await blog.save();
 
     res.status(200).json({ message: "User removed from favorites" });

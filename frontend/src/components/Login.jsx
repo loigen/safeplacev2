@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import "../styles/login.css";
 import logo from "../images/bigLogo.png";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Swal from "sweetalert2";
-import { AuthContext } from "../context/AuthContext"; // Import the context
+import { AuthContext } from "../context/AuthContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,7 +16,7 @@ const Login = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const history = useHistory();
   const [rememberMe, setRememberMe] = useState(false);
-  const { setUser } = useContext(AuthContext); // Get setUser from AuthContext
+  const { setUser } = useContext(AuthContext);
 
   useEffect(() => {
     const remembered = localStorage.getItem("rememberMe");

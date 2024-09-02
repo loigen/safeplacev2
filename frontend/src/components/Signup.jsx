@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
 import "./../styles/Signup.css";
@@ -10,6 +9,7 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import axiosInstance from "../config/axiosConfig";
 
 function Signup() {
   const [firstname, setFirstname] = useState("");
@@ -64,15 +64,18 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/auth/signup", {
-        firstname,
-        lastname,
-        email,
-        password,
-        repeatPassword,
-        birthdate,
-        sex,
-      });
+      const response = await axiosInstance.post(
+        "http://localhost:5000/auth/signup",
+        {
+          firstname,
+          lastname,
+          email,
+          password,
+          repeatPassword,
+          birthdate,
+          sex,
+        }
+      );
 
       if (response.status === 201) {
         Swal.fire("Success", "Account created successfully", "success");

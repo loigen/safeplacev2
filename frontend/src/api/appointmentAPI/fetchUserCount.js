@@ -1,6 +1,8 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get the total number of users
+
 export const fetchUserCount = async () => {
   try {
     const response = await axiosInstance.get(

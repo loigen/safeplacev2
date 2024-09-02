@@ -153,7 +153,7 @@ exports.getAllUsers = async (req, res) => {
 // Block a user (Admin only)
 exports.blockUser = async (req, res) => {
   try {
-    const userId = req.params.id; // Assuming the user ID is passed as a URL parameter
+    const userId = req.params.id;
 
     const user = await User.findByIdAndUpdate(
       userId,
@@ -195,12 +195,10 @@ exports.unblockUser = async (req, res) => {
 
 exports.getAll = async (req, res) => {
   try {
-    // Retrieve the ID of the logged-in user from the request object
     const loggedInUserId = req.user.id;
 
-    // Find all users except the one who is logged in
     const users = await User.find({ _id: { $ne: loggedInUserId } }).select(
-      "-password" // Exclude the password field from the response
+      "-password"
     );
 
     res.status(200).json(users);

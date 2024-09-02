@@ -1,7 +1,6 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -44,10 +43,6 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
               {totalSlots} slots
             </span>
           </div>
-          <button className="bg-blue-600 text-white p-2 rounded-full border-none cursor-pointer hidden md:flex items-center justify-center">
-            <ChevronRightIcon />
-            {/* this should redirect to the /schedules */}
-          </button>
         </div>
       </div>
     </div>

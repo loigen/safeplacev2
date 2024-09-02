@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get the highest appointments for all the week passed
+
 const useHighestWeeklyAppointments = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

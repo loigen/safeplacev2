@@ -7,8 +7,7 @@ import "../../styles/Schedules.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 import dayjs from "dayjs";
 import axiosInstance from "../../config/axiosConfig";
-import CustomTimePicker from "../../components/custom/CustomTimePicker";
-import AppointmentRequest from "../../components/custom/Appointment.request";
+import { CustomTimePicker, AppointmentRequest } from "../../components/custom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 

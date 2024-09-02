@@ -5,13 +5,9 @@ const authController = require("../controllers/authController");
 
 const checkAdmin = require("../middlewares/checkAdmin");
 const authenticateToken = require("../middlewares/authenticateToken");
-const {
-  uploadProfilePicture,
-  uploadBlogPhoto,
-} = require("../middlewares/multer");
+const { uploadProfilePicture } = require("../middlewares/multer");
 const { get } = require("mongoose");
 
-// User profile routes
 router.get("/profile", authenticateToken, userController.getProfile);
 
 router.put(
@@ -21,13 +17,6 @@ router.put(
 );
 
 router.post(
-  "/uploadblogphoto",
-  [authenticateToken, uploadBlogPhoto.single("blog_photo")],
-  userController.uploadBlogPhoto
-);
-
-// Admin routes
-router.post(
   "/admin",
   [authenticateToken, checkAdmin],
   userController.adminFunction
@@ -35,24 +24,24 @@ router.post(
 
 router.get("/countNonAdminUsers", userController.countNonAdminUsers);
 
-// Password management routes
 router.post(
   "/changepassword",
   authenticateToken,
   userController.changePassword
 );
 
-// New routes
-router.get("/users", [authenticateToken], userController.getAllUsers); // Fetch all users
-router.patch("/users/:id/block", [authenticateToken], userController.blockUser); // Block user
+router.get("/users", [authenticateToken], userController.getAllUsers);
+
+router.patch("/users/:id/block", [authenticateToken], userController.blockUser);
+
 router.patch(
   "/users/:id/unblock",
   [authenticateToken],
   userController.unblockUser
-); // Unblock user
+);
+
 router.get("/all", authenticateToken, userController.getAll);
 
-// Logout route
 router.post("/logout", authenticateToken, authController.logout);
 
 router.get("/find/:userId", userController.findUser);

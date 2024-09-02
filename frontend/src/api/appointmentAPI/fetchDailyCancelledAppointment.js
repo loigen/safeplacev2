@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 
+//get daily cancelled appointments
 export const fetchDailyCancelAppointments = async () => {
   try {
     const response = await axiosInstance.get(

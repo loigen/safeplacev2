@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
+import axiosInstance from "../config/axiosConfig";
 
 const NotFound = () => {
   const [redirectPath, setRedirectPath] = useState("/");
@@ -9,9 +9,12 @@ const NotFound = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/profile", {
-          withCredentials: true,
-        });
+        const response = await axiosInstance.get(
+          "http://localhost:5000/user/profile",
+          {
+            withCredentials: true,
+          }
+        );
         if (response.status === 200) {
           const role = response.data.user.role;
           if (role === "admin") {
