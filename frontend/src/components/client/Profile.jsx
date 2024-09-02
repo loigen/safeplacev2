@@ -84,13 +84,6 @@ const Profile = () => {
     }
 
     const now = new Date();
-    const lastUpdateDate = new Date(lastUpdate);
-    const oneMonthInMillis = 30 * 24 * 60 * 60 * 1000;
-
-    if (now - lastUpdateDate < oneMonthInMillis) {
-      setError("You can only update your profile once a month.");
-      return;
-    }
 
     try {
       const formPayload = new FormData();

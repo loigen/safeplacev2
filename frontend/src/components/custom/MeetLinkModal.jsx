@@ -1,11 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const MeetLinkModal = ({ isOpen, onClose, onSubmit }) => {
   const [meetLink, setMeetLink] = useState("");
 
   const handleSubmit = () => {
+    if (meetLink.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please enter a meet link!",
+      });
+      return;
+    }
+
     onSubmit(meetLink);
     setMeetLink("");
+
+    Swal.fire({
+      icon: "success",
+      title: "Success!",
+      text: "Meet link has been submitted successfully.",
+    }).then(() => {
+      onClose();
+    });
   };
 
   if (!isOpen) return null;
@@ -21,7 +39,14 @@ const MeetLinkModal = ({ isOpen, onClose, onSubmit }) => {
           placeholder="https://meet.example.com/your-link"
           className="w-full p-2 border rounded-lg mb-4"
         />
-        <a href="https://meet.google.com/landing">Create a link here.</a>
+        <a
+          href="https://meet.google.com/landing"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-800 underline"
+        >
+          Create a link here...
+        </a>
         <div className="flex justify-end">
           <button
             onClick={onClose}

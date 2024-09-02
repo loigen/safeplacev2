@@ -116,7 +116,6 @@ const AppointmentRequest = () => {
         setAppointments((prevAppointments) =>
           prevAppointments.filter((app) => app._id !== appointmentToAccept._id)
         );
-        setMessage("Appointment accepted successfully.");
       } catch (error) {
         Swal.fire({
           title: "Error",
@@ -346,12 +345,6 @@ const AppointmentRequest = () => {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleModalSubmit}
       />
-
-      {message && (
-        <div className="fixed bottom-0 right-0 p-4 bg-red-500 text-white">
-          {message}
-        </div>
-      )}
     </div>
   );
 };
