@@ -59,7 +59,7 @@ const UserChat = ({ chat, user }) => {
           )}
         </div>
         <div className="flex flex-col">
-          <span className="text-base font-semibold text-gray-800">
+          <span className="text-base font-semibold text-gray-800 capitalize">
             {recipientUser.firstname}
           </span>
           {latestMessage?.text && (
