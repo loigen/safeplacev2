@@ -14,6 +14,7 @@ import axiosInstance from "../config/axiosConfig";
 function Signup() {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -23,32 +24,45 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [agreement, setAgreement] = useState(false);
+  const [step, setStep] = useState(1);
 
   const history = useHistory();
 
   useEffect(() => {
-    if (
-      firstname.trim() &&
-      lastname.trim() &&
-      email.trim() &&
-      password.trim() &&
-      repeatPassword.trim() &&
-      birthdate.trim() &&
-      sex &&
-      agreement
-    ) {
-      setIsButtonDisabled(false);
-    } else {
-      setIsButtonDisabled(true);
+    if (step === 1) {
+      if (
+        firstname.trim() &&
+        lastname.trim() &&
+        middleName.trim() &&
+        birthdate.trim() &&
+        sex
+      ) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
+    } else if (step === 2) {
+      if (
+        email.trim() &&
+        password.trim() &&
+        repeatPassword.trim() &&
+        agreement
+      ) {
+        setIsButtonDisabled(false);
+      } else {
+        setIsButtonDisabled(true);
+      }
     }
   }, [
+    step,
     firstname,
     lastname,
+    middleName,
+    birthdate,
+    sex,
     email,
     password,
     repeatPassword,
-    birthdate,
-    sex,
     agreement,
   ]);
 
@@ -69,6 +83,7 @@ function Signup() {
         {
           firstname,
           lastname,
+          middleName,
           email,
           password,
           repeatPassword,
@@ -82,6 +97,7 @@ function Signup() {
 
         setFirstname("");
         setLastname("");
+        setMiddleName("");
         setEmail("");
         setPassword("");
         setRepeatPassword("");
@@ -105,6 +121,14 @@ function Signup() {
 
   const handleBackClick = () => {
     history.push("/");
+  };
+
+  const handleNext = () => {
+    setStep(2);
+  };
+
+  const handlePrev = () => {
+    setStep(1);
   };
 
   return (
@@ -131,156 +155,178 @@ function Signup() {
         <br />
         <div className="form">
           <form onSubmit={handleSubmit}>
-            <div className="inputFields">
-              <div className="flex flex-row justify-between">
-                <div>
-                  <label htmlFor="firstname">
-                    <span>
-                      <PersonOutlineIcon />
-                    </span>
-                    First Name:
-                  </label>
-                  <input
-                    type="text"
-                    value={firstname}
-                    onChange={(e) => setFirstname(e.target.value)}
-                    placeholder="First Name"
-                    required
-                  />
+            {step === 1 && (
+              <div className="inputFields">
+                <div className="flex flex-col">
+                  <div>
+                    <label htmlFor="firstname">
+                      <span></span>
+                      First Name:
+                    </label>
+                    <input
+                      className="capitalize"
+                      type="text"
+                      value={firstname}
+                      onChange={(e) => setFirstname(e.target.value)}
+                      placeholder="First Name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="middleName">
+                      <span></span>
+                      Middle Name:
+                    </label>
+                    <input
+                      className="capitalize"
+                      type="text"
+                      value={middleName}
+                      onChange={(e) => setMiddleName(e.target.value)}
+                      placeholder="Middle Name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastname">
+                      <span></span>
+                      Last Name:
+                    </label>
+                    <input
+                      className="capitalize"
+                      type="text"
+                      value={lastname}
+                      onChange={(e) => setLastname(e.target.value)}
+                      placeholder="Last Name"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label htmlFor="lastname">
-                    <span>
-                      <PersonOutlineIcon />
-                    </span>
-                    Last Name:
-                  </label>
-                  <input
-                    type="text"
-                    value={lastname}
-                    onChange={(e) => setLastname(e.target.value)}
-                    placeholder="Last Name"
-                    required
-                  />
-                </div>
-              </div>
-              <label htmlFor="email">
-                <span>
-                  <ContactMailIcon />
-                </span>
-                Email Address:
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email Address"
-                required
-              />
-              <label htmlFor="birthdate">
-                <span>
-                  <PersonOutlineIcon />
-                </span>
-                Birthdate:
-              </label>
-              <input
-                type="date"
-                value={birthdate}
-                onChange={(e) => setBirthdate(e.target.value)}
-                placeholder="Birthdate"
-                required
-              />
-              <label htmlFor="sex">
-                <span>
-                  <PersonOutlineIcon />
-                </span>
-                Gender:
-              </label>
-              <div className="radioGroup flex gap-2">
-                <label>
-                  <input
-                    type="radio"
-                    value="Male"
-                    checked={sex === "Male"}
-                    onChange={(e) => setSex(e.target.value)}
-                  />
-                  Male
+                <label htmlFor="birthdate">
+                  <span></span>
+                  Birthdate:
                 </label>
-                <label>
-                  <input
-                    type="radio"
-                    value="Female"
-                    checked={sex === "Female"}
-                    onChange={(e) => setSex(e.target.value)}
-                  />
-                  Female
-                </label>
-              </div>
-              <label htmlFor="password">
-                <span>
-                  <LockOpenIcon />
-                </span>
-                Password:
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                required
-              />
-              <label htmlFor="repeatPassword">
-                <span>
-                  <LockOpenIcon />
-                </span>
-                Repeat Password:
-              </label>
-              <input
-                type="password"
-                value={repeatPassword}
-                onChange={(e) => setRepeatPassword(e.target.value)}
-                placeholder="Repeat Password"
-                required
-              />
-            </div>
-
-            <div className="agreement">
-              <p>
-                The Safe Place platform may keep me informed with personalized
-                emails about services and activities. See our Privacy Policy for
-                more details or to opt-out at any time.
-              </p>
-              <div className="checkbox">
                 <input
-                  type="checkbox"
-                  name="agree"
-                  id="agree"
-                  checked={agreement}
-                  onChange={() => setAgreement(!agreement)}
+                  type="date"
+                  value={birthdate}
+                  onChange={(e) => setBirthdate(e.target.value)}
+                  placeholder="Birthdate"
+                  required
                 />
-                <span>Please contact me via email</span>
+                <label htmlFor="sex">
+                  <span></span>
+                  Gender:
+                </label>
+                <div className="radioGroup flex gap-2">
+                  <label>
+                    <input
+                      type="radio"
+                      value="Male"
+                      checked={sex === "Male"}
+                      onChange={(e) => setSex(e.target.value)}
+                    />
+                    Male
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="Female"
+                      checked={sex === "Female"}
+                      onChange={(e) => setSex(e.target.value)}
+                    />
+                    Female
+                  </label>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={isButtonDisabled}
+                  className={`px-6 py-2 rounded-md text-white font-semibold transition duration-300 ${
+                    isButtonDisabled
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-teal-600 hover:bg-teal-700"
+                  }`}
+                >
+                  Next
+                </button>
               </div>
-              <p>
-                By clicking Create account, I agree that I have read and
-                accepted the Terms of Use and Privacy Policy.
-              </p>
-            </div>
-            <div className="bottompart w-full">
-              <div></div>
-              <button
-                type="submit"
-                disabled={isButtonDisabled}
-                className={isButtonDisabled ? "disabled" : ""}
-              >
-                {loading ? "Signing up..." : "Create Account"}
-              </button>
-            </div>
-            <div className="forSignup">
-              <p>Already have an account? </p>
-              <Link className="login" to="/login">
-                Sign In
-              </Link>
-            </div>
+            )}
+
+            {step === 2 && (
+              <div className="inputFields">
+                <label htmlFor="email">
+                  <span>
+                    <ContactMailIcon />
+                  </span>
+                  Email Address:
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email Address"
+                  required
+                />
+                <label htmlFor="password">
+                  <span>
+                    <LockOpenIcon />
+                  </span>
+                  Password:
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  required
+                />
+                <label htmlFor="repeatPassword">
+                  <span>
+                    <LockOpenIcon />
+                  </span>
+                  Repeat Password:
+                </label>
+                <input
+                  type="password"
+                  value={repeatPassword}
+                  onChange={(e) => setRepeatPassword(e.target.value)}
+                  placeholder="Repeat Password"
+                  required
+                />
+                <div className="agreement">
+                  <p>
+                    The Safe Place platform may keep me informed with
+                    personalized emails about services and activities. See our
+                    Privacy Policy for more details or to opt-out at any time.
+                  </p>
+                  <div className="checkbox">
+                    <input
+                      type="checkbox"
+                      name="agree"
+                      id="agree"
+                      checked={agreement}
+                      onChange={() => setAgreement(!agreement)}
+                    />
+                    <span>Please contact me via email</span>
+                  </div>
+                  <p>
+                    By clicking Create account, I agree that I have read and
+                    accepted the Terms of Use and Privacy Policy.
+                  </p>
+                </div>
+                <div className="bottompart w-full">
+                  <button type="button" onClick={handlePrev}>
+                    Previous
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isButtonDisabled}
+                    className={isButtonDisabled ? "disabled" : ""}
+                  >
+                    {loading ? "Signing up..." : "Create Account"}
+                  </button>
+                </div>
+              </div>
+            )}
           </form>
         </div>
       </div>

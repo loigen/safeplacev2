@@ -44,6 +44,7 @@ exports.signup = async (req, res) => {
   const {
     firstname,
     lastname,
+    middleName,
     email,
     password,
     repeatPassword,
@@ -77,6 +78,7 @@ exports.signup = async (req, res) => {
     const user = new User({
       firstname,
       lastname,
+      middleName,
       email,
       password: hashedPassword,
       role,

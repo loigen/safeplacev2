@@ -5,7 +5,12 @@ import UserDashboard from "./pages/client/userDashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import LoadingSpinner from "./components/custom/LoadingSpinner";
 
-const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
+const PrivateRoute = ({
+  component: Component,
+  adminOnly,
+  anyLoggedIn,
+  ...rest
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,14 +51,16 @@ const PrivateRoute = ({ component: Component, adminOnly, ...rest }) => {
     <Route
       {...rest}
       render={(props) =>
-        isAdmin ? (
+        adminOnly ? (
           <AdminDashboard>
             <Component {...props} />
           </AdminDashboard>
-        ) : (
+        ) : anyLoggedIn ? (
           <UserDashboard>
             <Component {...props} />
           </UserDashboard>
+        ) : (
+          <Component {...props} />
         )
       }
     />

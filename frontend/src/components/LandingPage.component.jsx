@@ -5,7 +5,6 @@ import exp from "../images/experience.png";
 import hq from "../images/hq.png";
 import quote from "../images/quote.png";
 import clientPhoto from "../images/clientPhoto.png";
-import dice from "../images/dice.png";
 import { Navbar, Courosel, Footer } from "./custom";
 
 const testimonies = [
@@ -74,7 +73,9 @@ const LandingPage = () => {
           Find Relief, Growth, and Understanding Through Compassionate <br />{" "}
           Counseling
         </b>
-        <button className="appointmentButton">Schedule an Appointment</button>
+        <a href="/login" className="appointmentButton">
+          Schedule an Appointment
+        </a>
         <section className="cards">
           <div className="card">
             <div className="top">
@@ -138,7 +139,9 @@ const LandingPage = () => {
               To know more click About Me.
             </p>
             <div className="btns">
-              <button className="book">Book an Appointment</button>
+              <a href="/login" className="book">
+                Book an Appointment
+              </a>
               <button className="Aboutlink">About Me</button>
             </div>
           </div>
@@ -150,7 +153,9 @@ const LandingPage = () => {
           </h2>
           <Courosel />
           <div className="btns2">
-            <button className="book">Book an Appointment</button>
+            <a href="/login" className="book text-center">
+              Book an Appointment
+            </a>{" "}
             <button className="Aboutlink">Browse Services</button>
           </div>
         </section>
@@ -180,56 +185,9 @@ const LandingPage = () => {
             <button onClick={handleNext}>o</button>
           </div>
         </section>
-        <section className="blog">
-          <center>
-            {" "}
-            <h1>Blog</h1>
-          </center>
-          <div className="Categories">
-            {["All category", "Category 1", "Category 2", "Category 3"].map(
-              (category) => (
-                <div
-                  key={category}
-                  className={`Category ${
-                    activeCategory === category ? "active" : ""
-                  }`}
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  {category}
-                </div>
-              )
-            )}
-          </div>
 
-          <div className="blogContent">
-            <div className="Articles">
-              <img src={dice} alt="" />
-              <div className="cardbottom">
-                <h2 className="category">category 1</h2>
-                <b className="titlePart">Happiness is a choice</b>
-                <button>Read Now</button>
-              </div>
-            </div>
-            <div className="Articles second">
-              <img src={dice} alt="" />
-              <div className="cardbottom">
-                <h2 className="category">category 1</h2>
-                <b className="titlePart">Happiness is a choice</b>
-                <button>Read Now</button>
-              </div>
-            </div>
-            <div className="Articles third">
-              <img src={dice} alt="" />
-              <div className="cardbottom">
-                <h2 className="category">category 1</h2>
-                <b className="titlePart">Happiness is a choice</b>
-                <button>Read Now</button>
-              </div>
-            </div>
-          </div>
-        </section>
         <section className="bottomBanner">
-          <button>Schedule an Appointment</button>
+          <a href="/login">Schedule an Appointment</a>
         </section>
         <section className="bottomNavlinks">
           {[

@@ -66,12 +66,29 @@ const App = () => {
           <Route path="/patients/:id" element={PatientDetails} />
           <Route path="/Services" component={Services} />
           <Route path="/forgot-password" component={Reset} />
+          <PrivateRoute path="/messenger" component={Chat} />
 
           {/* Private Routes for All Authenticated Users */}
-          <PrivateRoute path="/MR_JEB_BLOG" component={MrJebBlog} />
-          <PrivateRoute path="/Booking" component={AppointmentsPage} />
-          <PrivateRoute path="/clientSettings" component={ClientSettings} />
-          <PrivateRoute path="/contactSupport" component={ContactSupport} />
+          <PrivateRoute
+            path="/MR_JEB_BLOG"
+            component={MrJebBlog}
+            anyLoggedIn={true}
+          />
+          <PrivateRoute
+            path="/Booking"
+            component={AppointmentsPage}
+            anyLoggedIn={true}
+          />
+          <PrivateRoute
+            path="/clientSettings"
+            component={ClientSettings}
+            anyLoggedIn={true}
+          />
+          <PrivateRoute
+            path="/contactSupport"
+            component={ContactSupport}
+            anyLoggedIn={true}
+          />
           <PrivateRoute path="/messenger" component={Chat} />
 
           {/* Admin-Only Private Routes */}

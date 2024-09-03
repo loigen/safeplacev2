@@ -27,6 +27,7 @@ import UserChat from "./UserChat";
 import UserGuide from "./UserGuide";
 import FAQs from "./FAQs";
 import RatesandReview from "./RatesandReview";
+import Topbar from "./messageTopbar";
 
 export {
   AllBlogs,
@@ -58,4 +59,5 @@ export {
   UserGuide,
   FAQs,
   RatesandReview,
+  Topbar,
 };

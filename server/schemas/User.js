@@ -5,6 +5,7 @@ const { type } = require("os");
 const userSchema = new mongoose.Schema({
   firstname: { type: String, required: true },
   lastname: { type: String, required: true },
+  middleName: { type: String, required: false },
   email: {
     type: String,
     required: true,

@@ -47,14 +47,18 @@
 }
 
 .content .appointmentButton {
-  background: #68b2a0;
+  background: #2c6975;
   color: #fff;
+  text-align: center;
   width: 20%;
   padding: 1%;
   font-weight: bold;
   border-radius: 10px;
 }
 
+.content .appointmentButton:hover {
+  background: #307c69;
+}
 .cards {
   display: flex;
   flex-direction: row;
@@ -371,7 +375,7 @@
   background-image: url(../images/AdobeStock_287586510\ 2.png);
 }
 
-.bottomBanner button {
+.bottomBanner a {
   font-size: large;
   background: linear-gradient(to right, #8be332, #4d7d1c);
   padding: 10px;
@@ -381,6 +385,7 @@
   color: #000;
   top: 80%;
   width: 20%;
+  text-align: center;
   box-shadow: 1px 5px 5px black;
   left: 40%;
 }
@@ -462,7 +467,8 @@ hr {
     gap: 1rem;
   }
 
-  .book, .Aboutlink {
+  .book,
+  .Aboutlink {
     width: 100%;
   }
 
@@ -475,11 +481,13 @@ hr {
     padding: 5% 0;
   }
 
-  .services h1, .testimonies h1 {
+  .services h1,
+  .testimonies h1 {
     font-size: 1.5rem;
   }
 
-  .services h2, .testimonies h2 {
+  .services h2,
+  .testimonies h2 {
     font-size: 1rem;
   }
 
@@ -542,7 +550,7 @@ hr {
   .quote img {
     width: 100%;
   }
-  .about{
+  .about {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -560,7 +568,8 @@ hr {
     gap: 0.5rem;
   }
 
-  .book, .Aboutlink {
+  .book,
+  .Aboutlink {
     width: 100%;
   }
 
@@ -568,31 +577,34 @@ hr {
     width: 90%;
   }
 
-  .services{
+  .services {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
-  .services h1, .testimonies h1 {
+  .services h1,
+  .testimonies h1 {
     font-size: 1.2rem;
   }
 
-  .services h2, .testimonies h2 {
+  .services h2,
+  .testimonies h2 {
     font-size: 0.9rem;
   }
-  .blog, .blogContent{
+  .blog,
+  .blogContent {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-  .Categories{
+  .Categories {
     font-size: x-small;
   }
   .btns2 {
     width: 90%;
   }
-  .Articles{
+  .Articles {
     width: 90%;
   }
   .bottomBanner {
@@ -604,7 +616,7 @@ hr {
     width: 80%;
     left: 10%;
   }
-  .bottomNavlinks{
+  .bottomNavlinks {
     display: flex;
     flex-direction: row;
     font-size: small;

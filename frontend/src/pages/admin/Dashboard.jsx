@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 const Dashboard = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const handleResize = () => {
@@ -13,60 +13,54 @@ const Dashboard = ({ children }) => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize();
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   const closeSidebar = () => {
-    if (isMobile && isSidebarOpen) {
+    if (isMobile) {
       setIsSidebarOpen(false);
     }
   };
 
   return (
-    <div onClick={closeSidebar} className="relative h-screen overflow-hidden">
-      <div>
+    <div className="relative h-screen overflow-hidden">
+      {/* Topbar */}
+      <header className="fixed top-0 left-0 right-0 z-50">
         <Topbar />
-      </div>
-      <div className="contentBody flex flex-row justify-between h-full">
+      </header>
+
+      <div className="flex flex-row pt-[56px] h-full">
+        {/* Sidebar */}
         {isMobile ? (
-          <div className="burgerMenu flex flex-col items-start z-50">
+          <div className="flex flex-col items-start z-50">
             <button onClick={toggleSidebar} className="p-2">
               {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
             </button>
             {isSidebarOpen && (
-              <div
-                className="mobileSidebar absolute top-16 left-0 w-3/4 bg-white shadow-lg z-50"
+              <aside
+                className="absolute top-16 left-0 w-3/4 bg-white shadow-lg z-50"
                 onClick={(e) => e.stopPropagation()}
               >
                 <Sidebar />
-              </div>
+              </aside>
             )}
           </div>
         ) : (
-          <div className="sidebarWrapper">
+          <aside className="w-64 bg-white shadow-md">
             <Sidebar />
-          </div>
+          </aside>
         )}
-        <div
-          className="flex-grow"
-          style={{
-            overflow: "scroll",
-            height: "90vh",
-            appearance: "none",
-            overflowX: "hidden",
-            backgroundColor: "#d9f4f9",
-          }}
+
+        <main
+          className="flex-grow overflow-auto"
+          style={{ backgroundColor: "#d9f4f9" }}
         >
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

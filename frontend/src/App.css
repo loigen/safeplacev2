@@ -18,16 +18,17 @@
 .all-users {
   display: flex;
   margin-bottom: 1rem;
+  scroll-snap-type: x mandatory;
 }
 
 .single-user {
-  background: rgb(0, 213, 255);
   color: white;
   cursor: pointer;
   padding: 5px 7px;
   border-radius: 10px;
   margin-right: 0.5rem;
   position: relative;
+  scroll-snap-align: start;
 }
 
 /* User Card */
