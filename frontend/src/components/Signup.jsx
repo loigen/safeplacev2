@@ -214,7 +214,7 @@ function Signup() {
                 />
                 <label htmlFor="sex">
                   <span></span>
-                  Gender:
+                  Sex:
                 </label>
                 <div className="radioGroup flex gap-2">
                   <label>

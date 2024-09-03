@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentsByUserId } from "../../api/appointmentAPI/fetchAppointmentsByUserId";
 import axiosInstance from "../../config/axiosConfig";
+import Swal from "sweetalert2";
 
 const RejectedAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -77,7 +78,14 @@ const RejectedAppointments = () => {
         { withCredentials: true }
       );
 
-      setResponseMessage(response.data.message);
+      Swal.fire({
+        icon: "success",
+        title: "Request Created",
+        text: "Your request has been sent successfully!",
+        willClose: () => {
+          window.location.reload();
+        },
+      });
       setSelectedAppointmentId(null);
       setQrCodeFile(null);
     } catch (error) {

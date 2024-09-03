@@ -123,6 +123,9 @@ const Profile = () => {
         icon: "success",
         title: "Profile Updated",
         text: "Your profile has been successfully updated!",
+        willClose: () => {
+          window.location.reload();
+        },
       });
     } catch (error) {
       setError("Error updating profile.");

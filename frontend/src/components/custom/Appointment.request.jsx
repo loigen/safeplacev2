@@ -31,24 +31,41 @@ const AppointmentRequest = () => {
   };
 
   const handleReject = async (id, date, time) => {
-    try {
-      await axiosInstance.patch(
-        `http://localhost:5000/Appointments/api/reject/${id}`
-      );
-      await axiosInstance.patch(
-        "http://localhost:5000/schedules/updateByDateTime",
-        { date, time }
-      );
-      setAppointments((prevAppointments) =>
-        prevAppointments.filter((app) => app._id !== id)
-      );
-    } catch (error) {
-      Swal.fire({
-        title: "Error",
-        text: "Failed to reject the appointment.",
-        icon: "error",
-        confirmButtonText: "Close",
-      });
+    const confirmation = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, reject it!",
+      cancelButtonText: "No, cancel!",
+    });
+
+    if (confirmation.isConfirmed) {
+      try {
+        await axiosInstance.patch(
+          `http://localhost:5000/Appointments/api/reject/${id}`
+        );
+        await axiosInstance.patch(
+          "http://localhost:5000/schedules/updateByDateTime",
+          { date, time }
+        );
+        setAppointments((prevAppointments) =>
+          prevAppointments.filter((app) => app._id !== id)
+        );
+        Swal.fire({
+          title: "Success",
+          text: "Successfully declined!",
+          icon: "success",
+          confirmButtonText: "Close",
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error",
+          text: "Failed to reject the appointment.",
+          icon: "error",
+          confirmButtonText: "Close",
+        });
+      }
     }
   };
 
@@ -173,6 +190,7 @@ const AppointmentRequest = () => {
         <ul className="list-disc pl-5 mt-4">
           {filteredAppointments.map((appointment) => {
             const appointmentDate = new Date(appointment.date);
+            const appointmentTime = new Date(appointment.time);
             const today = new Date().setHours(0, 0, 0, 0);
             const appointmentDateSet = appointmentDate.setHours(0, 0, 0, 0);
             const isToday = appointmentDateSet === today;
@@ -185,7 +203,7 @@ const AppointmentRequest = () => {
               weekday: "long",
             });
             const formattedTime = new Date(
-              `1970-01-01T${appointment.time}`
+              `1970-01-01T${appointment.time}:00`
             ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
             return (
@@ -231,7 +249,7 @@ const AppointmentRequest = () => {
                   {appointment.appointmentType}
                 </p>
                 <p className="mt-2">
-                  <strong>{formattedTime}</strong>
+                  <strong>{appointment.time}</strong>
                 </p>
                 <div className="mt-4 flex justify-end">
                   <button

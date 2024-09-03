@@ -36,7 +36,7 @@ const MeetLinkModal = ({ isOpen, onClose, onSubmit }) => {
           type="text"
           value={meetLink}
           onChange={(e) => setMeetLink(e.target.value)}
-          placeholder="https://meet.example.com/your-link"
+          placeholder="https://meet.example.com/your-link or meet.google.com/yur-bchs-rdy"
           className="w-full p-2 border rounded-lg mb-4"
         />
         <a

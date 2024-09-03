@@ -64,19 +64,17 @@ const AppointmentsPage = () => {
 
     loadUserProfile();
   }, []);
-
+  const loadAvailableSlots = async () => {
+    try {
+      const slots = await fetchAvailableSlots();
+      setAvailableSlots(slots);
+    } catch (error) {
+      console.error("Error loading available slots:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const loadAvailableSlots = async () => {
-      try {
-        const slots = await fetchAvailableSlots();
-        setAvailableSlots(slots);
-      } catch (error) {
-        console.error("Error loading available slots:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadAvailableSlots();
   }, []);
 
@@ -129,13 +127,18 @@ const AppointmentsPage = () => {
           icon: "success",
           title: "Appointment Created",
           text: "Your appointment has been scheduled successfully!",
+          willClose: () => {
+            window.location.reload();
+          },
         });
+
         setAppointmentType("");
         setSelectedSlot(null);
         setFile(null);
         setFilePreview(null);
         setCurrentStep(1);
         document.getElementById("receipt").value = "";
+        await loadAvailableSlots();
 
         const updatedSlots = await fetchAvailableSlots();
         setAvailableSlots(updatedSlots);
@@ -390,7 +393,7 @@ const AppointmentsPage = () => {
                       src={filePreview}
                       alt="Receipt Preview"
                       className="mt-4 border border-gray-300 rounded-md"
-                      style={{ width: "300px", height: "auto" }} // Adjust width and height here
+                      style={{ width: "300px", height: "auto" }}
                     />
                   )}
                 </div>
