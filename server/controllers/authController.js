@@ -2,6 +2,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../schemas/User");
 const validator = require("validator");
+const { json } = require("express");
+const session = require("express-session");
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -105,12 +107,18 @@ exports.login = async (req, res) => {
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid email address" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Incorrect password" });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({
+        error: "Your account has been blocked. Please contact support.",
+      });
     }
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
@@ -122,7 +130,6 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-//Logout
 exports.logout = (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -146,7 +153,7 @@ exports.forgotpassword = async (req, res) => {
     });
 
     const link = `http://localhost:5000/auth/reset-password/${oldUser._id}/${token}`;
-    return res.json({ status: "success", link });
+    returnjwt.res.json({ status: "success", link });
   } catch (error) {
     console.error(error);
     return res

@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
 import Swal from "sweetalert2";
-import "./../styles/Signup.css";
-import logo from "../images/bannerLogo.png";
-
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosInstance from "../config/axiosConfig";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  FormControl,
+  FormControlLabel,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-function Signup() {
+const SignupModal = ({ open, onClose, handleOpenLoginModal }) => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -23,8 +34,7 @@ function Signup() {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [agreement, setAgreement] = useState(false);
   const [step, setStep] = useState(1);
-
-  const history = useHistory();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     if (step === 1) {
@@ -69,7 +79,8 @@ function Signup() {
     setError("");
 
     if (password !== repeatPassword) {
-      Swal.fire("Error", "Passwords do not match", "error");
+      setError("Passwords do not match");
+      setSnackbarOpen(true);
       return;
     }
 
@@ -92,33 +103,22 @@ function Signup() {
 
       if (response.status === 201) {
         Swal.fire("Success", "Account created successfully", "success");
-
-        setFirstname("");
-        setLastname("");
-        setMiddleName("");
-        setEmail("");
-        setPassword("");
-        setRepeatPassword("");
-        setBirthdate("");
-        setSex("");
-
-        history.push("/login");
+        onClose(); // Close the modal after successful signup
       } else {
-        Swal.fire("Error", "Failed to create account", "error");
+        setError("Failed to create account");
+        setSnackbarOpen(true);
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.error) {
-        Swal.fire("Error", error.response.data.error, "error");
+        setError(error.response.data.error);
+        setSnackbarOpen(true);
       } else {
-        Swal.fire("Error", "An unexpected error occurred", "error");
+        setError("An unexpected error occurred");
+        setSnackbarOpen(true);
       }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleBackClick = () => {
-    history.push("/");
   };
 
   const handleNext = () => {
@@ -129,207 +129,215 @@ function Signup() {
     setStep(1);
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <div className="containerSignup">
-      <div className="logo">
-        <img src={logo} alt="" />
-      </div>
-      <div className="cardSignup">
-        <div className="back">
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle className="flex gap-2 items-center">
           <ArrowBackIcon
-            onClick={handleBackClick}
-            style={{
+            onClick={handleOpenLoginModal}
+            sx={{
               cursor: "pointer",
-              width: "10%",
               fontSize: "1.5rem",
               color: "#2C6975",
             }}
           />
-          <div className="subtitle">
-            <h1>Welcome to Safe Place</h1>
-            <p>Please take a moment to complete your account</p>
-          </div>
-        </div>
-        <br />
-        <div className="form">
-          <form onSubmit={handleSubmit}>
+          <Typography variant="h6" component="span">
+            {step === 1 ? "Personal Information" : "Account Details"}
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
             {step === 1 && (
-              <div className="inputFields">
-                <div className="flex flex-col">
-                  <div>
-                    <label htmlFor="firstname">
-                      <span></span>
-                      First Name:
-                    </label>
-                    <input
-                      className="capitalize"
-                      type="text"
-                      value={firstname}
-                      onChange={(e) => setFirstname(e.target.value)}
-                      placeholder="First Name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="middleName">
-                      <span></span>
-                      Middle Name:
-                    </label>
-                    <input
-                      className="capitalize"
-                      type="text"
-                      value={middleName}
-                      onChange={(e) => setMiddleName(e.target.value)}
-                      placeholder="Middle Name"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="lastname">
-                      <span></span>
-                      Last Name:
-                    </label>
-                    <input
-                      className="capitalize"
-                      type="text"
-                      value={lastname}
-                      onChange={(e) => setLastname(e.target.value)}
-                      placeholder="Last Name"
-                      required
-                    />
-                  </div>
-                </div>
-                <label htmlFor="birthdate">
-                  <span></span>
-                  Birthdate:
-                </label>
-                <input
+              <Box>
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#4e8e9b",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#2c6975",
+                      },
+                    },
+                  }}
+                  label="First Name"
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#4e8e9b",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#2c6975",
+                      },
+                    },
+                  }}
+                  label="Middle Name"
+                  value={middleName}
+                  onChange={(e) => setMiddleName(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#4e8e9b",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#2c6975",
+                      },
+                    },
+                  }}
+                  label="Last Name"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                  fullWidth
+                  margin="normal"
+                  required
+                />
+                <TextField
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      "&:hover fieldset": {
+                        borderColor: "#4e8e9b",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#2c6975",
+                      },
+                    },
+                  }}
+                  label="Birthdate"
                   type="date"
                   value={birthdate}
                   onChange={(e) => setBirthdate(e.target.value)}
-                  placeholder="Birthdate"
+                  fullWidth
+                  margin="normal"
                   required
+                  InputLabelProps={{ shrink: true }}
                 />
-                <label htmlFor="sex">
-                  <span></span>
-                  Sex:
-                </label>
-                <div className="radioGroup flex gap-2">
-                  <label>
-                    <input
-                      type="radio"
+                <FormControl
+                  component="fieldset"
+                  margin="normal"
+                  required
+                  fullWidth
+                >
+                  <RadioGroup
+                    row
+                    value={sex}
+                    onChange={(e) => setSex(e.target.value)}
+                  >
+                    <FormControlLabel
                       value="Male"
-                      checked={sex === "Male"}
-                      onChange={(e) => setSex(e.target.value)}
+                      control={<Radio />}
+                      label="Male"
                     />
-                    Male
-                  </label>
-                  <label>
-                    <input
-                      type="radio"
+                    <FormControlLabel
                       value="Female"
-                      checked={sex === "Female"}
-                      onChange={(e) => setSex(e.target.value)}
+                      control={<Radio />}
+                      label="Female"
                     />
-                    Female
-                  </label>
-                </div>
-                <button
+                  </RadioGroup>
+                </FormControl>
+                <Button
                   type="button"
                   onClick={handleNext}
                   disabled={isButtonDisabled}
-                  className={`px-6 py-2 rounded-md text-white font-semibold transition duration-300 ${
-                    isButtonDisabled
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-teal-600 hover:bg-teal-700"
-                  }`}
+                  variant="contained"
+                  color="primary"
                 >
                   Next
-                </button>
-              </div>
+                </Button>
+              </Box>
             )}
 
             {step === 2 && (
-              <div className="inputFields">
-                <label htmlFor="email">
-                  <span>
-                    <ContactMailIcon />
-                  </span>
-                  Email Address:
-                </label>
-                <input
+              <Box>
+                <TextField
+                  label="Email Address"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Email Address"
+                  fullWidth
+                  margin="normal"
                   required
                 />
-                <label htmlFor="password">
-                  <span>
-                    <LockOpenIcon />
-                  </span>
-                  Password:
-                </label>
-                <input
+                <TextField
+                  label="Password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Password"
+                  fullWidth
+                  margin="normal"
                   required
                 />
-                <label htmlFor="repeatPassword">
-                  <span>
-                    <LockOpenIcon />
-                  </span>
-                  Repeat Password:
-                </label>
-                <input
+                <TextField
+                  label="Repeat Password"
                   type="password"
                   value={repeatPassword}
                   onChange={(e) => setRepeatPassword(e.target.value)}
-                  placeholder="Repeat Password"
+                  fullWidth
+                  margin="normal"
                   required
                 />
-                <div className="agreement">
-                  <p>
-                    The Safe Place platform may keep me informed with
-                    personalized emails about services and activities. See our
-                    Privacy Policy for more details or to opt-out at any time.
-                  </p>
-                  <div className="checkbox">
-                    <input
-                      type="checkbox"
-                      name="agree"
-                      id="agree"
-                      checked={agreement}
-                      onChange={() => setAgreement(!agreement)}
-                    />
-                    <span>Please contact me via email</span>
-                  </div>
-                  <p>
-                    By clicking Create account, I agree that I have read and
-                    accepted the Terms of Use and Privacy Policy.
-                  </p>
-                </div>
-                <div className="bottompart w-full">
-                  <button type="button" onClick={handlePrev}>
-                    Previous
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isButtonDisabled}
-                    className={isButtonDisabled ? "disabled" : ""}
-                  >
-                    {loading ? "Signing up..." : "Create Account"}
-                  </button>
-                </div>
-              </div>
+                <Box display="flex" alignItems="center" marginY={2}>
+                  <Checkbox
+                    checked={agreement}
+                    onChange={() => setAgreement(!agreement)}
+                  />
+                  <Typography variant="body2">
+                    I agree to the Terms of Use and Privacy Policy
+                  </Typography>
+                </Box>
+                <Button
+                  type="button"
+                  onClick={handlePrev}
+                  variant="outlined"
+                  color="primary"
+                >
+                  Previous
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isButtonDisabled}
+                  variant="contained"
+                  color="primary"
+                  sx={{ marginLeft: 2 }}
+                >
+                  {loading ? "Signing up..." : "Create Account"}
+                </Button>
+              </Box>
             )}
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
+          </Box>
+        </DialogContent>
+      </Dialog>
 
-export default Signup;
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+    </>
+  );
+};
+
+export default SignupModal;

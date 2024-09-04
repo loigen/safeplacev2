@@ -6,6 +6,8 @@ import hq from "../images/hq.png";
 import quote from "../images/quote.png";
 import clientPhoto from "../images/clientPhoto.png";
 import { Navbar, Courosel, Footer } from "./custom";
+import LoginModal from "./Login";
+import SignupModal from "./Signup";
 
 const testimonies = [
   {
@@ -32,9 +34,26 @@ const testimonies = [
 
 const LandingPage = () => {
   const [currentTestimonyIndex, setCurrentTestimonyIndex] = useState(0);
-  const [activeCategory, setActiveCategory] = useState("All category");
   const [activeNavLink, setActiveNavLink] = useState("ABOUT");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
+  const handleOpenRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleCloseRegisterModal = () => {
+    setIsRegisterModalOpen(false);
+  };
+  const handleOpenLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsRegisterModalOpen(false);
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
   const handleNext = () => {
     setCurrentTestimonyIndex(
       (prevIndex) => (prevIndex + 2) % testimonies.length
@@ -47,10 +66,6 @@ const LandingPage = () => {
     );
   };
 
-  const handleCategoryClick = (category) => {
-    setActiveCategory(category);
-  };
-
   const handleNavLinkClick = (navLink) => {
     setActiveNavLink(navLink);
   };
@@ -58,7 +73,7 @@ const LandingPage = () => {
   return (
     <>
       <div className="navbar flex flex-grow justify-between">
-        <Navbar />
+        <Navbar handleOpenLoginModal={handleOpenLoginModal} />
       </div>
       <section className="banner">
         <p>Safeplace</p>
@@ -73,7 +88,7 @@ const LandingPage = () => {
           Find Relief, Growth, and Understanding Through Compassionate <br />{" "}
           Counseling
         </b>
-        <a href="/login" className="appointmentButton">
+        <a onClick={handleOpenLoginModal} className="appointmentButton ">
           Schedule an Appointment
         </a>
         <section className="cards">
@@ -139,7 +154,7 @@ const LandingPage = () => {
               To know more click About Me.
             </p>
             <div className="btns">
-              <a href="/login" className="book">
+              <a onClick={handleOpenLoginModal} className="book">
                 Book an Appointment
               </a>
               <button className="Aboutlink">About Me</button>
@@ -153,7 +168,7 @@ const LandingPage = () => {
           </h2>
           <Courosel />
           <div className="btns2">
-            <a href="/login" className="book text-center">
+            <a onClick={handleOpenLoginModal} className="book text-center">
               Book an Appointment
             </a>{" "}
             <button className="Aboutlink">Browse Services</button>
@@ -187,7 +202,7 @@ const LandingPage = () => {
         </section>
 
         <section className="bottomBanner">
-          <a href="/login">Schedule an Appointment</a>
+          <a onClick={handleOpenLoginModal}>Schedule an Appointment</a>
         </section>
         <section className="bottomNavlinks">
           {[
@@ -216,6 +231,16 @@ const LandingPage = () => {
       <section>
         <Footer />
       </section>
+      <LoginModal
+        open={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+        handleOpenRegisterModal={handleOpenRegisterModal}
+      />
+      <SignupModal
+        open={isRegisterModalOpen}
+        onClose={handleCloseRegisterModal}
+        handleOpenLoginModal={handleOpenLoginModal}
+      />
     </>
   );
 };

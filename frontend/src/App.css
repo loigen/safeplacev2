@@ -15,6 +15,11 @@
   background-color: #2c6975 !important;
   border-color: #2c6975 !important;
 }
+
+.nav-link.active {
+  font-weight: bold;
+  border-bottom: #ea4335 2px solid;
+}
 .all-users {
   display: flex;
   margin-bottom: 1rem;

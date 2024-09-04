@@ -1,22 +1,35 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory, Link } from "react-router-dom";
-import "../styles/login.css";
 import logo from "../images/bigLogo.png";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import LockOpenIcon from "@mui/icons-material/LockOpen";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Swal from "sweetalert2";
 import { useAuth } from "../context/AuthContext";
+import {
+  TextField,
+  Checkbox,
+  Button,
+  FormControlLabel,
+  Grid,
+  Box,
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 
-const Login = () => {
+const LoginModal = ({ open, onClose, handleOpenRegisterModal }) => {
   const { fetchUserProfile } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const history = useHistory();
   const [rememberMe, setRememberMe] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const history = useHistory();
 
   useEffect(() => {
     const remembered = localStorage.getItem("rememberMe");
@@ -34,10 +47,6 @@ const Login = () => {
       setIsButtonDisabled(true);
     }
   }, [email, password]);
-
-  const handleBackClick = () => {
-    history.push("/");
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -68,17 +77,34 @@ const Login = () => {
       } else {
         history.push("/home");
       }
+      onClose();
     } catch (error) {
-      if (error.response && error.response.status === 403) {
-        Swal.fire({
-          icon: "error",
-          title: "Account Blocked",
-          text: error.response.data.error,
-        });
+      if (error.response) {
+        const status = error.response.status;
+        const errorMessage = error.response.data.error;
+
+        if (status === 403) {
+          setError("Your account has been blocked. Please contact support.");
+          Swal.fire({
+            icon: "error",
+            title: "Account Blocked",
+            text: errorMessage,
+          });
+        } else if (status === 401) {
+          if (errorMessage.includes("password")) {
+            setError("Incorrect password. Please try again.");
+          } else if (errorMessage.includes("email")) {
+            setError("Email not found. Please check your email address.");
+          } else {
+            setError("Invalid credentials. Please try again.");
+          }
+        } else {
+          setError("An error occurred. Please try again later.");
+        }
+        setSnackbarOpen(true);
       } else {
-        setError("Invalid credentials, Please try again!");
-        setEmail("");
-        setPassword("");
+        setError("Network error. Please check your connection.");
+        setSnackbarOpen(true);
       }
       console.error(
         "Login error:",
@@ -87,96 +113,169 @@ const Login = () => {
     }
   };
 
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <div className="containerLogin">
-      <div className="logo">
-        <img src={logo} alt="" />
-      </div>
-      <div className="cardLogin">
-        <div className="back">
+    <>
+      <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
           <ArrowBackIcon
-            onClick={handleBackClick}
-            style={{
+            onClick={onClose}
+            sx={{
               cursor: "pointer",
-              width: "10%",
               fontSize: "1.5rem",
               color: "#2C6975",
             }}
           />
-          <div className="subtitle">
-            <h1>Welcome to Safe Place</h1>
-            <p>Please take a moment to complete your account</p>
-          </div>
-        </div>
-        <div className="form">
-          <form onSubmit={handleLogin}>
-            <label htmlFor="email">
-              <span>
-                <ContactMailIcon />
-              </span>
-              Email Address:
-            </label>
-            <input
+        </DialogTitle>
+        <DialogContent>
+          <Box alignItems="center" className="flex justify-center" mb={4}>
+            <img src={logo} alt="Logo" style={{ width: "150px" }} />
+          </Box>
+          <Box textAlign="center" mb={2}>
+            <Typography variant="h5" component="h1" gutterBottom>
+              Welcome to Safe Place
+            </Typography>
+            <Typography variant="body1" color="textSecondary">
+              Please take a moment to complete your account
+            </Typography>
+          </Box>
+          <Box component="form" onSubmit={handleLogin} sx={{ mt: 3 }}>
+            <TextField
+              id="email"
+              label="Email Address"
+              variant="outlined"
               type="email"
-              placeholder="Email"
+              fullWidth
               value={email}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#4e8e9b",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#2c6975",
+                  },
+                },
+              }}
               onChange={(e) => {
                 setEmail(e.target.value);
                 setError("");
               }}
+              margin="normal"
               required
             />
-            <div className="forgotpass">
-              <label htmlFor="password">
-                <span>
-                  <LockOpenIcon />
-                </span>
-                Password:
-              </label>
+            <Box
+              textAlign="right"
+              mt={1}
+              sx={{
+                ":hover": {
+                  color: "#2C6975",
+                },
+              }}
+            >
               <Link to="/forgot-password">Forgot Password?</Link>
-            </div>
-            <input
+            </Box>
+            <TextField
+              id="password"
+              label="Password"
+              variant="outlined"
               type="password"
-              placeholder="Password"
+              fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#4e8e9b",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#2c6975",
+                  },
+                },
+              }}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 setError("");
               }}
+              margin="normal"
               required
             />
-            {error && <p className="errorMessage">{error}</p>}
-            <div className="bottompart">
-              <div className="forgotpass">
-                <input
-                  type="checkbox"
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={{
+                    color: "#2C6975",
+                    "& .MuiSvgIcon-root": {
+                      fontSize: 28,
+                    },
+                    "& .MuiCheckbox-root": {
+                      borderColor: "#4e8e9b",
+                    },
+                    "& .Mui-checked": {
+                      color: "#4e8e9b",
+                    },
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.04)",
+                    },
+                    "& .MuiCheckbox-root.Mui-checked": {
+                      backgroundColor: "#2c6975",
+                    },
+                  }}
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
-                />{" "}
-                <span>Remember password</span>
-              </div>
-            </div>
+                />
+              }
+              label="Remember password"
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions className="flex flex-col">
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{
+              width: "20%",
+              backgroundColor: "#4e8e9b",
+              "&:hover": { backgroundColor: "#2c6975" },
+            }}
+            disabled={isButtonDisabled}
+            onClick={handleLogin}
+          >
+            Login
+          </Button>
+          <Box textAlign="center" mt={2}>
+            <Typography variant="body2">
+              Don{"'"}t have an account?{" "}
+              <Button onClick={handleOpenRegisterModal}>Sign Up</Button>
+            </Typography>
+          </Box>
+        </DialogActions>
+      </Dialog>
 
-            <div className="buttonSubmit">
-              <button
-                type="submit"
-                disabled={isButtonDisabled}
-                className={isButtonDisabled ? "disabled" : ""}
-              >
-                Login
-              </button>
-            </div>
-            <div className="forSignup">
-              <p>Don{"'"}t have an account? </p>
-              <Link className="signup" to="/signup">
-                Sign Up
-              </Link>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
+          {error}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 
-export default Login;
+export default LoginModal;

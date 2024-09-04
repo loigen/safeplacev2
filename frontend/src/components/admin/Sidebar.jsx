@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { NavLink } from "react-router-dom";
 import "../../styles/sidebar.css";
 import logo from "../../images/bigLogo.png";
@@ -7,14 +7,10 @@ import Person2Icon from "@mui/icons-material/Person2";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import axiosInstance from "../../config/axiosConfig";
 
 const Sidebar = () => {
-  const [loading, setLoading] = useState(false);
-
   return (
-    <div className="sidebar flex flex-col items-center bg-white shadow-lg">
+    <div className="sidebar flex flex-col items-center bg-white">
       <div className="w-full object-cover p-4">
         <img className="w-full" src={logo} alt="safeplace" />
       </div>
