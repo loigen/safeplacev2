@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -9,39 +8,18 @@ import EmailIcon from "@mui/icons-material/Email";
 import { NavLink } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Profile } from "../../components/client";
-import axiosInstance from "../../config/axiosConfig";
 import {
   ChangePasswordForm,
   UserGuide,
   LoadingSpinner,
   FAQs,
 } from "../../components/custom";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminSettings = () => {
-  const [user, setUser] = useState(null);
-  const [avatar, setAvatar] = useState(null);
+  const { user } = useAuth();
+
   const [view, setView] = useState("settings");
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        const { profilePicture } = response.data.user;
-        setUser(response.data.user);
-        setAvatar(
-          profilePicture ||
-            "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"
-        );
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
 
   if (!user) {
     return <LoadingSpinner />;
@@ -71,7 +49,7 @@ const AdminSettings = () => {
                 style={{ borderBottom: "gray 1px solid" }}
               >
                 <img
-                  src={avatar}
+                  src={user.profilePicture}
                   alt="Profile"
                   className="w-16 h-16 rounded-full border-2 border-gray-300 shadow-md"
                 />

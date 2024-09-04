@@ -7,6 +7,7 @@ import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
 import { LoadingSpinner } from "../../components/custom";
 import dayjs from "dayjs";
 import { useHistory } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const categories = [
   { id: "Technology", name: "Technology" },
@@ -24,25 +25,24 @@ const MrJebBlog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteBlogs, setFavoriteBlogs] = useState([]);
   const [expandedBlogs, setExpandedBlogs] = useState(new Set());
-
+  const { user } = useAuth();
   const history = useHistory();
 
   useEffect(() => {
     const fetchUserProfileAndBlogs = async () => {
       setLoading(true);
       try {
-        const userProfile = await fetchUserProfile();
-        setUserId(userProfile._id);
+        setUserId(user._id);
 
         const blogsResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/blog/allBlogs`
         );
         setBlogs(blogsResponse.data.blogs);
 
-        if (view === "favorites" && userProfile._id) {
+        if (view === "favorites" && user._id) {
           try {
             const favoritesResponse = await axios.get(
-              `${process.env.REACT_APP_API_URL}/blog/userFavorites/${userProfile._id}`
+              `${process.env.REACT_APP_API_URL}/blog/userFavorites/${user._id}`
             );
             setFavoriteBlogs(favoritesResponse.data.blogs || []);
           } catch (favoriteError) {

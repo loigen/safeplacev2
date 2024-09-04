@@ -11,6 +11,8 @@ const Topbar = () => {
   const [avatar, setAvatar] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,6 +55,26 @@ const Topbar = () => {
   if (!user) {
     return <LoadingSpinner />;
   }
+  const handleLogout = async () => {
+    setLoading(true);
+
+    try {
+      await axiosInstance.post(
+        "http://localhost:5000/auth/logout",
+        {},
+        { withCredentials: true }
+      );
+      localStorage.removeItem("token");
+
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Error logging out:", error);
+      setLoading(false);
+    }
+  };
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <div className="topbarComponent fixed w-full bg-gray-400 z-50 flex flex-row justify-between shadow-2xl p-3 h-16 md:h-20">
@@ -77,13 +99,33 @@ const Topbar = () => {
               className="object-cover w-full h-full rounded-full"
             />
           </div>
-          {!isMobile && (
-            <div className="nameAndRole">
-              <p className="name capitalize font-bold text-xs md:text-sm">
-                {user.firstname} {user.lastname}
-              </p>
-            </div>
-          )}
+          <div className="relative">
+            {!isMobile && (
+              <div className="nameAndRole" onClick={toggleDropdown}>
+                <p className="name capitalize font-bold text-xs md:text-sm cursor-pointer">
+                  {user.firstname} {user.lastname}
+                </p>
+              </div>
+            )}
+
+            {isOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                <div
+                  className="py-1"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="options-menu"
+                >
+                  <button
+                    onClick={handleLogout}
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -4,10 +4,8 @@ import Swal from "sweetalert2";
 import "./../styles/Signup.css";
 import logo from "../images/bannerLogo.png";
 
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { Link } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axiosInstance from "../config/axiosConfig";
 

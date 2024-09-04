@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useHistory, Link } from "react-router-dom";
 import "../styles/login.css";
@@ -7,16 +7,16 @@ import ContactMailIcon from "@mui/icons-material/ContactMail";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Swal from "sweetalert2";
-import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
+  const { fetchUserProfile } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const history = useHistory();
   const [rememberMe, setRememberMe] = useState(false);
-  const { setUser } = useContext(AuthContext);
 
   useEffect(() => {
     const remembered = localStorage.getItem("rememberMe");
@@ -60,21 +60,9 @@ const Login = () => {
         localStorage.removeItem("rememberedPassword");
       }
 
+      await fetchUserProfile();
+
       const userRole = response.data.role;
-      const userData = {
-        token: response.data.token,
-        role: userRole,
-        email,
-      };
-
-      // Set user data in AuthContext and localStorage
-      if (setUser) {
-        setUser(userData);
-      } else {
-        console.error("setUser is not a function");
-      }
-      localStorage.setItem("User", JSON.stringify(userData));
-
       if (userRole === "user") {
         history.push("/booking");
       } else {

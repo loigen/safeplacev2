@@ -1,49 +1,42 @@
-import { createContext, useCallback, useState } from "react";
-import { baseUrl, postRequest } from "../utils/service";
+import React, { createContext, useState, useEffect } from "react";
+import axiosInstance from "../config/axiosConfig";
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthContextProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [registerError, setRegisterError] = useState(null);
-  const [isRegisterLoading, setIsRegisterLoading] = useState(false);
-  const [registerInfo, setRegisterInfo] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [loading, setLoading] = useState(true);
 
-  const updateRegisterInfo = useCallback((info) => {
-    setRegisterInfo(info);
+  const fetchUserProfile = async () => {
+    try {
+      const response = await axiosInstance.get(
+        `${process.env.REACT_APP_API_URL}/user/profile`,
+        { withCredentials: true }
+      );
+      setUser(response.data.user);
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
   }, []);
 
-  const registerUser = useCallback(async () => {
-    setIsRegisterLoading(true);
-    setRegisterError(null);
-    const response = await postRequest(
-      `${baseUrl}/auth/signup`,
-      JSON.stringify(registerInfo)
-    );
-    setIsRegisterLoading(false);
-    if (response.error) {
-      setRegisterError(response);
-    }
-    localStorage.setItem("User", JSON.stringify(response));
-    setUser(response);
-  }, [registerInfo]);
-
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser, // Ensure setUser is provided
-        registerInfo,
-        updateRegisterInfo,
-        registerUser,
-        registerError,
-      }}
-    >
+    <AuthContext.Provider value={{ user, loading, fetchUserProfile }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = React.useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

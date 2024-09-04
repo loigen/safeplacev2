@@ -30,28 +30,11 @@ import {
   PatientDetails,
 } from "./components/custom";
 import { ChatContextProvider } from "./context/ChatContext";
-import axiosInstance from "./config/axiosConfig";
+import { useAuth } from "./context/AuthContext";
 
 const App = () => {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        const { profilePicture } = response.data.user;
-        setUser(response.data.user);
-      } catch (error) {
-        setError("Error fetching profile.");
-        console.error("Error fetching profile:", error);
-      }
-    };
-    fetchProfile();
-  }, []);
   return (
     <ChatContextProvider user={user}>
       <Router>

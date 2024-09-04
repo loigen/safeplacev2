@@ -7,31 +7,10 @@ import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import axiosInstance from "../../config/axiosConfig";
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 
 const Sidebar = () => {
-  const [loading, setLoading] = useState(false);
-
-  const handleLogout = async () => {
-    setLoading(true);
-
-    try {
-      await axiosInstance.post(
-        "http://localhost:5000/auth/logout",
-        {},
-        { withCredentials: true }
-      );
-      localStorage.removeItem("token");
-
-      window.location.href = "/login";
-    } catch (error) {
-      console.error("Error logging out:", error);
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="sidebar flex flex-col items-center  bg-white shadow-lg">
+    <div className="sidebar flex flex-col items-center  bg-white shadow-2xl">
       <div className="w-full object-cover p-4">
         <img className="w-full" src={logo} alt="safeplace" />
       </div>
@@ -64,18 +43,6 @@ const Sidebar = () => {
             <SettingsIcon className="sidebar-icon" />
           </NavLink>
         </ul>
-        <div className="logout p-4  mb-10">
-          <button
-            className="flex text-[#2c6975] font-bold flex-row justify-center items-center"
-            onClick={handleLogout}
-          >
-            {loading ? (
-              <span>Logging out...</span>
-            ) : (
-              <LogoutIcon fontSize="large" />
-            )}
-          </button>
-        </div>
       </div>
     </div>
   );

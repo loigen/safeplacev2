@@ -2,35 +2,17 @@ import React, { useState, useEffect } from "react";
 import { fetchAppointmentsByUserId } from "../../api/appointmentAPI/fetchAppointmentsByUserId";
 import axiosInstance from "../../config/axiosConfig";
 import Swal from "sweetalert2";
+import { useAuth } from "../../context/AuthContext";
 
 const RejectedAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
   const [qrCodeFile, setQrCodeFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [responseMessage, setResponseMessage] = useState(null);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        setUser(response.data.user);
-      } catch (error) {
-        setError("Error fetching profile.");
-        console.error("Error fetching profile:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
+  const { user } = useAuth();
   useEffect(() => {
     const getAppointments = async () => {
       if (!user) return;

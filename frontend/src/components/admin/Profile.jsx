@@ -1,53 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 import { LoadingSpinner } from "../custom";
+import { useAuth } from "../../context/AuthContext";
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user, loading, fetchUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState(
+    user?.profilePicture ||
+      "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"
+  );
   const [localFile, setLocalFile] = useState(null);
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
-    email: "",
-    role: "",
+    firstname: user?.firstname || "",
+    lastname: user?.lastname || "",
+    email: user?.email || "",
+    role: user?.role || "",
   });
-  const [lastUpdate, setLastUpdate] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        const {
-          firstname,
-          lastname,
-          email,
-          role,
-          profilePicture,
-          lastProfileUpdate,
-        } = response.data.user;
-        setUser(response.data.user);
-        setFormData({ firstname, lastname, email, role });
-        setAvatar(
-          profilePicture ||
-            "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"
-        );
-        setLastUpdate(new Date(lastProfileUpdate));
-      } catch (error) {
-        setError("Error fetching profile.");
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+  const [saving, setSaving] = useState(false);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -84,9 +56,7 @@ const Profile = () => {
       return;
     }
 
-    const now = new Date();
-
-    setLoading(true);
+    setSaving(true);
 
     try {
       const formPayload = new FormData();
@@ -110,14 +80,12 @@ const Profile = () => {
         }
       );
 
-      setUser(response.data.user);
-      setAvatar(response.data.user.profilePicture || avatar);
-      setLocalFile(null);
-      setIsEditing(false);
-      URL.revokeObjectURL(avatar);
+      // Update the user context
+      await fetchUserProfile();
 
-      localStorage.setItem("lastProfileUpdate", now.toISOString());
-      setLastUpdate(now);
+      setIsEditing(false);
+      setLocalFile(null);
+      URL.revokeObjectURL(avatar);
 
       Swal.fire({
         icon: "success",
@@ -131,7 +99,7 @@ const Profile = () => {
       setError("Error updating profile.");
       console.error("Error updating profile:", error);
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -148,7 +116,7 @@ const Profile = () => {
     setLocalFile(null);
   };
 
-  if (!user) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 
@@ -229,10 +197,10 @@ const Profile = () => {
           <>
             <button
               onClick={handleSaveChanges}
-              disabled={!validateForm() || loading}
+              disabled={!validateForm() || saving}
               className="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 disabled:opacity-50"
             >
-              {loading ? "Saving..." : "Save Changes"}
+              {saving ? "Saving..." : "Save Changes"}
             </button>
             <button
               onClick={handleCancel}

@@ -4,16 +4,14 @@ import "../../styles/topbar.css";
 import profile from "../../images/defaultAvatar.jpg";
 import axiosInstance from "../../config/axiosConfig";
 import { Notification } from "../custom";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useHistory } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+
 const Topbar = () => {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const [avatar, setAvatar] = useState(null);
+  const { user, loading } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useHistory();
-  useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useHistory();
 
   useEffect(() => {
     const handleResize = () => {
@@ -23,40 +21,20 @@ const Topbar = () => {
     window.addEventListener("resize", handleResize);
     handleResize();
 
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        const { profilePicture } = response.data.user;
-        setUser(response.data.user);
-        setAvatar(
-          `${profilePicture}?t=${new Date().getTime()}` ||
-            "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"
-        );
-      } catch (error) {
-        setError("Error fetching profile.");
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-
     return () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleProfileClick = () => {
-    navigate.push("/AdminSettings"); // Redirect to the /profile route
+    navigate.push("/AdminSettings");
   };
-  const handleLogout = async () => {
-    setLoading(true);
 
+  const handleLogout = async () => {
     try {
       await axiosInstance.post(
         "http://localhost:5000/auth/logout",
@@ -68,11 +46,15 @@ const Topbar = () => {
       window.location.href = "/login";
     } catch (error) {
       console.error("Error logging out:", error);
-      setLoading(false);
     }
   };
-  if (!user) {
+
+  if (loading) {
     return <LoadingSpinner />;
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -86,7 +68,7 @@ const Topbar = () => {
         <div className="profilePart flex flex-row gap-4 md:gap-6 items-center justify-center">
           <div className="profilePicture border-2 border-black rounded-full w-10 h-10 md:w-12 md:h-12">
             <img
-              src={avatar || profile}
+              src={user.profilePicture}
               alt={`${user.firstname} ${user.lastname}`}
               className="object-cover w-full h-full rounded-full"
             />

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
 import { fetchAvailableSlots } from "../../api/schedulesAPI/fetchAvailableSlots";
 import { createAppointment } from "../../api/appointmentAPI/createAppointmentApi";
 import { updateSlotStatus } from "../../api/schedulesAPI/updateSlotStatus";
@@ -13,6 +12,7 @@ import {
   RefundedAppointments,
   Appointments,
 } from "../../components/client";
+import { useAuth } from "../../context/AuthContext";
 
 const AppointmentsPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -21,12 +21,16 @@ const AppointmentsPage = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const { user } = useAuth();
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [price, setPrice] = useState(0);
+  const [showContent, setShowContent] = useState(false);
 
+  const handleCreateAppointment = () => {
+    setShowContent(true);
+  };
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -50,12 +54,11 @@ const AppointmentsPage = () => {
       setPrice(selectedType.price);
     }
   }, [appointmentType]);
+
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
-        const user = await fetchUserProfile();
         const { firstname, lastname, email, role, profilePicture, sex } = user;
-        setUser(user);
         setFormData({ firstname, lastname, email, role, profilePicture, sex });
       } catch (error) {
         console.error("Error loading user profile:", error);
@@ -64,6 +67,7 @@ const AppointmentsPage = () => {
 
     loadUserProfile();
   }, []);
+
   const loadAvailableSlots = async () => {
     try {
       const slots = await fetchAvailableSlots();
@@ -203,6 +207,7 @@ const AppointmentsPage = () => {
         return (
           <div className="flex h-full p-2 flex-col justify-center items-center">
             <div className="mb-4 w-full">
+              <strong className=" text-center">Create Appointment</strong>
               <label
                 htmlFor="appointmentType"
                 className="block text-sm font-medium text-gray-700"
@@ -503,7 +508,22 @@ const AppointmentsPage = () => {
         className="bg-white w-1/3 shadow-2xl rounded-md"
         onSubmit={(e) => e.preventDefault()}
       >
-        {loading ? <LoadingSpinner /> : renderStepContent()}
+        {showContent ? (
+          loading ? (
+            <LoadingSpinner />
+          ) : (
+            renderStepContent()
+          )
+        ) : (
+          <div className="w-full flex items-center justify-center h-full">
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded"
+              onClick={handleCreateAppointment}
+            >
+              Create Appointment
+            </button>
+          </div>
+        )}
       </form>
       <Appointments />
     </div>

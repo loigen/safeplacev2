@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import dayjs from "dayjs";
-import { useHistory } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
 import { LoadingSpinner } from "../../components/custom";
@@ -28,8 +27,6 @@ const BLog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteBlogs, setFavoriteBlogs] = useState([]);
   const [expandedBlogs, setExpandedBlogs] = useState(new Set());
-
-  const history = useHistory();
 
   useEffect(() => {
     const fetchUserProfileAndBlogs = async () => {

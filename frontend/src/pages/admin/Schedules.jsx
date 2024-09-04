@@ -15,31 +15,12 @@ const Schedules = () => {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
   const [freeSchedules, setFreeSchedules] = useState({});
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [todaysAppointments, setTodaysAppointments] = useState([]);
-  const [appointments, setAppointments] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
 
   const [freeSlots, setFreeSlots] = useState([]);
 
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const response = await axiosInstance.get(
-          "http://localhost:5000/Appointments/api/pending"
-        );
-        setAppointments(response.data);
-      } catch (err) {
-        setError("Failed to fetch pending appointments.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAppointments();
-  }, []);
   useEffect(() => {
     const handleFetchTodaysAppointment = async () => {
       try {
@@ -177,14 +158,6 @@ const Schedules = () => {
         confirmButtonColor: "#2c6975",
       });
     }
-  };
-
-  const handleShowDetails = (appointment) => {
-    setSelectedAppointment(appointment);
-  };
-
-  const handleCloseDetails = () => {
-    setSelectedAppointment(null);
   };
 
   const tileDisabled = ({ date }) => {

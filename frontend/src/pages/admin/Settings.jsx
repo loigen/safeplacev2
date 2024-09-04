@@ -14,32 +14,11 @@ import { Profile, ManageUsers } from "../../components/admin";
 import axiosInstance from "../../config/axiosConfig";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Help from "../../components/custom/Help";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminSettings = () => {
-  const [user, setUser] = useState(null);
-  const [avatar, setAvatar] = useState(null);
   const [view, setView] = useState("settings");
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          { withCredentials: true }
-        );
-        const { profilePicture } = response.data.user;
-        setUser(response.data.user);
-        setAvatar(
-          profilePicture ||
-            "https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png"
-        );
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-    };
-
-    fetchProfile();
-  }, []);
+  const { user } = useAuth();
 
   if (!user) {
     return <LoadingSpinner />;
@@ -71,7 +50,7 @@ const AdminSettings = () => {
                 style={{ borderBottom: "gray 1px solid" }}
               >
                 <img
-                  src={avatar}
+                  src={user.profilePicture}
                   alt="Profile"
                   className="w-16 h-16 rounded-full border-2 border-gray-300 shadow-md"
                 />
