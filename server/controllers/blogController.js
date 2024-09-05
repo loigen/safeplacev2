@@ -1,6 +1,8 @@
+const { json } = require("express");
 const Blog = require("../schemas/blogSchema");
 const User = require("../schemas/User");
 const mongoose = require("mongoose");
+const { save } = require("node-cron/src/storage");
 
 exports.createBlog = async (req, res) => {
   try {
@@ -180,6 +182,95 @@ exports.getAllDrafts = async (req, res) => {
     res.status(200).json({ drafts });
   } catch (error) {
     console.error("Error fetching drafts:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.updateDraft = async (req, res) => {
+  const { draftId } = req.params;
+  const { title, content, category } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(draftId)) {
+    return res.status(400).json({ message: "Invalid draftId" });
+  }
+
+  try {
+    const updatedDraft = await Blog.findByIdAndUpdate(
+      draftId,
+      { title, content, category },
+      { new: true }
+    );
+
+    if (!updatedDraft) {
+      return res.status(404).json({ message: "Draft not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Draft updated successfully", draft: updatedDraft });
+  } catch (error) {
+    console.error("Error updating draft:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.publishDraft = async (req, res) => {
+  const { draftId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(draftId)) {
+    return res.status(400).json({ message: "Invalid draftId" });
+  }
+
+  try {
+    const updatedDraft = await Blog.findByIdAndUpdate(
+      draftId,
+      { status: "published" },
+      { new: true }
+    );
+
+    if (!updatedDraft) {
+      return res.status(404).json({ message: "Draft not found" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Draft published successfully", blog: updatedDraft });
+  } catch (error) {
+    console.error("Error publishing draft:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.editPublishedBlog = async (req, res) => {
+  const { blogId } = req.params;
+  const { title, content, category } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(blogId)) {
+    return res.status(400).json({ message: "Invalid blogId" });
+  }
+
+  if (!title || !content || !category) {
+    return res
+      .status(400)
+      .json({ message: "Title, content, and category are required" });
+  }
+
+  try {
+    const blog = await Blog.findOne({ _id: blogId, status: "published" });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Published blog not found" });
+    }
+
+    blog.title = title;
+    blog.content = content;
+    blog.category = category;
+
+    const updatedBlog = await blog.save();
+
+    res
+      .status(200)
+      .json({ message: "Blog updated successfully", blog: updatedBlog });
+  } catch (error) {
+    console.error("Error updating published blog:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

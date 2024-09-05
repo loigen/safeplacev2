@@ -103,7 +103,7 @@ const SignupModal = ({ open, onClose, handleOpenLoginModal }) => {
 
       if (response.status === 201) {
         Swal.fire("Success", "Account created successfully", "success");
-        onClose(); // Close the modal after successful signup
+        onClose();
       } else {
         setError("Failed to create account");
         setSnackbarOpen(true);

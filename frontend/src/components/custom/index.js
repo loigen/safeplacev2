@@ -28,7 +28,7 @@ import UserGuide from "./UserGuide";
 import FAQs from "./FAQs";
 import RatesandReview from "./RatesandReview";
 import Topbar from "./messageTopbar";
-
+import Help from "./Help";
 export {
   AllBlogs,
   AppointmentRequest,
@@ -60,4 +60,5 @@ export {
   FAQs,
   RatesandReview,
   Topbar,
+  Help,
 };

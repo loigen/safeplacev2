@@ -56,7 +56,7 @@ const Chat = () => {
           <div className="lg:w-1/3 bg-gray-100 p-4 rounded-lg shadow-lg overflow-y-auto">
             <PotentialChats />
             {userChats?.length > 0 ? (
-              <div className="flex flex-col gap-2 mt-4">
+              <div className="flex flex-col gap-2 mt-4 h-24">
                 {userChats.map((chat, index) => (
                   <div
                     key={index}
@@ -81,7 +81,6 @@ const Chat = () => {
               <ChatBox chat={currentChat} />
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center">
-                <img src={pointing} alt="Pointing gif" />
                 <p>Select a chat to start sending messages...</p>
               </div>
             )}

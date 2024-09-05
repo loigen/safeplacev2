@@ -79,7 +79,7 @@ const Topbar = () => {
   return (
     <div className="topbarComponent fixed w-full bg-gray-400 z-50 flex flex-row justify-between shadow-2xl p-3 h-16 md:h-20">
       <button
-        className="goBackButton w-1/4 p-2 text-left md:p-4"
+        className="goBackButton w-full p-2 text-left md:p-4"
         onClick={() => history.goBack()}
       >
         Back to Dashboard

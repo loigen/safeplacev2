@@ -49,7 +49,7 @@ const UserChat = ({ chat, user }) => {
         {recipientUser.profilePicture && (
           <img
             src={recipientUser.profilePicture}
-            className="w-10 h-10 rounded-full mr-3"
+            className="w-10 h-10 rounded-full mr-3 border-2 border-[#2c6975]"
             alt={`${recipientUser.firstname}'s profile`}
           />
         )}

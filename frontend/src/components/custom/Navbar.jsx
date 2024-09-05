@@ -115,7 +115,7 @@ const Navbar = ({ handleOpenLoginModal }) => {
               </Drawer>
             </>
           ) : (
-            <div className="nav-links flex-row flex items-center gap-10 px-2">
+            <div className="nav-links flex-row flex items-center gap-10 px-10">
               <div
                 className={`nav-link ${isActive("/")}`}
                 onClick={() => handleMenuItemClick("/")}

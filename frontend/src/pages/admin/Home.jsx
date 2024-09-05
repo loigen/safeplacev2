@@ -133,7 +133,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className="w-full bg-white shadow-xl p-2 rounded-md">
+            <div className="w-full flex justify-center items-center bg-white shadow-xl p-2 rounded-md">
               <HighestWeeklyAppointments />
             </div>
           </div>
@@ -150,7 +150,7 @@ const Home = () => {
         </div>
         <div className="flex flex-col w-full sm:w-[48%] gap-10">
           <div className="rating flex flex-col sm:flex-row w-full items-center justify-evenly gap-8 px-4">
-            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col sm:flex-row">
+            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col items-center justify-center sm:flex-row">
               <div className="w-full sm:w-1/6 flex items-center justify-center">
                 <EqualizerOutlinedIcon
                   style={{ fontSize: "3rem", color: "#00A8E8" }}
@@ -167,8 +167,8 @@ const Home = () => {
                 )}
               </div>
             </div>
-            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col sm:flex-row gap-2">
-              <div className="w-full sm:w-1/6 flex items-center justify-center bg-red-300 rounded-md">
+            <div className="shadow-2xl w-full sm:w-1/2 p-8 rounded-lg bg-white flex flex-col items-center justify-center sm:flex-row gap-2">
+              <div className="w-1/6 sm:w-1/6 flex items-center justify-center bg-red-300 rounded-md">
                 <FaTimes className="text-3xl text-red-600 font-normal" />
               </div>
               <div className="text-center sm:text-left">

@@ -44,39 +44,10 @@ const Patients = () => {
     setSelectedPatient(null);
   };
 
-  const handleAccept = async (id) => {
-    try {
-      await axiosInstance.patch(
-        `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${id}`
-      );
-      setPatients(patients.filter((patient) => patient.id !== id));
-      Swal.fire("Success", "Appointment accepted successfully", "success");
-    } catch (error) {
-      console.error("Error accepting appointment:", error);
-      Swal.fire("Error", "Failed to accept the appointment", "error");
-    }
-    setSelectedPatient(null);
-  };
-
-  const handleReject = async (id) => {
-    try {
-      await axiosInstance.patch(
-        `${process.env.REACT_APP_API_URL}/Appointments/api/reject/${id}`
-      );
-      setPatients(patients.filter((patient) => patient.id !== id));
-      Swal.fire("Success", "Appointment rejected successfully", "success");
-    } catch (error) {
-      console.error("Error rejecting appointment:", error);
-      Swal.fire("Error", "Failed to reject the appointment", "error");
-    }
-  };
-
   const handleRefund = async (id, file) => {
     const formData = new FormData();
     formData.append("refundReceipt", file);
     formData.append("appointmentId", id);
-
-    console.log("Sending refund request with formData:", formData);
 
     try {
       await axiosInstance.post(
@@ -97,28 +68,28 @@ const Patients = () => {
   };
 
   return (
-    <div className="patientsContainer">
+    <div className="p-4">
       {selectedPatient && (
         <PatientDetails
           patient={selectedPatient}
           onClose={handleCloseModal}
-          handleAccept={handleAccept}
-          handleReject={handleReject}
           handleRefund={handleRefund}
         />
       )}
-      <div className="p-2 flex flex-wrap w-full flex-row justify-center">
-        <PatientList
-          patients={patients}
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          onPatientSelect={handlePatientSelect}
-          onToggleActionsList={handleToggleActionsList}
-          activePatientIdList={activePatientIdList}
-          handleAccept={handleAccept}
-          handleReject={handleReject}
-        />
-        <AppointmentStats />
+      <div className="flex flex-col lg:flex-col gap-4">
+        <div className="flex-1 ">
+          <AppointmentStats />
+        </div>
+        <div className="flex-1">
+          <PatientList
+            patients={patients}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            onPatientSelect={handlePatientSelect}
+            onToggleActionsList={handleToggleActionsList}
+            activePatientIdList={activePatientIdList}
+          />
+        </div>
       </div>
     </div>
   );

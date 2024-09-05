@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import {
+  Container,
+  Typography,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  IconButton,
+  Box,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {
   getUsers,
   blockUser,
   unblockUser,
 } from "../../api/manageUsers/userService";
 
-const ManageUsers = () => {
+const ManageUsers = ({ setView }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -93,70 +109,86 @@ const ManageUsers = () => {
     }
   };
 
-  if (loading) return <p>Loading users...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <CircularProgress />;
+  if (error) return <Typography color="error">{error}</Typography>;
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white py-10">
-      <h1 className="text-3xl font-bold mb-6 text-center">Manage Users</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-800 shadow-lg rounded-lg overflow-hidden">
-          <thead>
-            <tr className="bg-[#2C6975] text-white uppercase text-sm leading-normal">
-              <th className="py-3 px-6 text-left">Name</th>
-              <th className="py-3 px-6 text-left">Sex</th>
-              <th className="py-3 px-6 text-left">Email</th>
-              <th className="py-3 px-6 text-left">Status</th>
-              <th className="py-3 px-6 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="text-sm font-light">
+    <Container component="main" maxWidth="lg" sx={{ py: 5 }}>
+      <IconButton onClick={() => setView("settings")}>
+        <ArrowBackIcon />
+      </IconButton>
+      <Typography variant="h4" component="h1" gutterBottom align="center">
+        Manage Users
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Sex</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {users.map((user) => (
-              <tr
-                key={user._id}
-                className="border-b border-gray-700 hover:bg-[#2C6975] hover:bg-opacity-40 transition-colors"
-              >
-                <td className="py-3 px-6">
+              <TableRow key={user._id}>
+                <TableCell>
                   {user.firstname} {user.lastname}
-                </td>
-                <td className="py-3 px-6">{user.sex}</td>
-                <td className="py-3 px-6">{user.email}</td>
-                <td className="py-3 px-6">
-                  <span
-                    className={`py-1 px-3 rounded-full text-xs ${
-                      user.status === "active"
-                        ? "bg-green-600 text-white"
-                        : "bg-red-600 text-white"
-                    }`}
+                </TableCell>
+                <TableCell>{user.sex}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      backgroundColor:
+                        user.status === "active" ? "green" : "red",
+                      color: "white",
+                      borderRadius: 1,
+                      padding: 1,
+                      textAlign: "center",
+                    }}
                   >
                     {user.status}
-                  </span>
-                </td>
-                <td className="py-3 px-6">
-                  {user.status === "active" ? (
-                    <button
-                      onClick={() => handleBlock(user._id)}
-                      disabled={actionLoading === user._id}
-                      className="py-2 px-4 bg-red-600 hover:bg-red-700 rounded text-white text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {actionLoading === user._id ? "Blocking..." : "Block"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => handleUnblock(user._id)}
-                      disabled={actionLoading === user._id}
-                      className="py-2 px-4 bg-green-600 hover:bg-green-700 rounded text-white text-xs font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {actionLoading === user._id ? "Unblocking..." : "Unblock"}
-                    </button>
-                  )}
-                </td>
-              </tr>
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Box
+                    sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                  >
+                    {user.status === "active" ? (
+                      <Button
+                        onClick={() => handleBlock(user._id)}
+                        variant="contained"
+                        color="error"
+                        fullWidth
+                        disabled={actionLoading === user._id}
+                      >
+                        {actionLoading === user._id ? "Blocking..." : "Block"}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleUnblock(user._id)}
+                        variant="contained"
+                        color="success"
+                        fullWidth
+                        disabled={actionLoading === user._id}
+                      >
+                        {actionLoading === user._id
+                          ? "Unblocking..."
+                          : "Unblock"}
+                      </Button>
+                    )}
+                  </Box>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 };
 

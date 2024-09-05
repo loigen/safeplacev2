@@ -196,13 +196,11 @@ export const ChatContextProvider = ({ children, user }) => {
 
   const markNotificationAsRead = useCallback(
     (n, userChats, user, notifications) => {
-      // Find the desired chat
       const desiredChat = userChats.find((chat) => {
         const chatMembers = [user._id, n.senderId];
         return chat?.members.every((member) => chatMembers.includes(member));
       });
 
-      // Update notifications
       const updatedNotifications = notifications.map((el) => {
         if (n.senderId === el.senderId) {
           return { ...n, isRead: true };

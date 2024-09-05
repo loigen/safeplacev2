@@ -18,7 +18,13 @@
 
 .nav-link.active {
   font-weight: bold;
-  border-bottom: #ea4335 2px solid;
+  border-bottom: #2c6975 5px solid;
+}
+.nav-link {
+  cursor: pointer;
+}
+.nav-link:hover {
+  border-bottom: #2c6975 5px solid;
 }
 .all-users {
   display: flex;
@@ -220,4 +226,8 @@
   border-radius: 50%;
   align-items: center;
   justify-content: center;
+}
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

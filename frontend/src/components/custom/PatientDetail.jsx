@@ -3,17 +3,13 @@ import Modal from "@mui/material/Modal";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import Button from "@mui/material/Button";
+import { Close as CloseIcon } from "@mui/icons-material";
 
-const PatientDetails = ({
-  patient,
-  onClose,
-  handleAccept,
-  handleReject,
-  handleRefund,
-}) => {
+const PatientDetails = ({ patient, onClose, handleRefund }) => {
   const [refundFile, setRefundFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
-  console.log("qr", patient.qrCode);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setRefundFile(file);
@@ -22,13 +18,17 @@ const PatientDetails = ({
 
   const handleRefundClick = () => {
     if (refundFile) {
-      console.log("Processing refund with file:", refundFile);
       handleRefund(patient.id, refundFile);
       setRefundFile(null);
       setPreviewUrl(null);
     } else {
       alert("Please select a file before submitting.");
     }
+  };
+
+  const handleRemovePreview = () => {
+    setRefundFile(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -38,100 +38,212 @@ const PatientDetails = ({
       aria-labelledby="patient-details-modal"
       aria-describedby="patient-details-description"
     >
-      <Box className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto mt-16 relative">
+      <Box
+        sx={{
+          bgcolor: "background.paper",
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 24,
+          width: "100%",
+          maxWidth: 800, // Increased size
+          maxHeight: "90vh", // Limit modal height
+          mx: "auto",
+          mt: 8,
+          position: "relative",
+          overflowY: "auto", // Enable vertical scrolling
+        }}
+      >
         <IconButton
           edge="start"
           color="inherit"
           onClick={onClose}
           aria-label="close"
-          className="absolute top-2 right-2"
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            color: "text.secondary",
+          }}
         >
-          <span className="text-xl">x</span>
+          <CloseIcon />
         </IconButton>
-        <div className="top mb-4">
-          <div className="actions">
-            {patient.status === "pending" && (
-              <>
-                <button onClick={() => handleAccept(patient.id)}>Accept</button>
-                <button onClick={() => handleReject(patient.id)}>
-                  Decline
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-        <p className="text-gray-500 font-bold text-center capitalize">
+
+        <Typography
+          variant="h6"
+          component="div"
+          align="center"
+          color="text.secondary"
+          className="capitalize"
+          sx={{ mb: 2 }}
+        >
           {patient.status}
-        </p>
-        <hr className="m-3" />
-        <div className="bg-white flex flex-col items-center mb-4">
-          <div className="avatar flex items-center justify-center">
-            <img
-              src={patient.avatar || "https://via.placeholder.com/150"}
-              alt="Avatar"
-              className="w-16 h-16 rounded-full"
-            />
-          </div>
-          <div className="name text-lg font-bold">{patient.name}</div>
-        </div>
-        <div className="flex items-center justify-center flex-col mb-4">
-          <Typography
-            variant="h6"
-            className="font-extrabold text-center mb-2 w-full"
+        </Typography>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", md: "row" }} // Adjust layout based on screen size
+          gap={2}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              mb: 2,
+            }}
           >
-            <b>About</b>
-          </Typography>
-          <div className="personalInfo text-center items-center flex flex-col text-gray-700">
-            <div className="firstname text-center">{patient.time || "N/A"}</div>
-            <div className="lastname">{patient.date || "N/A"}</div>
-            <div className="emailAddress">{patient.email || "N/A"}</div>
-            <div className="typeOfCounseling">
-              {patient.typeOfCounseling || "N/A"}
-            </div>
-          </div>
-          {patient.status === "requested" && (
-            <div className="flex flex-col items-center gap-1">
-              {patient.qrCode && (
-                <div className="qr-code mt-4 flex flex-col items-center">
-                  <strong>Patient's QR Code</strong>
-                  <img
-                    src={patient.qrCode}
-                    alt="QR Code"
-                    className="w-32 h-32 object-cover border border-black p-2 rounded-md"
-                  />
-                </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                id="refund-file"
-                className="hidden"
-              />
-              <label
-                htmlFor="refund-file"
-                className="button border-b-2 cursor-pointer text-[#2c6975] font-bold text-center border-[#2c6975]"
+            {patient.qrCode && (
+              <Box
+                sx={{
+                  mb: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
               >
-                Click to Upload Receipt
-              </label>
-              {previewUrl && (
-                <div className="preview mt-4">
-                  <img
-                    src={previewUrl}
-                    alt="Refund Preview"
-                    className="w-32 h-32 object-cover rounded-md"
-                  />
-                </div>
-              )}
-              <button
-                className="bg-[#2c6975] text-white p-2 rounded-md"
-                onClick={handleRefundClick}
+                <Typography
+                  variant="subtitle1"
+                  fontWeight="bold"
+                  component="div"
+                  sx={{ mb: 1 }}
+                >
+                  Patient's QR Code
+                </Typography>
+                <img
+                  src={patient.qrCode}
+                  alt="QR Code"
+                  style={{
+                    width: "100%",
+                    maxWidth: 500, // Limit max width
+                    height: "auto",
+                    border: "1px solid #000",
+                    borderRadius: 4,
+                    padding: 4,
+                  }}
+                />
+              </Box>
+            )}
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+            }}
+          >
+            <Box sx={{ textAlign: "center", mb: 4 }}>
+              <Box
+                sx={{
+                  mb: 2,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
               >
-                Process Refund
-              </button>
-            </div>
-          )}
-        </div>
+                <img
+                  src={patient.avatar || "https://via.placeholder.com/150"}
+                  alt="Avatar"
+                  style={{ width: 100, height: 100, borderRadius: "50%" }}
+                />
+              </Box>
+              <Typography
+                variant="h6"
+                className="capitalize"
+                sx={{ fontWeight: "bold" }}
+              >
+                {patient.name}
+              </Typography>
+            </Box>
+
+            <Typography
+              variant="h6"
+              component="div"
+              align="center"
+              sx={{ fontWeight: "bold", mb: 2 }}
+            >
+              About
+            </Typography>
+            <Box
+              sx={{
+                textAlign: "center",
+                color: "text.secondary",
+                mb: 4,
+              }}
+            >
+              <Typography>{patient.time || "N/A"}</Typography>
+              <Typography>{patient.date || "N/A"}</Typography>
+              <Typography>{patient.email || "N/A"}</Typography>
+              <Typography className="capitalize">
+                {patient.typeOfCounseling || "N/A"}
+              </Typography>
+            </Box>
+
+            {patient.status === "requested" && (
+              <Box
+                sx={{
+                  textAlign: "center",
+                  mt: 4,
+                }}
+              >
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  id="refund-file"
+                  style={{ display: "none" }}
+                />
+                <label htmlFor="refund-file" className="m-2">
+                  <Button
+                    variant="outlined"
+                    component="span"
+                    sx={{ mb: 2, color: "#2c6975", borderColor: "#2c6975" }}
+                  >
+                    Click to Upload Receipt
+                  </Button>
+                </label>
+
+                {previewUrl && (
+                  <Box sx={{ mb: 2, position: "relative" }}>
+                    <img
+                      src={previewUrl}
+                      alt="Refund Preview"
+                      style={{
+                        width: 200,
+                        height: 200,
+                        borderRadius: 4,
+                      }}
+                    />
+                    <IconButton
+                      onClick={handleRemovePreview}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        color: "text.secondary",
+                        backgroundColor: "background.paper",
+                        borderRadius: "50%",
+                        boxShadow: 2,
+                        p: 0.5,
+                      }}
+                    >
+                      <CloseIcon />
+                    </IconButton>
+                  </Box>
+                )}
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleRefundClick}
+                  disabled={!refundFile}
+                  sx={{ mb: 2 }}
+                >
+                  Process Refund
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
       </Box>
     </Modal>
   );

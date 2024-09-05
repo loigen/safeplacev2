@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import "../../styles/topbar.css";
-import profile from "../../images/defaultAvatar.jpg";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import axiosInstance from "../../config/axiosConfig";
 import { Notification } from "../custom";
 import { useHistory } from "react-router-dom";
@@ -65,7 +65,10 @@ const Topbar = () => {
             <Notification />
           </li>
         </ul>
-        <div className="profilePart flex flex-row gap-4 md:gap-6 items-center justify-center">
+        <div
+          onClick={toggleDropdown}
+          className="profilePart cursor-pointer flex flex-row gap-4 md:gap-6 items-center justify-center"
+        >
           <div className="profilePicture border-2 border-black rounded-full w-10 h-10 md:w-12 md:h-12">
             <img
               src={user.profilePicture}
@@ -75,7 +78,7 @@ const Topbar = () => {
           </div>
           <div className="relative">
             {!isMobile && (
-              <div className="nameAndRole" onClick={toggleDropdown}>
+              <div className="nameAndRole">
                 <p className="name capitalize font-bold text-xs md:text-sm cursor-pointer">
                   {user.firstname} {user.lastname}
                 </p>
@@ -92,9 +95,9 @@ const Topbar = () => {
                 >
                   <button
                     onClick={handleProfileClick}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 w-full text-left"
                   >
-                    Go to Profile
+                    Profile
                   </button>
                   <button
                     onClick={handleLogout}
@@ -106,6 +109,9 @@ const Topbar = () => {
               </div>
             )}
           </div>
+          <p>
+            <KeyboardArrowDownIcon />
+          </p>
         </div>
       </div>
     </div>

@@ -3,8 +3,36 @@ import Swal from "sweetalert2";
 import axiosInstance from "../../config/axiosConfig";
 import { LoadingSpinner } from "../custom";
 import { useAuth } from "../../context/AuthContext";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  Box,
+  CircularProgress,
+  Input,
+  Paper,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const Profile = () => {
+const PrimaryButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#2c6975",
+  "&:hover": {
+    backgroundColor: "#1e4d54",
+  },
+}));
+
+const SecondaryButton = styled(Button)(({ theme }) => ({
+  backgroundColor: "#d9534f",
+  "&:hover": {
+    backgroundColor: "#c9302c",
+  },
+}));
+
+const Profile = ({ setView }) => {
   const { user, loading, fetchUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState(null);
@@ -20,6 +48,7 @@ const Profile = () => {
     role: user?.role || "",
   });
   const [saving, setSaving] = useState(false);
+  const [fileInputId] = useState("profile-picture-upload");
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -80,7 +109,6 @@ const Profile = () => {
         }
       );
 
-      // Update the user context
       await fetchUserProfile();
 
       setIsEditing(false);
@@ -116,109 +144,191 @@ const Profile = () => {
     setLocalFile(null);
   };
 
+  const handleAvatarClick = () => {
+    document.getElementById(fileInputId).click();
+  };
+
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <div className="p-6 max-w-lg mx-auto">
-      {error && <p className="text-red-600 mb-4">{error}</p>}
-      <div className="text-center mb-6">
-        <img
-          src={avatar}
-          alt="Profile"
-          className="w-36 h-36 rounded-full border-2 border-gray-300 shadow-md"
-        />
-        {isEditing && (
-          <label className="block mt-4 cursor-pointer bg-blue-600 text-white rounded-lg py-2 px-4 text-center relative">
-            <input
+    <Container component="main" maxWidth="sm">
+      <Paper elevation={3} sx={{ padding: 4, borderRadius: 2 }}>
+        {error && (
+          <Typography color="error" gutterBottom>
+            {error}
+          </Typography>
+        )}
+        <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
+          <Typography
+            onClick={() => setView("settings")}
+            className="text-black"
+            style={{ cursor: "pointer", marginBottom: "1rem" }}
+          >
+            <ArrowBackIcon />
+          </Typography>
+          <Box
+            position="relative"
+            onClick={isEditing ? handleAvatarClick : undefined}
+            sx={{ cursor: isEditing ? "pointer" : "default" }}
+          >
+            <Avatar
+              src={avatar}
+              sx={{ width: 120, height: 120, mb: 2, boxShadow: 3 }}
+            />
+
+            {isEditing && (
+              <AddCircleIcon
+                sx={{
+                  position: "absolute",
+                  bottom: 0,
+                  right: 0,
+                  fontSize: 40,
+                  color: "#2c6975",
+                  backgroundColor: "white",
+                  borderRadius: "50%",
+                  border: "2px solid #2c6975",
+                  padding: 1,
+                }}
+              />
+            )}
+            <Input
+              id={fileInputId}
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="absolute inset-0 opacity-0 cursor-pointer"
+              sx={{ display: "none" }}
             />
-            Upload Photo
-          </label>
-        )}
-      </div>
-      <div className="mb-4">
-        <label className="block mb-2">
-          Name:
-          <div className="flex space-x-2">
-            <input
-              type="text"
-              name="firstname"
-              value={formData.firstname}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="block w-full border border-gray-300 rounded-lg px-3 py-2"
-              placeholder="First Name"
-            />
-            <input
-              type="text"
-              name="lastname"
-              value={formData.lastname}
-              onChange={handleInputChange}
-              disabled={!isEditing}
-              className="block w-full border border-gray-300 rounded-lg px-3 py-2"
-              placeholder="Last Name"
-            />
-          </div>
-        </label>
-      </div>
-      <div className="mb-4">
-        <label className="block mb-2">
-          Email:
-          <input
-            type="email"
+          </Box>
+          <Typography
+            fontSize={20}
+            textTransform="capitalize"
+            fontWeight="bold"
+          >
+            {user.firstname} {user.lastname}
+          </Typography>
+        </Box>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <TextField
+            label="First Name"
+            name="firstname"
+            value={formData.firstname}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: 1,
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#4e8e9b",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#2c6975",
+                },
+              },
+            }}
+          />
+          <TextField
+            label="Last Name"
+            name="lastname"
+            value={formData.lastname}
+            onChange={handleInputChange}
+            disabled={!isEditing}
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: 1,
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#4e8e9b",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#2c6975",
+                },
+              },
+            }}
+          />
+          <TextField
+            label="Email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
             disabled={!isEditing}
-            className="block w-full border border-gray-300 rounded-lg px-3 py-2"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: 1,
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#4e8e9b",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#2c6975",
+                },
+              },
+            }}
           />
-        </label>
-      </div>
-      <div className="mb-6">
-        <label className="block mb-2">
-          Role:
-          <input
-            type="text"
+          <TextField
+            label="Role"
             name="role"
             value={formData.role}
             onChange={handleInputChange}
             disabled={!isEditing}
-            className="block w-full border border-gray-300 rounded-lg px-3 py-2"
+            fullWidth
+            margin="normal"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#f5f5f5",
+              borderRadius: 1,
+              "& .MuiOutlinedInput-root": {
+                "&:hover fieldset": {
+                  borderColor: "#4e8e9b",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#2c6975",
+                },
+              },
+            }}
           />
-        </label>
-      </div>
-      <div className="flex space-x-4">
-        {isEditing ? (
-          <>
-            <button
-              onClick={handleSaveChanges}
-              disabled={!validateForm() || saving}
-              className="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-700 disabled:opacity-50"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-            <button
-              onClick={handleCancel}
-              className="bg-gray-600 text-white rounded-lg px-4 py-2 hover:bg-gray-700"
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={() => setIsEditing(true)}
-            className="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700"
-          >
-            Edit Profile
-          </button>
-        )}
-      </div>
-    </div>
+          <Box mt={2} display="flex" justifyContent="space-between">
+            {isEditing ? (
+              <>
+                <PrimaryButton
+                  variant="contained"
+                  onClick={handleSaveChanges}
+                  disabled={!validateForm() || saving}
+                >
+                  {saving ? <CircularProgress size={24} /> : "Save Changes"}
+                </PrimaryButton>
+                <SecondaryButton variant="contained" onClick={handleCancel}>
+                  Cancel
+                </SecondaryButton>
+              </>
+            ) : (
+              <PrimaryButton
+                variant="contained"
+                onClick={() => setIsEditing(true)}
+              >
+                Edit Profile
+              </PrimaryButton>
+            )}
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

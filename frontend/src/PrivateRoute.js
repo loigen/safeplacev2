@@ -40,7 +40,7 @@ const PrivateRoute = ({
   }
 
   if (!isAuthenticated) {
-    return <Redirect to="/login" />;
+    return <Redirect to="/" />;
   }
 
   if (adminOnly && !isAdmin) {

@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { changePassword } from "../../api/userAPI/changePassword";
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  Paper,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-const ChangePasswordForm = () => {
+const ChangePasswordForm = ({ setView }) => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -131,57 +142,63 @@ const ChangePasswordForm = () => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="max-w-md mx-auto bg-white p-6 shadow-lg rounded-lg"
-    >
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2">
-          Current Password
-        </label>
-        <input
-          type="password"
-          value={currentPassword}
-          onChange={(e) => setCurrentPassword(e.target.value)}
-          required
-          disabled={isBlocked || isDisabled}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2">
-          New Password
-        </label>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          disabled={isBlocked || isDisabled}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2">
-          Confirm New Password
-        </label>
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-          disabled={isBlocked || isDisabled}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <button
-        type="submit"
-        disabled={isBlocked || isDisabled}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-      >
-        Change Password
-      </button>
-    </form>
+    <Container component="main" maxWidth="xs">
+      <Paper elevation={3} style={{ padding: "2rem" }}>
+        <Box display="flex" justifyContent="flex-start" mb={2}>
+          <IconButton onClick={() => setView("settings")}>
+            <ArrowBackIcon />
+          </IconButton>
+        </Box>
+        <Typography variant="h5" gutterBottom>
+          Change Password
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="Current Password"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+            disabled={isBlocked || isDisabled}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="New Password"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+            disabled={isBlocked || isDisabled}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            fullWidth
+            label="Confirm New Password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            disabled={isBlocked || isDisabled}
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={isBlocked || isDisabled}
+            style={{ marginTop: "1rem" }}
+          >
+            Change Password
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   );
 };
 

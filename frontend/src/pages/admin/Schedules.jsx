@@ -5,9 +5,18 @@ import "react-datepicker/dist/react-datepicker.css";
 import Swal from "sweetalert2";
 import "../../styles/Schedules.css";
 import DeleteIcon from "@mui/icons-material/Delete";
+
 import dayjs from "dayjs";
 import axiosInstance from "../../config/axiosConfig";
 import { CustomTimePicker, AppointmentRequest } from "../../components/custom";
+import {
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  Typography,
+  IconButton,
+} from "@mui/material";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -226,30 +235,41 @@ const Schedules = () => {
           />
         </div>
 
-        <div className="mt-4 bg-white shadow-2xl rounded-2xl">
-          <div className="p-4">
+        <Card sx={{ mt: 4, bgcolor: "white", boxShadow: 2, borderRadius: 2 }}>
+          <CardContent>
             {freeSlots.length > 0 ? (
-              freeSlots.map((slot) => (
-                <li
-                  key={slot._id}
-                  className="mb-2 w-full shadow-2xl flex justify-between"
-                >
-                  {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
-                  <button
-                    onClick={() => handleDeleteFreeSlot(slot._id)}
-                    className="text-red-600 p-1 rounded ml-4"
+              <List>
+                {freeSlots.map((slot) => (
+                  <ListItem
+                    key={slot._id}
+                    sx={{
+                      mb: 2,
+                      display: "flex",
+                      justifyContent: "space-between",
+                      p: 2,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                    }}
                   >
-                    <DeleteIcon />
-                  </button>
-                </li>
-              ))
+                    <Typography sx={{ flexGrow: 1 }}>
+                      {dayjs(slot.date).format("YYYY-MM-DD")} at {slot.time}
+                    </Typography>
+                    <IconButton
+                      onClick={() => handleDeleteFreeSlot(slot._id)}
+                      sx={{ color: "#2c6975", ml: 2 }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItem>
+                ))}
+              </List>
             ) : (
-              <p className="text-gray-500 w-full text-center">
+              <Typography color="textSecondary" align="center" sx={{ p: 2 }}>
                 No Time slots today
-              </p>
+              </Typography>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
       <AppointmentRequest />
     </div>
