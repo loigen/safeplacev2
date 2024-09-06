@@ -49,7 +49,7 @@ const Appointments = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="w-1/4 shadow-2xl h-full p-5 flex flex-col gap-5 bg-white rounded-lg">
+    <div className="w-full shadow-2xl h-full p-5 flex flex-col gap-5 bg-white rounded-lg">
       <h2 className="font-bold font-mono text-gray-500 text-lg">
         My Appointments
       </h2>

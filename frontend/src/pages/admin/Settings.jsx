@@ -42,18 +42,16 @@ const AdminSettings = () => {
         return <ChangePasswordForm setView={setView} />;
       case "manage":
         return <ManageUsers setView={setView} />;
-      case "Rates and Review":
-        return <RatesandReview setView={setView} />;
+
       case "Help":
         return <Help setView={setView} />;
+      case "userFeedback":
+        return <RatesandReview setView={setView} />;
       default:
         return (
           <Container maxWidth="md" sx={{ py: 4 }}>
-            <IconButton onClick={() => setView("settings")} sx={{ mb: 2 }}>
-              <SettingsIcon color="primary" />
-            </IconButton>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={4}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={10}>
                 <Card>
                   <CardContent>
                     <Box display="flex" alignItems="center" mb={2}>
@@ -72,14 +70,19 @@ const AdminSettings = () => {
                       </Box>
                     </Box>
                     <Divider sx={{ my: 2 }} />
-                    <Typography variant="subtitle1" gutterBottom>
+                    <Typography
+                      variant="subtitle1"
+                      textAlign="center"
+                      gutterBottom
+                      color="GrayText"
+                    >
                       Account Settings
                     </Typography>
                     <Button
                       startIcon={<AccountCircleOutlinedIcon />}
                       fullWidth
                       onClick={() => setView("profile")}
-                      sx={{ mb: 1 }}
+                      sx={{ mb: 1, color: "#2C6975" }}
                     >
                       My Profile
                     </Button>
@@ -87,39 +90,46 @@ const AdminSettings = () => {
                       startIcon={<LockOutlinedIcon />}
                       fullWidth
                       onClick={() => setView("Security")}
-                      sx={{ mb: 1 }}
+                      sx={{ mb: 1, color: "#2C6975" }}
                     >
-                      Password and Security
+                      Password & Security
                     </Button>
                     <Button
                       startIcon={<GroupsOutlinedIcon />}
                       fullWidth
                       onClick={() => setView("manage")}
-                      sx={{ mb: 1 }}
+                      sx={{ mb: 1, color: "#2C6975" }}
                     >
                       Manage Users
                     </Button>
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={12} md={8}>
+              <Grid item xs={12} md={10}>
                 <Card>
                   <CardContent>
-                    <Typography variant="subtitle1" gutterBottom>
+                    <Typography
+                      variant="subtitle1"
+                      gutterBottom
+                      color="GrayText"
+                    >
                       More
                     </Typography>
+
                     <Button
-                      startIcon={<StarBorderOutlinedIcon />}
+                      startIcon={<SettingsIcon />}
                       fullWidth
-                      onClick={() => setView("Rates and Review")}
-                      sx={{ mb: 1 }}
+                      onClick={() => setView("userFeedback")}
+                      sx={{ color: "#2C6975" }}
                     >
-                      Rates and Review
+                      User Feedback
                     </Button>
+
                     <Button
                       startIcon={<QuestionMarkOutlinedIcon />}
                       fullWidth
                       onClick={() => setView("Help")}
+                      sx={{ mb: 1, color: "#2C6975" }}
                     >
                       Help
                     </Button>
@@ -132,7 +142,7 @@ const AdminSettings = () => {
     }
   };
 
-  return <div>{renderView()}</div>;
+  return <div className="h-full pt-10">{renderView()}</div>;
 };
 
 export default AdminSettings;

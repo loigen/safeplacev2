@@ -3,22 +3,58 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
 import { LoadingSpinner, Navbar } from "./custom";
+
+import {
+  Divider,
+  Button,
+  TextField,
+  IconButton,
+  ThemeProvider,
+  createTheme,
+  Box,
+  Typography,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Container,
+  CardHeader,
+} from "@mui/material";
 const categories = [
   { id: "Technology", name: "Technology" },
   { id: "Health", name: "Health" },
   { id: "Lifestyle", name: "Lifestyle" },
   { id: "Education", name: "Education" },
 ];
+const blogTheme = createTheme({
+  palette: {
+    primary: {
+      main: "#2c6975",
+    },
+    secondary: {
+      main: "#4a8e8b",
+    },
+    textColor: {
+      main: "#fff",
+    },
+    subheader: {
+      main: "gray",
+    },
+  },
+});
 const BlogGuestPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [userId, setUserId] = useState(null);
-  const [view, setView] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("Technology");
   const [searchQuery, setSearchQuery] = useState("");
-  const [favoriteBlogs, setFavoriteBlogs] = useState([]);
   const [expandedBlogs, setExpandedBlogs] = useState(new Set());
+  const [fullBlogDetails, setFullBlogDetails] = useState(null);
+  const [view, setView] = useState("all");
 
   useEffect(() => {
     const fetchUserProfileAndBlogs = async () => {
@@ -76,99 +112,225 @@ const BlogGuestPage = () => {
   if (error) {
     return <p>{error}</p>;
   }
+  const openFullContentView = (blog) => {
+    setFullBlogDetails(blog);
+  };
+
+  const closeFullContentView = () => {
+    setFullBlogDetails(null);
+  };
 
   return (
-    <div>
-      <Navbar />
-      <br />
-      <div className="px-[10%] py-[5%]">
-        <div className="mb-4 flex items-center gap-20">
-          <input
-            type="text"
-            placeholder="Search blogs..."
+    <ThemeProvider theme={blogTheme}>
+      <Box sx={{ p: 3, bgcolor: "background.default" }}>
+        <Box
+          sx={{
+            mb: 4,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            flexWrap: "wrap",
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          <TextField
+            label="Search blogs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-500 py-3 px-10 rounded-full mr-4 flex-1"
+            variant="outlined"
+            size="small"
+            color="subheader"
+            fullWidth
+            sx={{
+              flex: 1,
+              width: { xs: "100%", sm: "auto" },
+              "& .MuiInputBase-input": {
+                color: "gray",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "gray",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#2c6975",
+                },
+              },
+            }}
           />
-          <div>
-            <label htmlFor="view" className="mr-2 font-semibold text-gray-700">
-              View:
-            </label>
-            <select
-              id="view"
+
+          <FormControl
+            variant="outlined"
+            size="small"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
+          >
+            <InputLabel sx={{ color: "black" }}>View</InputLabel>
+            <Select
               value={view}
               onChange={(e) => setView(e.target.value)}
-              className="border border-gray-300 p-1 rounded-xl cursor-pointer outline-none"
+              label="View"
+              sx={{ color: "black" }}
             >
-              <option value="all">All Blogs</option>
-              <option value="newest">Newest</option>
-            </select>
-          </div>
-        </div>
-        <div className="flex flex-col w-full justify-center items-center mx-auto p-6 bg-transparent rounded-lg">
-          <div className="mb-4 w-full justify-between flex border-b border-gray-300">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 text-sm font-semibold ${
-                  selectedCategory === category.id
-                    ? "border-b-4 border-t-0 border-l-0 border-r-0  border-b-[#2C6975] text-black"
-                    : "border-none bg-transparent text-gray-800"
-                } border rounded-t-md hover:border-b-[#2C6975] hover:border-b-4 hover:border-solid focus:outline-none `}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
+              <MenuItem sx={{ color: "black" }} value="all">
+                All Blogs
+              </MenuItem>
 
+              <MenuItem sx={{ color: "black" }} value="newest">
+                Newest
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+
+        <Container>
           {filteredBlogs.length === 0 ? (
-            <div className="text-center text-gray-600">
-              {view === "favorites" ? (
-                <>
-                  <p>No favorites found, please add some favorites.</p>
-                  <button onClick={() => setView("all")}>go to newsfeed</button>
-                </>
-              ) : (
-                <p>No blogs available for this category.</p>
-              )}
-            </div>
+            <Grid item xs={12}>
+              <Typography variant="body1" align="center" color="text.secondary">
+                {view === "favorites" ? (
+                  <Box>
+                    <Typography>
+                      No favorites found, please add some favorites.
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Typography>No blogs available for this category.</Typography>
+                )}
+              </Typography>
+            </Grid>
           ) : (
-            filteredBlogs.map((blog) => (
-              <div
-                key={blog._id}
-                className="border w-[40vw] border-gray-300 p-4 rounded-md shadow-sm mb-4"
-              >
-                <div className="flex gap-2 items-center">
-                  <h2>{blog.author}</h2>·
-                  <h2 className="text-gray-700 text-sm">
-                    {dayjs(blog.createdDate).format("YYYY-MM-DD")}
-                  </h2>
-                </div>
-                <h3 className="text-2xl capitalize font-medium">
-                  {blog.title}
-                </h3>
-                <p className="mb-4 text-sm w-full">
-                  {expandedBlogs.has(blog._id)
-                    ? blog.content
-                    : blog.content.length > 200
-                    ? blog.content.substring(0, 200) + "..."
-                    : blog.content}
-                  {blog.content.length > 200 && (
-                    <button
-                      onClick={() => handleToggleExpand(blog._id)}
-                      className="text-blue-600 hover:underline "
-                    >
-                      {expandedBlogs.has(blog._id) ? "Read Less" : "Read More"}
-                    </button>
-                  )}
-                </p>
-              </div>
-            ))
+            <Grid container spacing={4}>
+              {filteredBlogs.map((blog) => (
+                <Grid item xs={12} sm={6} md={4} key={blog._id}>
+                  <Card>
+                    <CardHeader
+                      title={blog.title}
+                      subheader={
+                        <Typography variant="body2" color="subheader">
+                          {`Category: ${blog.category} | Author: ${blog.author}`}
+                        </Typography>
+                      }
+                      sx={{
+                        bgcolor: "primary.main",
+                        color: "#fff",
+                        textTransform: "capitalize",
+                      }}
+                    />
+                    <Divider />
+
+                    <CardContent>
+                      <Typography color="textSecondary">
+                        {dayjs(blog.createdDate).format("MMM D, YYYY")}
+                      </Typography>
+                      <Typography variant="body2" color="textSecondary">
+                        {blog.content.length > 100 &&
+                        !expandedBlogs.has(blog._id)
+                          ? `${blog.content.substring(0, 100)}...`
+                          : blog.content}
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      {blog.content.length > 100 && (
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleToggleExpand(blog._id)}
+                          sx={{ fontSize: 15 }}
+                        >
+                          {expandedBlogs.has(blog._id)
+                            ? "Show Less"
+                            : "Read More"}
+                        </IconButton>
+                      )}
+                      <Button
+                        onClick={() => openFullContentView(blog)}
+                        variant="outlined"
+                        color="primary"
+                      >
+                        Read Full
+                      </Button>
+                    </CardActions>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
           )}
-        </div>
-      </div>
-    </div>
+        </Container>
+
+        {fullBlogDetails && (
+          <Box
+            sx={{
+              position: "fixed",
+              top: 0,
+              left: "10%",
+              width: "90%",
+              height: "100%",
+              bgcolor: "background.paper",
+              boxShadow: 24,
+              p: 4,
+              zIndex: 100,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Box
+              display="flex"
+              justifyContent="flex-end"
+              sx={{ width: "100%", alignItems: "center" }}
+            >
+              <Button
+                onClick={closeFullContentView}
+                variant="contained"
+                color="primary"
+              >
+                Close
+              </Button>
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="column"
+              borderRadius={2}
+              height="100%"
+              padding={2}
+              width="80%"
+              alignItems="center"
+            >
+              <Typography
+                variant="h6"
+                fontSize={30}
+                textTransform="capitalize"
+                fontWeight="bold"
+                gutterBottom
+              >
+                {fullBlogDetails.title}
+              </Typography>
+              <Typography
+                fullWidth
+                variant="body2"
+                color="textSecondary"
+                gutterBottom
+              >
+                {`Author: ${fullBlogDetails.author} | Published on: ${dayjs(
+                  fullBlogDetails.createdDate
+                ).format("MMM D, YYYY")}`}
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Box
+                sx={{
+                  width: "100%",
+                  overflowY: "auto",
+                  maxHeight: "80vh",
+                  bgcolor: "background.default",
+                  p: 2,
+                }}
+              >
+                <Typography variant="body1" fullWidth>
+                  {fullBlogDetails.content}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 };
 

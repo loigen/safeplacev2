@@ -11,10 +11,31 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { useLocation } from "react-router-dom";
 import logo from "../../images/logo.png";
-
-const Navbar = ({ handleOpenLoginModal }) => {
+import LoginModal from "../Login";
+import SignupModal from "../Signup";
+const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
+  const [activeNavLink, setActiveNavLink] = useState("ABOUT");
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+
+  const handleOpenRegisterModal = () => {
+    setIsRegisterModalOpen(true);
+    setIsLoginModalOpen(false);
+  };
+
+  const handleCloseRegisterModal = () => {
+    setIsRegisterModalOpen(false);
+  };
+  const handleOpenLoginModal = () => {
+    setIsLoginModalOpen(true);
+    setIsRegisterModalOpen(false);
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -64,8 +85,8 @@ const Navbar = ({ handleOpenLoginModal }) => {
       </ListItem>
       <ListItem
         button
-        onClick={() => handleMenuItemClick("/Blog")}
-        className={isActive("/Blog")}
+        onClick={() => handleMenuItemClick("/guestBlog")}
+        className={isActive("/guestBlog")}
       >
         <ListItemText primary="Blog" />
       </ListItem>
@@ -141,8 +162,8 @@ const Navbar = ({ handleOpenLoginModal }) => {
                 Contact
               </div>
               <div
-                className={`nav-link ${isActive("/Blog")}`}
-                onClick={() => handleMenuItemClick("/Blog")}
+                className={`nav-link ${isActive("/guestBlog")}`}
+                onClick={() => handleMenuItemClick("/guestBlog")}
               >
                 Blog
               </div>
@@ -156,6 +177,16 @@ const Navbar = ({ handleOpenLoginModal }) => {
           )}
         </div>
       </nav>
+      <LoginModal
+        open={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+        handleOpenRegisterModal={handleOpenRegisterModal}
+      />
+      <SignupModal
+        open={isRegisterModalOpen}
+        onClose={handleCloseRegisterModal}
+        handleOpenLoginModal={handleOpenLoginModal}
+      />
     </>
   );
 };

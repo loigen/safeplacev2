@@ -22,7 +22,7 @@ const AvailabilityCard = ({ availableSlots, totalSlots }) => {
         display: true,
       },
       tooltip: {
-        enabled: false,
+        enabled: true,
       },
     },
   };

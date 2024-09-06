@@ -16,6 +16,7 @@ import {
   ListItem,
   Typography,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -258,7 +259,9 @@ const Schedules = () => {
                       onClick={() => handleDeleteFreeSlot(slot._id)}
                       sx={{ color: "#2c6975", ml: 2 }}
                     >
-                      <DeleteIcon />
+                      <Tooltip title="Delete Time Slot" arrow>
+                        <DeleteIcon />
+                      </Tooltip>
                     </IconButton>
                   </ListItem>
                 ))}

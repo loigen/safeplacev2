@@ -4,6 +4,17 @@ import "../../styles/topbar.css";
 import profile from "../../images/defaultAvatar.jpg";
 import axiosInstance from "../../config/axiosConfig";
 import { Notification, LoadingSpinner } from "../custom";
+import {
+  Avatar,
+  Menu,
+  MenuItem,
+  IconButton,
+  Button,
+  Tooltip,
+} from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { title } from "process";
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
@@ -12,7 +23,8 @@ const Topbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,6 +60,14 @@ const Topbar = () => {
     };
   }, []);
 
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   if (error) {
     return <div>{error}</div>;
   }
@@ -55,6 +75,7 @@ const Topbar = () => {
   if (!user) {
     return <LoadingSpinner />;
   }
+
   const handleLogout = async () => {
     setLoading(true);
 
@@ -72,18 +93,14 @@ const Topbar = () => {
       setLoading(false);
     }
   };
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   return (
-    <div className="topbarComponent fixed w-full bg-gray-400 z-50 flex flex-row justify-between shadow-2xl p-3 h-16 md:h-20">
-      <button
-        className="goBackButton w-full p-2 text-left md:p-4"
-        onClick={() => history.goBack()}
-      >
-        Back to Dashboard
-      </button>
+    <div className="topbarComponent fixed w-full bg-white z-50 flex flex-row justify-between shadow-2xl p-3 h-16 md:h-20">
+      <IconButton onClick={() => history.goBack()}>
+        <Tooltip title="Back to Dashboard" arrow>
+          <KeyboardArrowLeftIcon />
+        </Tooltip>
+      </IconButton>
       <div className="flex flex-row w-full justify-end gap-10">
         <ul className="flex flex-row gap-4 md:gap-6 items-center">
           <li>
@@ -92,40 +109,40 @@ const Topbar = () => {
         </ul>
 
         <div className="profilePart flex flex-row gap-4 md:gap-6 items-center justify-center">
-          <div className="profilePicture border-2 border-black rounded-full w-10 h-10 md:w-12 md:h-12">
-            <img
-              src={avatar || profile}
-              alt={`${user.firstname} ${user.lastname}`}
-              className="object-cover w-full h-full rounded-full"
-            />
-          </div>
-          <div className="relative">
-            {!isMobile && (
-              <div className="nameAndRole" onClick={toggleDropdown}>
-                <p className="name capitalize font-bold text-xs md:text-sm cursor-pointer">
-                  {user.firstname} {user.lastname}
-                </p>
-              </div>
-            )}
-
-            {isOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                <div
-                  className="py-1"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="options-menu"
-                >
-                  <button
-                    onClick={handleLogout}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
+          {!isMobile && (
+            <p className="name capitalize font-bold text-xs md:text-sm cursor-pointer">
+              {user.firstname} {user.lastname}
+            </p>
+          )}
+          <IconButton onClick={handleMenuClick} size="small">
+            <Tooltip title="Menu" className="flex items-center " arrow>
+              <Avatar
+                src={avatar || profile}
+                alt={`${user.firstname} ${user.lastname}`}
+                sx={{ width: 40, height: 40 }}
+              />
+              <KeyboardArrowDownIcon />
+            </Tooltip>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            PaperProps={{
+              elevation: 3,
+              sx: { mt: 1.5 },
+            }}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
         </div>
       </div>
     </div>

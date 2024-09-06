@@ -6,12 +6,14 @@ import axiosInstance from "../../config/axiosConfig";
 import { Notification } from "../custom";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { Menu, MenuItem, Avatar, IconButton } from "@mui/material";
 
 const Topbar = () => {
   const { user, loading } = useAuth();
-  const [isOpen, setIsOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useHistory();
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const handleResize = () => {
@@ -26,11 +28,16 @@ const Topbar = () => {
     };
   }, []);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   const handleProfileClick = () => {
+    handleMenuClose();
     navigate.push("/AdminSettings");
   };
 
@@ -65,53 +72,45 @@ const Topbar = () => {
             <Notification />
           </li>
         </ul>
-        <div
-          onClick={toggleDropdown}
-          className="profilePart cursor-pointer flex flex-row gap-4 md:gap-6 items-center justify-center"
-        >
-          <div className="profilePicture border-2 border-black rounded-full w-10 h-10 md:w-12 md:h-12">
-            <img
-              src={user.profilePicture}
+        <div className="profilePart flex items-center gap-4 md:gap-6">
+          {!isMobile && (
+            <p className="name capitalize font-bold text-xs md:text-sm">
+              {user.firstname} {user.lastname}
+            </p>
+          )}
+          <IconButton onClick={handleMenuClick} size="small">
+            <Avatar
               alt={`${user.firstname} ${user.lastname}`}
-              className="object-cover w-full h-full rounded-full"
+              src={user.profilePicture}
+              sx={{ width: 40, height: 40 }}
             />
-          </div>
-          <div className="relative">
-            {!isMobile && (
-              <div className="nameAndRole">
-                <p className="name capitalize font-bold text-xs md:text-sm cursor-pointer">
-                  {user.firstname} {user.lastname}
-                </p>
-              </div>
-            )}
-
-            {isOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
-                <div
-                  className="py-1"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="options-menu"
-                >
-                  <button
-                    onClick={handleProfileClick}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200 w-full text-left"
-                  >
-                    Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          <p>
             <KeyboardArrowDownIcon />
-          </p>
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleMenuClose}
+            PaperProps={{
+              elevation: 3,
+              sx: {
+                mt: 1.5,
+                "& .MuiMenuItem-root": {
+                  padding: "10px 20px",
+                },
+              },
+            }}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "center",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+          >
+            <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
         </div>
       </div>
     </div>

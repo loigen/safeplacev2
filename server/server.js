@@ -12,6 +12,7 @@ const appointmentRoutes = require("./routes/appointmentRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const chatRoute = require("./routes/chatRoutes");
 const messageRoute = require("./routes/messageRoutes");
+const feedbackRoute = require("./routes/FeedbackRoutes");
 const socketServer = require("./socket/socket");
 
 const app = express();
@@ -76,7 +77,7 @@ app.use("/Appointments/api", appointmentRoutes);
 app.use("/blog", blogRoutes);
 app.use("/api/chats", chatRoute);
 app.use("/api/messages", messageRoute);
-
+app.use("/Feedback", feedbackRoute);
 app.set("view engine", "ejs");
 
 const server = app.listen(PORT, () => {

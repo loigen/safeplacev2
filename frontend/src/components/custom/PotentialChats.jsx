@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
 import axiosInstance from "../../config/axiosConfig";
 import LoadingSpinner from "./LoadingSpinner";
-import src from "react-input-emoji";
+import { Tooltip } from "@mui/material";
 
 const PotentialChats = () => {
   const [user, setUser] = useState(null);
@@ -41,25 +41,27 @@ const PotentialChats = () => {
     <div className=" flex overflow-x-auto space-x-4 p-4">
       {potentialChats &&
         potentialChats.map((u, index) => (
-          <div
-            className="single-user flex flex-col items-center flex-shrink-0"
-            key={index}
-            onClick={() => user && createChat(user._id, u._id)}
-          >
-            <div className="relative">
-              <img
-                src={u.profilePicture}
-                className="w-12 h-12 md:w-16 md:h-16 border-2 border-[#2c6975] rounded-full shadow-2xl"
-                alt={`${u.name}'s profile`}
-              />
-              {onlineUsers?.some((user) => user?.userId === u?._id) && (
-                <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
-              )}
+          <Tooltip title={u.firstname}>
+            <div
+              className="single-user flex flex-col items-center flex-shrink-0"
+              key={index}
+              onClick={() => user && createChat(user._id, u._id)}
+            >
+              <div className="relative">
+                <img
+                  src={u.profilePicture}
+                  className="w-12 h-12 md:w-16 md:h-16 border-2 border-[#2c6975] rounded-full shadow-2xl"
+                  alt={`${u.name}'s profile`}
+                />
+                {onlineUsers?.some((user) => user?.userId === u?._id) && (
+                  <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
+                )}
+              </div>
+              <span className="mt-2 text-sm font-medium text-gray-700 text-center">
+                {u.name}
+              </span>
             </div>
-            <span className="mt-2 text-sm font-medium text-gray-700 text-center">
-              {u.name}
-            </span>
-          </div>
+          </Tooltip>
         ))}
     </div>
   );

@@ -34,6 +34,7 @@ import {
   CircularProgress,
   Container,
   CardHeader,
+  Tooltip,
 } from "@mui/material";
 
 const categories = [
@@ -360,7 +361,9 @@ const BLog = () => {
                             color="textColor"
                             onClick={() => openEditModal(blog)}
                           >
-                            <EditIcon />
+                            <Tooltip title="Edit Blog" arrow>
+                              <EditIcon />
+                            </Tooltip>
                           </IconButton>
                         }
                         sx={{
@@ -408,9 +411,13 @@ const BLog = () => {
                           {favoriteBlogs.some(
                             (favBlog) => favBlog._id === blog._id
                           ) ? (
-                            <FavoriteIcon />
+                            <Tooltip title="Remove from Favorites" arrow>
+                              <FavoriteIcon />
+                            </Tooltip>
                           ) : (
-                            <FavoriteBorderIcon />
+                            <Tooltip title="Add to Favorites" arrow>
+                              <FavoriteBorderIcon />
+                            </Tooltip>
                           )}
                         </IconButton>
                       </CardActions>

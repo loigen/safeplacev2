@@ -13,6 +13,7 @@ import {
   CircularProgress,
   Input,
   Paper,
+  Tooltip,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -160,14 +161,16 @@ const Profile = ({ setView }) => {
             {error}
           </Typography>
         )}
-        <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
-          <Typography
-            onClick={() => setView("settings")}
-            className="text-black"
-            style={{ cursor: "pointer", marginBottom: "1rem" }}
-          >
+        <Typography
+          onClick={() => setView("settings")}
+          className="text-black"
+          style={{ cursor: "pointer", marginBottom: "1rem" }}
+        >
+          <Tooltip title="Back to settings" arrow>
             <ArrowBackIcon />
-          </Typography>
+          </Tooltip>
+        </Typography>
+        <Box display="flex" flexDirection="column" alignItems="center" mb={4}>
           <Box
             position="relative"
             onClick={isEditing ? handleAvatarClick : undefined}
@@ -303,7 +306,7 @@ const Profile = ({ setView }) => {
               },
             }}
           />
-          <Box mt={2} display="flex" justifyContent="space-between">
+          <Box mt={2} display="flex" justifyContent="right" gap={1}>
             {isEditing ? (
               <>
                 <PrimaryButton

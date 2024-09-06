@@ -71,6 +71,11 @@ const LoginModal = ({ open, onClose, handleOpenRegisterModal }) => {
 
       await fetchUserProfile();
 
+      const Blocked = response.data.status;
+
+      if (Blocked === "blocked") {
+        setError("Your account has been blocked");
+      }
       const userRole = response.data.role;
       if (userRole === "user") {
         history.push("/booking");
@@ -85,11 +90,6 @@ const LoginModal = ({ open, onClose, handleOpenRegisterModal }) => {
 
         if (status === 403) {
           setError("Your account has been blocked. Please contact support.");
-          Swal.fire({
-            icon: "error",
-            title: "Account Blocked",
-            text: errorMessage,
-          });
         } else if (status === 401) {
           if (errorMessage.includes("password")) {
             setError("Incorrect password. Please try again.");

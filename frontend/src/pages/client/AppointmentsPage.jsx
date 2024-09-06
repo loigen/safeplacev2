@@ -13,6 +13,15 @@ import {
   Appointments,
 } from "../../components/client";
 import { useAuth } from "../../context/AuthContext";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 
 const AppointmentsPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -205,76 +214,141 @@ const AppointmentsPage = () => {
     switch (currentStep) {
       case 1:
         return (
-          <div className="flex h-full p-2 flex-col justify-center items-center">
-            <div className="mb-4 w-full">
-              <strong className=" text-center">Create Appointment</strong>
-              <label
-                htmlFor="appointmentType"
-                className="block text-sm font-medium text-gray-700"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
+              p: 2,
+            }}
+          >
+            <Box sx={{ mb: 4, width: "100%" }}>
+              <Typography variant="h6" align="center">
+                Create Appointment
+              </Typography>
+              <Box
+                sx={{
+                  mt: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                }}
               >
-                Appointment Type
-              </label>
-              <select
-                id="appointmentType"
-                value={appointmentType}
-                onChange={(e) => setAppointmentType(e.target.value)}
-                className="mt-1 block w-1/2 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                required
-              >
-                <option value="">Select</option>
-                <option value="consultation">Consultation</option>
-                <option value="followup">Follow-Up</option>
-                <option value="checkup">Check-Up</option>
-              </select>
-            </div>
-            <div className="mb-4 h-full w-full  flex flex-col">
-              <div className="grid grid-cols-1 w-full gap-4">
+                <Typography variant="body2" color="text.secondary">
+                  Appointment Type
+                </Typography>
+                <Select
+                  id="appointmentType"
+                  value={appointmentType}
+                  onChange={(e) => setAppointmentType(e.target.value)}
+                  sx={{
+                    mt: 1,
+                    width: "50%",
+                    px: 2,
+                    py: 1,
+                    borderColor: "gray.300",
+                    borderRadius: 1,
+                    "&:focus": {
+                      borderColor: "primary.main",
+                      boxShadow: "0 0 0 2px rgba(66, 153, 225, 0.5)",
+                    },
+                  }}
+                  required
+                >
+                  <MenuItem value="">Select</MenuItem>
+                  <MenuItem value="consultation">Consultation</MenuItem>
+                  <MenuItem value="followup">Follow-Up</MenuItem>
+                  <MenuItem value="checkup">Check-Up</MenuItem>
+                </Select>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                mb: 4,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Grid container spacing={2}>
                 {loading ? (
-                  <p className="text-gray-500">Loading available slots...</p>
+                  <Typography variant="body2" color="text.secondary">
+                    Loading available slots...
+                  </Typography>
                 ) : availableSlots.length > 0 ? (
                   availableSlots.map((slot) => (
-                    <div
-                      key={slot._id}
-                      className={`p-4 border rounded-md cursor-pointer hover:border-[#2C6975] ${
-                        selectedSlot && selectedSlot._id === slot._id
-                          ? "bg-indigo-100 border-indigo-500"
-                          : "bg-white border-gray-300"
-                      }`}
-                      onClick={() =>
-                        setSelectedSlot(
-                          selectedSlot && selectedSlot._id === slot._id
-                            ? null
-                            : slot
-                        )
-                      }
-                    >
-                      <p>
-                        <strong>Date:</strong>{" "}
-                        {new Date(slot.date).toLocaleDateString()}
-                      </p>
-                      <p>
-                        <strong>Time:</strong> {slot.time}
-                      </p>
-                    </div>
+                    <Grid item xs={12} key={slot._id}>
+                      <Box
+                        sx={{
+                          p: 2,
+                          border: "1px solid",
+                          borderColor:
+                            selectedSlot && selectedSlot._id === slot._id
+                              ? "primary.main"
+                              : "gray.300",
+                          borderRadius: 1,
+                          backgroundColor:
+                            selectedSlot && selectedSlot._id === slot._id
+                              ? "background.paper"
+                              : "white",
+                          cursor: "pointer",
+                          "&:hover": {
+                            borderColor: "primary.main",
+                          },
+                        }}
+                        onClick={() =>
+                          setSelectedSlot(
+                            selectedSlot && selectedSlot._id === slot._id
+                              ? null
+                              : slot
+                          )
+                        }
+                      >
+                        <Typography>
+                          <strong>Date:</strong>{" "}
+                          {new Date(slot.date).toLocaleDateString()}
+                        </Typography>
+                        <Typography>
+                          <strong>Time:</strong> {slot.time}
+                        </Typography>
+                      </Box>
+                    </Grid>
                   ))
                 ) : (
-                  <p className="h-full text-center items-center">
+                  <Typography
+                    variant="body2"
+                    align="center"
+                    color="text.secondary"
+                  >
                     No available slots.
-                  </p>
+                  </Typography>
                 )}
-              </div>
-            </div>
-            <button
-              type="button"
+              </Grid>
+            </Box>
+            <Button
+              variant="contained"
+              color="primary"
               onClick={handleNext}
-              className={`btn btn-primary bg-[#2C6975] px-4 py-1 text-white rounded-md ${
-                isNextButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              sx={{
+                mt: 2,
+                px: 4,
+                py: 1,
+                borderRadius: 1,
+                backgroundColor: "#2C6975",
+                "&:hover": {
+                  backgroundColor: "#1a4c5d",
+                },
+                opacity: isNextButtonDisabled ? 0.5 : 1,
+                cursor: isNextButtonDisabled ? "not-allowed" : "pointer",
+              }}
               disabled={isNextButtonDisabled}
             >
               Next
-            </button>
-          </div>
+            </Button>
+          </Box>
         );
       case 2:
         return (
@@ -362,21 +436,21 @@ const AppointmentsPage = () => {
             <div className="mb-4 flex flex-col gap-2 p-2">
               <div className="p-4 border border-gray-300 rounded-md shadow-lg">
                 <p className="flex gap-2">
-                  <b className=" underline">STEP 1:</b>
+                  <b className="">STEP 1:</b>
                   Choose a payment method below.
                 </p>
                 <p>QR Code Image</p>
               </div>
               <div className="p-4 border border-gray-300 rounded-md shadow-lg">
                 <p className="">
-                  <b className=" underline">STEP 2:</b> {""}
+                  <b className="">STEP 2:</b> {""}
                   Pay the right amount and take a screenshot/picture of the
                   proof of payment.
                 </p>
               </div>
               <div className="p-4 border border-gray-300 rounded-md shadow-lg">
                 <p className="text-gray-700">
-                  <b className="underline">STEP 3:</b> {""}
+                  <b className="">STEP 3:</b> {""}
                   Upload your proof of payment below to successfully book an
                   appointment.
                 </p>
@@ -424,68 +498,111 @@ const AppointmentsPage = () => {
         );
       case 4:
         return (
-          <div className="flex flex-col h-full p-2">
-            {" "}
-            <button
-              className="w-full p-2 flex justify-start text-[#2C6975] "
-              type="button"
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              p: 2,
+            }}
+          >
+            <Button
+              startIcon={<ArrowBackIcon />}
+              sx={{
+                alignSelf: "flex-start",
+                color: "#2C6975",
+                textAlign: "left",
+                mb: 2,
+              }}
               onClick={handleBack}
             >
-              <ArrowBackIcon style={{ fontSize: "2rem" }} />
-            </button>
-            <p className="text-xl capitalize text-[#2C6975] font-bold w-full text-center">
+              Back
+            </Button>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "#2C6975",
+                fontWeight: "bold",
+                textAlign: "center",
+                mb: 2,
+              }}
+            >
               Confirm and Schedule your appointment
-            </p>
-            <div className="w-full max-w-md p-4  rounded-md bg-white">
-              <p className="mb-2 capitalize">
+            </Typography>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 600,
+                p: 4,
+                borderRadius: 1,
+                bgcolor: "white",
+              }}
+            >
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Name:</strong> {formData.firstname} {formData.lastname}
-              </p>
-              <p className="mb-2">
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Email:</strong> {formData.email}
-              </p>
-              <p className="mb-2 capitalize">
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Appointment Type:</strong> {appointmentType}
-              </p>
-
-              <p className="mb-2">
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Date:</strong>{" "}
                 {selectedSlot
                   ? new Date(selectedSlot.date).toLocaleDateString()
                   : ""}
-              </p>
-              <p className="mb-2">
+              </Typography>
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Time:</strong> {selectedSlot ? selectedSlot.time : ""}
-              </p>
+              </Typography>
               {filePreview && (
                 <img
                   src={filePreview}
                   alt="Receipt Preview"
-                  className="mt-4 border border-gray-300 rounded-md"
-                  style={{ width: "300px", height: "auto" }}
+                  style={{
+                    width: "300px",
+                    height: "auto",
+                    marginTop: "16px",
+                    border: "1px solid #d1d1d1",
+                    borderRadius: "8px",
+                  }}
                 />
               )}
-            </div>
-            <div className="w-full flex justify-end p-2">
-              {" "}
-              <p className="mb-2">
+            </Box>
+            <Box
+              sx={{
+                width: "100%",
+                display: "flex",
+                justifyContent: "flex-end",
+                p: 2,
+              }}
+            >
+              <Typography variant="body1" sx={{ mb: 2 }}>
                 <strong>Payment = </strong> PHP {price}
-              </p>
-            </div>
-            <hr className="w-full border" />
-            <div className="flex flex-col justify-center items-center h-full">
-              <br />
-              <div className="flex justify-center w-full gap-2">
-                <button
-                  type="button"
-                  className="bg-[#2C6975] py-2 px-6 text-white rounded-md"
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "Schedule Appointment"}
-                </button>
-              </div>
-            </div>
-          </div>
+              </Typography>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+                disabled={submitting}
+                sx={{ mt: 2 }}
+              >
+                {submitting ? "Submitting..." : "Schedule Appointment"}
+              </Button>
+            </Box>
+          </Box>
         );
       default:
         return null;
@@ -496,8 +613,8 @@ const AppointmentsPage = () => {
   }
 
   return (
-    <div className="flex flex-row p-10 justify-around">
-      <div>
+    <div className="flex flex-col md:flex-row p-10 justify-between gap-10">
+      <div className="w-full mb-4 md:mb-0">
         <CanceledAppointments />
         <br />
         <RejectedAppointments />
@@ -505,7 +622,7 @@ const AppointmentsPage = () => {
         <RefundedAppointments />
       </div>
       <form
-        className="bg-white w-1/3 shadow-2xl rounded-md"
+        className="bg-white w-full shadow-2xl rounded-md mb-4 md:mb-0"
         onSubmit={(e) => e.preventDefault()}
       >
         {showContent ? (
@@ -515,14 +632,23 @@ const AppointmentsPage = () => {
             renderStepContent()
           )
         ) : (
-          <div className="w-full flex items-center justify-center h-full">
-            <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              width: "100%",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
               onClick={handleCreateAppointment}
             >
               Create Appointment
-            </button>
-          </div>
+            </Button>
+          </Box>
         )}
       </form>
       <Appointments />
