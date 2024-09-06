@@ -25,6 +25,7 @@ import {
 } from "../../components/custom";
 import { Profile, ManageUsers } from "../../components/admin";
 import { useAuth } from "../../context/AuthContext";
+import FeedbackList from "../../components/custom/FeedbackList";
 
 const AdminSettings = () => {
   const [view, setView] = useState("settings");
@@ -46,7 +47,7 @@ const AdminSettings = () => {
       case "Help":
         return <Help setView={setView} />;
       case "userFeedback":
-        return <RatesandReview setView={setView} />;
+        return <FeedbackList />;
       default:
         return (
           <Container maxWidth="md" sx={{ py: 4 }}>
