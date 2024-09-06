@@ -5,7 +5,7 @@ let onlineUser = [];
 const socketServer = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "*",
+      origin: "https://safeplacev2.vercel.app",
       methods: ["GET", "POST"],
       credentials: true,
     },
