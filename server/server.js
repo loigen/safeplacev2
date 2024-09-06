@@ -30,7 +30,7 @@ app.use(
     credentials: true,
     methods: "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH",
     allowedHeaders:
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin",
   })
 );
 

@@ -14,6 +14,7 @@ const PrivateRoute = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -26,10 +27,16 @@ const PrivateRoute = ({
         );
         if (response.status === 200) {
           setIsAuthenticated(true);
-          setIsAdmin(response.data.user.role === "admin");
+          setIsAdmin(response.data.user?.role === "admin");
+        } else {
+          setError("Unexpected response status");
         }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error(
+          "Error fetching user profile:",
+          error.response?.data || error.message
+        );
+        setError("Failed to fetch user profile");
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -41,6 +48,10 @@ const PrivateRoute = ({
 
   if (isLoading) {
     return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // or redirect to an error page
   }
 
   if (!isAuthenticated) {
