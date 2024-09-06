@@ -1,73 +1,142 @@
 import React from "react";
-import support from "../../images/support.gif";
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Paper,
+  Button,
+  Avatar,
+} from "@mui/material";
 import MoveToInboxIcon from "@mui/icons-material/MoveToInbox";
 import LocalPhoneIcon from "@mui/icons-material/LocalPhone";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import support from "../../images/support.gif";
+
 const ContactSupport = () => {
   return (
-    <div className="contact-support h-full">
-      <nav className="h-[8%] flex  items-center px-10 text-3xl font-bold font-sans">
+    <Container maxWidth="lg" sx={{ paddingY: 4 }}>
+      <Typography variant="h4" align="center" gutterBottom>
         Contact Support
-      </nav>
-      <section className="flex h-1/3 flex-row overflow-hidden items-center justify-around bg-[#2c6975]">
-        <div className="h-full flex gap-2 items-center flex-row">
-          <img
-            className="h-1/2 rounded-full bg-[#68b2a0]"
+      </Typography>
+
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          backgroundColor: "#2c6975",
+          padding: 2,
+          borderRadius: 2,
+          mb: 4,
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <Avatar
             src={support}
-            alt=""
+            alt="Support"
+            sx={{ width: 120, height: 120, backgroundColor: "#68b2a0" }}
           />
-          <div className="flex flex-col gap-2">
-            <strong className="text-2xl text-white font-sans">
+          <Box sx={{ color: "white" }}>
+            <Typography variant="h6" gutterBottom>
               Support Team
-            </strong>
-            <p className="bg-[#68b2a0] w-fit rounded-md px-2 py-1">
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                backgroundColor: "#68b2a0",
+                display: "inline-block",
+                padding: "4px 8px",
+                borderRadius: 1,
+              }}
+            >
               24/7 Support
-            </p>
-            <p className="text-white">
+            </Typography>
+            <Typography variant="body1" sx={{ mt: 1 }}>
               We are here to assist you with any queries or issues.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center">
-          <p className="border-2 px-10 rounded-lg text-white py-2 ">FAQs</p>
-        </div>
-      </section>
-      <section className="flex flex-col items-center p-5 w-full gap-10">
-        <h1 className="text-center text-3xl font-bold">Contact Options</h1>
-        <div className="w-3/4 flex flex-row justify-between">
-          <div className="flex flex-col items-center gap-2">
-            <div className="bg-gray-400 p-2 rounded-full">
-              <MoveToInboxIcon
-                className="text-[#2c6975]"
-                style={{ fontSize: "4rem" }}
-              />
-            </div>
-            <p>safeplacesupport@gmail.com</p>
-            <p>Email us for assistance</p>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="bg-gray-400 p-2 rounded-full">
-              <LocalPhoneIcon
-                className="text-[#000]"
-                style={{ fontSize: "4rem" }}
-              />
-            </div>
-            <p>safeplacesupport@gmail.com</p>
-            <p>Email us for assistance</p>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <div className="bg-gray-400 p-2 rounded-full">
-              <QuestionMarkIcon
-                className="text-red-800"
-                style={{ fontSize: "4rem" }}
-              />
-            </div>
-            <p>safeplacesupport@gmail.com</p>
-            <p>Email us for assistance</p>
-          </div>
-        </div>
-      </section>
-    </div>
+            </Typography>
+          </Box>
+        </Box>
+        <Button
+          variant="outlined"
+          color="secondary"
+          sx={{
+            borderColor: "white",
+            color: "white",
+            "&:hover": { borderColor: "#68b2a0", color: "#68b2a0" },
+          }}
+        >
+          FAQs
+        </Button>
+      </Box>
+
+      <Typography variant="h5" align="center" gutterBottom>
+        Contact Options
+      </Typography>
+
+      <Grid container spacing={4} justifyContent="center">
+        <Grid item xs={12} sm={4}>
+          <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+            <Avatar
+              sx={{
+                backgroundColor: "#2c6975",
+                width: 60,
+                height: 60,
+                margin: "0 auto",
+              }}
+            >
+              <MoveToInboxIcon sx={{ fontSize: "2.5rem", color: "white" }} />
+            </Avatar>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              safeplacesupport@gmail.com
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Email us for assistance
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+            <Avatar
+              sx={{
+                backgroundColor: "#2c6975",
+                width: 60,
+                height: 60,
+                margin: "0 auto",
+              }}
+            >
+              <LocalPhoneIcon sx={{ fontSize: "2.5rem", color: "white" }} />
+            </Avatar>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              123-456-7890
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Call us for immediate assistance
+            </Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={4}>
+          <Paper elevation={3} sx={{ padding: 3, textAlign: "center" }}>
+            <Avatar
+              sx={{
+                backgroundColor: "#2c6975",
+                width: 60,
+                height: 60,
+                margin: "0 auto",
+              }}
+            >
+              <QuestionMarkIcon sx={{ fontSize: "2.5rem", color: "white" }} />
+            </Avatar>
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              help@safeplace.com
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Email us for any queries
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

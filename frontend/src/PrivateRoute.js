@@ -18,14 +18,18 @@ const PrivateRoute = ({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/user/profile", {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/user/profile`,
+          {
+            withCredentials: true,
+          }
+        );
         if (response.status === 200) {
           setIsAuthenticated(true);
           setIsAdmin(response.data.user.role === "admin");
         }
       } catch (error) {
+        console.error("Error fetching user profile:", error);
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);

@@ -198,7 +198,7 @@ const BLog = () => {
 
   return (
     <ThemeProvider theme={blogTheme}>
-      <Box sx={{ p: 3, bgcolor: "background.default" }}>
+      <Box sx={{ p: 10, bgcolor: "background.default" }}>
         <Box
           sx={{
             mb: 4,
