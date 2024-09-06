@@ -25,8 +25,14 @@ const PrivateRoute = ({
           }
         );
         if (response.status === 200) {
-          setIsAuthenticated(true);
-          setIsAdmin(response.data.user.role === "admin");
+          const user = response.data.user;
+          if (user && user.role) {
+            setIsAuthenticated(true);
+            setIsAdmin(user.role === "admin");
+          } else {
+            console.error("User data or role is missing in the response");
+            setIsAuthenticated(false);
+          }
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
