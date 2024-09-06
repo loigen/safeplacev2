@@ -24,6 +24,16 @@ const allowedOrigins = [
   "https://safeplacev2.vercel.app",
 ];
 
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: "GET,HEAD,OPTIONS,POST,PUT,DELETE,PATCH",
+    allowedHeaders:
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+  })
+);
+
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -38,6 +48,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
+  z;
   if (req.method === "OPTIONS") {
     res.sendStatus(200);
   } else {
