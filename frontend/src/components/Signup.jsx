@@ -88,7 +88,7 @@ const SignupModal = ({ open, onClose, handleOpenLoginModal }) => {
 
     try {
       const response = await axiosInstance.post(
-        "http://localhost:5000/auth/signup",
+        `${process.env.REACT_APP_API_URL}/auth/signup`,
         {
           firstname,
           lastname,

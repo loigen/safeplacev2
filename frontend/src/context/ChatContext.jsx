@@ -21,7 +21,7 @@ export const ChatContextProvider = ({ children, user }) => {
   const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io(`${process.env.REACT_APP_API_URL}`);
     setSocket(newSocket);
 
     return () => {

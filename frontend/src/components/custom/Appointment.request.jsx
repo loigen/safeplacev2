@@ -43,10 +43,10 @@ const AppointmentRequest = () => {
     if (confirmation.isConfirmed) {
       try {
         await axiosInstance.patch(
-          `http://localhost:5000/Appointments/api/reject/${id}`
+          `${process.env.REACT_APP_API_URL}/Appointments/api/reject/${id}`
         );
         await axiosInstance.patch(
-          "http://localhost:5000/schedules/updateByDateTime",
+          `${process.env.REACT_APP_API_URL}/schedules/updateByDateTime`,
           { date, time }
         );
         setAppointments((prevAppointments) =>
@@ -120,7 +120,7 @@ const AppointmentRequest = () => {
     if (appointmentToAccept) {
       try {
         await axiosInstance.patch(
-          `http://localhost:5000/Appointments/api/accept/${appointmentToAccept._id}`,
+          `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${appointmentToAccept._id}`,
           {
             meetLink: validMeetLink,
           }
@@ -151,7 +151,7 @@ const AppointmentRequest = () => {
     const fetchAppointments = async () => {
       try {
         const response = await axiosInstance.get(
-          "http://localhost:5000/Appointments/api/pending"
+          `${process.env.REACT_APP_API_URL}/Appointments/api/pending`
         );
         setAppointments(response.data);
       } catch (err) {

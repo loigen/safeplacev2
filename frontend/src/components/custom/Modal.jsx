@@ -23,7 +23,7 @@ const UpdateProfileModal = ({ user, isOpen, onRequestClose, updateUser }) => {
     e.preventDefault();
     try {
       const response = await axiosInstance.put(
-        "http://localhost:5000/user/profile",
+        `${process.env.REACT_APP_API_URL}/user/profile`,
         formData,
         { withCredentials: true }
       );

@@ -81,7 +81,7 @@ const Topbar = () => {
 
     try {
       await axiosInstance.post(
-        "http://localhost:5000/auth/logout",
+        `${process.env.REACT_APP_API_URL}/auth/logout`,
         {},
         { withCredentials: true }
       );

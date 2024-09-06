@@ -35,7 +35,7 @@ const Schedules = () => {
     const handleFetchTodaysAppointment = async () => {
       try {
         const response = await axiosInstance.get(
-          "http://localhost:5000/Appointments/api/today"
+          `${process.env.REACT_APP_API_URL}/Appointments/api/today`
         );
         setTodaysAppointments(response.data);
       } catch (err) {

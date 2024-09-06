@@ -10,7 +10,7 @@ const NotFound = () => {
     const fetchUserProfile = async () => {
       try {
         const response = await axiosInstance.get(
-          "http://localhost:5000/user/profile",
+          `${process.env.REACT_APP_API_URL}/user/profile`,
           {
             withCredentials: true,
           }

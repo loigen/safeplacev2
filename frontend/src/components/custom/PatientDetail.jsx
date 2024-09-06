@@ -45,12 +45,12 @@ const PatientDetails = ({ patient, onClose, handleRefund }) => {
           borderRadius: 2,
           boxShadow: 24,
           width: "100%",
-          maxWidth: 800, // Increased size
-          maxHeight: "90vh", // Limit modal height
+          maxWidth: 800,
+          maxHeight: "90vh",
           mx: "auto",
           mt: 8,
           position: "relative",
-          overflowY: "auto", // Enable vertical scrolling
+          overflowY: "auto",
         }}
       >
         <IconButton

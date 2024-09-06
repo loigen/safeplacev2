@@ -60,7 +60,9 @@ const DraftsPage = ({ searchQuery }) => {
   useEffect(() => {
     const fetchDrafts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/blog/drafts");
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/blog/drafts`
+        );
         setDrafts(response.data.drafts);
       } catch (error) {
         setError("Failed to fetch drafts");
@@ -97,7 +99,7 @@ const DraftsPage = ({ searchQuery }) => {
   const handleUpdate = async () => {
     try {
       await axios.put(
-        `http://localhost:5000/blog/${selectedDraft._id}/update`,
+        `${process.env.REACT_APP_API_URL}/blog/${selectedDraft._id}/update`,
         formValues
       );
       setDrafts((prevDrafts) =>
@@ -113,7 +115,9 @@ const DraftsPage = ({ searchQuery }) => {
 
   const handlePublish = async (draftId) => {
     try {
-      await axios.put(`http://localhost:5000/blog/${draftId}/publish`);
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/blog/${draftId}/publish`
+      );
       setDrafts((prevDrafts) =>
         prevDrafts.map((draft) =>
           draft._id === draftId ? { ...draft, status: "published" } : draft

@@ -15,7 +15,7 @@ export default class Reset extends Component {
     e.preventDefault();
     const { email } = this.state;
 
-    fetch("http://localhost:5000/auth/forgot-password", {
+    fetch(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
