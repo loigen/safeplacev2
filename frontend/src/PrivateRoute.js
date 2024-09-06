@@ -22,6 +22,7 @@ const PrivateRoute = ({
         if (user && user.role) {
           setIsAuthenticated(true);
           setIsAdmin(user.role === "admin");
+          console.log(user.role);
         } else {
           console.error("User data or role is missing in the response");
           setIsAuthenticated(false);
