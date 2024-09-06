@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import InfoIcon from "@mui/icons-material/Info";
 import Swal from "sweetalert2";
-import axiosInstance from "../../config/axiosConfig";
 import { LoadingSpinner, MeetLinkModal } from "./index";
 import emailjs, { send } from "emailjs-com";
+import axios from "axios";
 
 const AppointmentRequest = () => {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
@@ -42,10 +42,10 @@ const AppointmentRequest = () => {
 
     if (confirmation.isConfirmed) {
       try {
-        await axiosInstance.patch(
+        await axios.patch(
           `${process.env.REACT_APP_API_URL}/Appointments/api/reject/${id}`
         );
-        await axiosInstance.patch(
+        await axios.patch(
           `${process.env.REACT_APP_API_URL}/schedules/updateByDateTime`,
           { date, time }
         );
@@ -119,7 +119,7 @@ const AppointmentRequest = () => {
 
     if (appointmentToAccept) {
       try {
-        await axiosInstance.patch(
+        await axios.patch(
           `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${appointmentToAccept._id}`,
           {
             meetLink: validMeetLink,
@@ -150,7 +150,7 @@ const AppointmentRequest = () => {
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/Appointments/api/pending`
         );
         setAppointments(response.data);

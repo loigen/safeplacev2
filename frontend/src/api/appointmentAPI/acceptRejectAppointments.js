@@ -1,9 +1,9 @@
+import axios from "axios";
 import Swal from "sweetalert2";
-import axiosInstance from "../../config/axiosConfig";
 
 export const acceptAppointment = async (id) => {
   try {
-    await axiosInstance.patch(
+    await axios.patch(
       `${process.env.REACT_APP_API_URL}/Appointments/api/accept/${id}`
     );
     Swal.fire("Success", "Appointment accepted successfully", "success");

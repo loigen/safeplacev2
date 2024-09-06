@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import axiosInstance from "../../config/axiosConfig";
 import { fetchUserProfile } from "../../api/userAPI/fetchUserProfile";
+import axios from "axios";
 
 const categories = [
   { id: "Technology", name: "Technology" },
@@ -26,7 +26,7 @@ const AllBlogs = () => {
     const fetchBlogs = async () => {
       setLoading(true);
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/blog/allBlogs`
         );
         setBlogs(response.data.blogs);
@@ -48,7 +48,7 @@ const AllBlogs = () => {
 
         setUserId(user._id);
 
-        const favoritesResponse = await axiosInstance.get(
+        const favoritesResponse = await axios.get(
           `${process.env.REACT_APP_API_URL}/blog/userFavorites/${user._id}`
         );
         setFavoriteBlogs(favoritesResponse.data.blogs.map((blog) => blog._id));
@@ -69,7 +69,7 @@ const AllBlogs = () => {
         ? `${process.env.REACT_APP_API_URL}/blog/removeFromFavorites/${blogId}/${userId}`
         : `${process.env.REACT_APP_API_URL}/blog/addToFavorites/${blogId}/${userId}`;
 
-      const response = await axiosInstance.post(url);
+      const response = await axios.post(url);
       Swal.fire({
         icon: isFavorite ? "success" : "success",
         title: isFavorite ? "Removed from Favorites" : "Added to Favorites",

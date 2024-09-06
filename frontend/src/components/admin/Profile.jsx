@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import axiosInstance from "../../config/axiosConfig";
 import { LoadingSpinner } from "../custom";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -18,6 +17,7 @@ import {
 import { styled } from "@mui/material/styles";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import axios from "axios";
 
 const PrimaryButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#2c6975",
@@ -99,7 +99,7 @@ const Profile = ({ setView }) => {
         formPayload.append("profile_picture", localFile);
       }
 
-      const response = await axiosInstance.put(
+      const response = await axios.put(
         `${process.env.REACT_APP_API_URL}/user/updateprofile`,
         formPayload,
         {

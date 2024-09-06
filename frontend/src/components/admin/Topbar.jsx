@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import LoadingSpinner from "../custom/LoadingSpinner";
 import "../../styles/topbar.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import axiosInstance from "../../config/axiosConfig";
 import { Notification } from "../custom";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Menu, MenuItem, Avatar, IconButton } from "@mui/material";
+import axios from "axios";
 
 const Topbar = () => {
   const { user, loading } = useAuth();
@@ -43,7 +43,7 @@ const Topbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axiosInstance.post(
+      await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/logout`,
         {},
         { withCredentials: true }

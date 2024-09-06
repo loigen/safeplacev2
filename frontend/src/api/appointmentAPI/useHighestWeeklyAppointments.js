@@ -1,6 +1,8 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import axiosInstance from "../../config/axiosConfig";
+
+//get the highest appointments for all the week passed
 
 const useHighestWeeklyAppointments = () => {
   const [data, setData] = useState(null);
@@ -10,7 +12,7 @@ const useHighestWeeklyAppointments = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/Appointments/api/highest-weekly`
         );
         setData(response.data);

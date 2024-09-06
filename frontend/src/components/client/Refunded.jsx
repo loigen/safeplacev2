@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentsByUserId } from "../../api/appointmentAPI/fetchAppointmentsByUserId";
-import axiosInstance from "../../config/axiosConfig";
 import { useAuth } from "../../context/AuthContext";
 
 const RefundedAppointments = () => {

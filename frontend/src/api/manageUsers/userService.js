@@ -1,9 +1,9 @@
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 const API_URL = `${process.env.REACT_APP_API_URL}/user/users`;
 //for manage users
 const getUsers = async (token) => {
-  return axiosInstance.get(API_URL, {
+  return axios.get(API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -12,7 +12,7 @@ const getUsers = async (token) => {
 };
 
 const blockUser = async (userId, token) => {
-  return axiosInstance.patch(
+  return axios.patch(
     `${API_URL}/${userId}/block`,
     {},
     {
@@ -25,7 +25,7 @@ const blockUser = async (userId, token) => {
 };
 
 const unblockUser = async (userId, token) => {
-  return axiosInstance.patch(
+  return axios.patch(
     `${API_URL}/${userId}/unblock`,
     {},
     {

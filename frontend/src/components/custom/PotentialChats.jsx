@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
-import axiosInstance from "../../config/axiosConfig";
 import LoadingSpinner from "./LoadingSpinner";
 import { Tooltip } from "@mui/material";
+import axios from "axios";
 
 const PotentialChats = () => {
   const [user, setUser] = useState(null);
@@ -12,7 +12,7 @@ const PotentialChats = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );

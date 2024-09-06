@@ -1,5 +1,4 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
-import axiosInstance from "../../config/axiosConfig";
 import { ChatContext } from "../../context/ChatContext";
 import { useFetchRecipient } from "../../hooks/useFetchRecipient";
 import moment from "moment";
@@ -15,6 +14,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 
 const ChatBox = () => {
   const [user, setUser] = useState(null);
@@ -32,7 +32,7 @@ const ChatBox = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );

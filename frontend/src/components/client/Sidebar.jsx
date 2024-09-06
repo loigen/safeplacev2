@@ -5,8 +5,6 @@ import logo from "../../images/bigLogo.png";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import EventAvailableIcon from "@mui/icons-material/EventAvailable";
 import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import axiosInstance from "../../config/axiosConfig";
 
 const Sidebar = () => {
   return (

@@ -1,10 +1,10 @@
+import axios from "axios";
 import Swal from "sweetalert2";
-import axiosInstance from "../../config/axiosConfig";
 
 //update the status if ma trigger
 export const updateSlotStatus = async (slotId, status) => {
   try {
-    const response = await axiosInstance.patch(
+    const response = await axios.patch(
       `${process.env.REACT_APP_API_URL}/schedules/slots/${slotId}`,
       { status },
       { withCredentials: true }

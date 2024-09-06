@@ -7,7 +7,7 @@ import {
   AppointmentStats,
 } from "../../components/custom";
 import "../../styles/patient.css";
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 const Patients = () => {
   const [patients, setPatients] = useState([]);
@@ -50,7 +50,7 @@ const Patients = () => {
     formData.append("appointmentId", id);
 
     try {
-      await axiosInstance.post(
+      await axios.post(
         `${process.env.REACT_APP_API_URL}/Appointments/api/refund`,
         formData,
         {

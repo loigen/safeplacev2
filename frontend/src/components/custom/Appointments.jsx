@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import dayjs from "dayjs";
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -18,7 +18,7 @@ const Appointments = () => {
 
   const fetchAppointments = async () => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axios.get(
         `${API_URL}/schedules/appointments/today`
       );
       setAppointments(response.data);
@@ -29,7 +29,7 @@ const Appointments = () => {
 
   const fetchFreeSlots = async () => {
     try {
-      const response = await axiosInstance.get(`${API_URL}/schedules/slots`);
+      const response = await axios.get(`${API_URL}/schedules/slots`);
       setFreeSlots(response.data);
     } catch (error) {
       console.error("Error fetching free slots:", error);
@@ -42,7 +42,7 @@ const Appointments = () => {
         return Swal.fire("Error", "Date and time are required", "error");
       }
 
-      const response = await axiosInstance.post(`${API_URL}/schedules/slots`, {
+      const response = await axios.post(`${API_URL}/schedules/slots`, {
         date,
         time,
       });
@@ -58,7 +58,7 @@ const Appointments = () => {
 
   const handleDeleteFreeSlot = async (id) => {
     try {
-      await axiosInstance.delete(`${API_URL}/schedules/slots/${id}`);
+      await axios.delete(`${API_URL}/schedules/slots/${id}`);
       setFreeSlots(freeSlots.filter((slot) => slot._id !== id));
       Swal.fire("Success", "Free time slot deleted", "success");
     } catch (error) {
@@ -69,7 +69,7 @@ const Appointments = () => {
 
   const handleAcceptAppointment = async (id) => {
     try {
-      const response = await axiosInstance.put(
+      const response = await axios.put(
         `${API_URL}/schedules/appointments/accept/${id}`
       );
       setAppointments(
@@ -88,7 +88,7 @@ const Appointments = () => {
 
   const handleRejectAppointment = async (id) => {
     try {
-      const response = await axiosInstance.put(
+      const response = await axios.put(
         `${API_URL}/schedules/appointments/reject/${id}`
       );
       setAppointments(

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import "../../styles/topbar.css";
 import profile from "../../images/defaultAvatar.jpg";
-import axiosInstance from "../../config/axiosConfig";
 import { Notification, LoadingSpinner } from "../custom";
 import {
   Avatar,
@@ -15,6 +14,7 @@ import {
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { title } from "process";
+import axios from "axios";
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
@@ -36,7 +36,7 @@ const Topbar = () => {
 
     const fetchProfile = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );
@@ -80,7 +80,7 @@ const Topbar = () => {
     setLoading(true);
 
     try {
-      await axiosInstance.post(
+      await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/logout`,
         {},
         { withCredentials: true }

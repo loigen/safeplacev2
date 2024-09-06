@@ -26,7 +26,7 @@ const FeedbackList = () => {
     const fetchFeedback = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/feedback`
+          `${process.env.REACT_APP_API_URL}/Feedback/feedback`
         );
         setFeedbackList(response.data.feedback);
         setLoading(false);

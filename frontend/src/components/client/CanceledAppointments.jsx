@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentsByUserId } from "../../api/appointmentAPI/fetchAppointmentsByUserId";
-import axiosInstance from "../../config/axiosConfig";
 import { useAuth } from "../../context/AuthContext";
+import axios from "axios";
 
 const CanceledAppointments = () => {
   const [appointments, setAppointments] = useState([]);
@@ -54,7 +54,7 @@ const CanceledAppointments = () => {
     try {
       setUploading(true);
       setResponseMessage(null);
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/Appointments/api/appointments/update-with-bank-account`,
         formData,
         { withCredentials: true }

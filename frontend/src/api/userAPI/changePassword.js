@@ -1,9 +1,9 @@
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 //chanspas jpg
 export const changePassword = async (currentPassword, newPassword, token) => {
   try {
-    const response = await axiosInstance.post(
+    const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/user/changepassword`,
       {
         currentPassword,

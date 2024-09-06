@@ -15,7 +15,7 @@ import {
   IconButton,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 const BlogModal = ({ isOpen, onClose }) => {
   const [title, setTitle] = useState("");
@@ -33,7 +33,7 @@ const BlogModal = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/blog/save-draft`,
         {
           title,
@@ -71,7 +71,7 @@ const BlogModal = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/blog/create`,
         {
           title,

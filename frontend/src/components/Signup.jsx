@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Swal from "sweetalert2";
-import axiosInstance from "../config/axiosConfig";
 import {
   Dialog,
   DialogTitle,
@@ -19,6 +18,7 @@ import {
   Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import axios from "axios";
 
 const SignupModal = ({ open, onClose, handleOpenLoginModal }) => {
   const [firstname, setFirstname] = useState("");
@@ -87,7 +87,7 @@ const SignupModal = ({ open, onClose, handleOpenLoginModal }) => {
     setLoading(true);
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/auth/signup`,
         {
           firstname,

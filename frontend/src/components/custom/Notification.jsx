@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
 import { ChatContext } from "../../context/ChatContext";
-import axiosInstance from "../../config/axiosConfig";
 import { unreadNotificationsFunc } from "../../utils/unreadNotifications";
 import moment from "moment";
 import {
@@ -19,6 +18,7 @@ import {
 } from "@mui/material";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
 const Notification = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +47,7 @@ const Notification = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           { withCredentials: true }
         );

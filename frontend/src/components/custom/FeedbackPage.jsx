@@ -15,7 +15,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useAuth } from "../../context/AuthContext";
-import axiosInstance from "../../config/axiosConfig";
+import axios from "axios";
 
 const FeedbackPage = ({ setView }) => {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ const FeedbackPage = ({ setView }) => {
     };
 
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/Feedback/submit-feedback`,
         feedbackData
       );

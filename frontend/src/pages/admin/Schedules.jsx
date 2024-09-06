@@ -7,7 +7,6 @@ import "../../styles/Schedules.css";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import dayjs from "dayjs";
-import axiosInstance from "../../config/axiosConfig";
 import { CustomTimePicker, AppointmentRequest } from "../../components/custom";
 import {
   Card,
@@ -18,6 +17,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
+import axios from "axios";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -34,7 +34,7 @@ const Schedules = () => {
   useEffect(() => {
     const handleFetchTodaysAppointment = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/Appointments/api/today`
         );
         setTodaysAppointments(response.data);
@@ -50,7 +50,7 @@ const Schedules = () => {
   useEffect(() => {
     const fetchFreeSlots = async () => {
       try {
-        const response = await axiosInstance.get(`${API_URL}/schedules/slots`);
+        const response = await axios.get(`${API_URL}/schedules/slots`);
         setFreeSlots(response.data);
       } catch (error) {
         console.error("Error fetching free slots:", error);
@@ -78,7 +78,7 @@ const Schedules = () => {
 
     if (result.isConfirmed) {
       try {
-        await axiosInstance.delete(`${API_URL}/schedules/slots/${id}`);
+        await axios.delete(`${API_URL}/schedules/slots/${id}`);
         setFreeSlots(freeSlots.filter((slot) => slot._id !== id));
         Swal.fire("Success", "Free time slot deleted", "success");
       } catch (error) {
@@ -105,7 +105,7 @@ const Schedules = () => {
       console.log("Constructed New Time Date:", newTimeDate);
 
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/schedules/slots/check`,
           {
             params: {
@@ -125,13 +125,10 @@ const Schedules = () => {
           return;
         }
 
-        await axiosInstance.post(
-          `${process.env.REACT_APP_API_URL}/schedules/slots`,
-          {
-            date: selectedDate.toDateString(),
-            time,
-          }
-        );
+        await axios.post(`${process.env.REACT_APP_API_URL}/schedules/slots`, {
+          date: selectedDate.toDateString(),
+          time,
+        });
 
         setFreeSchedules((prevSchedules) => {
           const dateKey = selectedDate.toDateString();

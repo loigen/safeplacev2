@@ -1,6 +1,6 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import axiosInstance from "../config/axiosConfig";
 
 const NotFound = () => {
   const [redirectPath, setRedirectPath] = useState("/");
@@ -9,7 +9,7 @@ const NotFound = () => {
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axios.get(
           `${process.env.REACT_APP_API_URL}/user/profile`,
           {
             withCredentials: true,
