@@ -4,6 +4,7 @@ import axios from "axios";
 import UserDashboard from "./pages/client/userDashboard";
 import AdminDashboard from "./pages/admin/Dashboard";
 import LoadingSpinner from "./components/custom/LoadingSpinner";
+import { useAuth } from "./context/AuthContext";
 
 const PrivateRoute = ({
   component: Component,
@@ -14,25 +15,16 @@ const PrivateRoute = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { user } = useAuth();
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/user/profile`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (response.status === 200) {
-          const user = response.data.user;
-          if (user && user.role) {
-            setIsAuthenticated(true);
-            setIsAdmin(user.role === "admin");
-          } else {
-            console.error("User data or role is missing in the response");
-            setIsAuthenticated(false);
-          }
+        if (user && user.role) {
+          setIsAuthenticated(true);
+          setIsAdmin(user.role === "admin");
+        } else {
+          console.error("User data or role is missing in the response");
+          setIsAuthenticated(false);
         }
       } catch (error) {
         console.error("Error fetching user profile:", error);
